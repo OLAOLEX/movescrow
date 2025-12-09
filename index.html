@@ -11,20 +11,35 @@
   <meta name="keywords" content="package delivery, food delivery, document delivery, escrow delivery, secure delivery, Nigeria delivery, Lagos delivery, Movescrow">
   <meta name="author" content="Movescrow">
   <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  <meta name="theme-color" content="#1E3A5F">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.movescrow.com/">
+  
+  <!-- Additional SEO -->
+  <meta name="geo.region" content="NG-LA">
+  <meta name="geo.placename" content="Lagos, Nigeria">
+  
+  <!-- Security Headers (also in vercel.json) -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
   
   <!-- Open Graph / Facebook -->
   <meta property="og:type" content="website">
-  <meta property="og:url" content="https://movescrow.com/">
+  <meta property="og:url" content="https://www.movescrow.com/">
   <meta property="og:title" content="Movescrow - Secure Package & Food Delivery Platform">
   <meta property="og:description" content="Join our waitlist to be among the first to experience secure, escrow-protected delivery services.">
-  <meta property="og:image" content="https://movescrow.com/icons/Icon-512.png">
+  <meta property="og:image" content="https://www.movescrow.com/icons/Icon-512.png">
   
   <!-- Twitter -->
   <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://movescrow.com/">
+  <meta property="twitter:url" content="https://www.movescrow.com/">
   <meta property="twitter:title" content="Movescrow - Secure Package & Food Delivery Platform">
   <meta property="twitter:description" content="Join our waitlist to be among the first to experience secure, escrow-protected delivery services.">
-  <meta property="twitter:image" content="https://movescrow.com/icons/Icon-512.png">
+  <meta property="twitter:image" content="https://www.movescrow.com/icons/Icon-512.png">
   
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png">
@@ -45,8 +60,8 @@
     "@context": "https://schema.org",
     "@type": "Organization",
     "name": "Movescrow",
-    "url": "https://movescrow.com",
-    "logo": "https://movescrow.com/icons/Icon-512.png",
+    "url": "https://www.movescrow.com",
+    "logo": "https://www.movescrow.com/icons/Icon-512.png",
     "description": "Secure, escrow-protected delivery platform for packages, food, and documents",
     "sameAs": [
       "https://facebook.com/movescrow",
@@ -58,6 +73,63 @@
       "@type": "ContactPoint",
       "contactType": "Customer Service",
       "email": "support@movescrow.com"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "NG",
+      "addressRegion": "Lagos"
+    }
+  }
+  </script>
+  
+  <!-- Additional Structured Data for Website -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Movescrow",
+    "url": "https://www.movescrow.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.movescrow.com/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+  <!-- LocalBusiness Schema (if applicable) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Movescrow",
+    "image": "https://www.movescrow.com/icons/Icon-512.png",
+    "@id": "https://www.movescrow.com",
+    "url": "https://www.movescrow.com",
+    "telephone": "",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "NG",
+      "addressRegion": "Lagos"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 6.5244,
+      "longitude": 3.3792
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "opens": "00:00",
+      "closes": "23:59"
     }
   }
   </script>
@@ -456,5 +528,12 @@
       }
     }
   </script>
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://api.movescrow.com">
+  <link rel="dns-prefetch" href="https://api.movescrow.com">
+  
+  <!-- Sitemap reference -->
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
 </body>
 </html>
