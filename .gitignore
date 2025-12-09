@@ -83,6 +83,14 @@ logs/
 # Vercel
 .vercel/
 
+# API Keys and Secrets
+mobile/lib/config/api_keys.dart
+*.env
+*.env.local
+*.env.*.local
+mobile/android/local.properties
+mobile/ios/Runner/GoogleService-Info.plist
+
 # Temporary files
 *.tmp
 *.temp

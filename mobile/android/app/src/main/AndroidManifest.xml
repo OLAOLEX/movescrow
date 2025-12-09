@@ -31,10 +31,10 @@
             android:name="flutterEmbedding"
             android:value="2" />
         
-        <!-- Google Maps API Key -->
+        <!-- Google Maps API Key (loaded from local.properties via manifestPlaceholders) -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBbYVUeFBtowWd_LAbMp_IBcwrz7FQRtWs"/>
+            android:value="${MAPS_API_KEY}"/>
     </application>
     
     <!-- Location Permissions for Google Maps -->
