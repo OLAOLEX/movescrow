@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  
+  <!-- SEO Meta Tags -->
+  <title>Movescrow - Secure Package & Food Delivery Platform | Coming Soon</title>
+  <meta name="description" content="Movescrow is a secure, escrow-protected delivery platform for packages, food, and documents. Join our waitlist to be among the first to experience safe and reliable delivery services in Nigeria.">
+  <meta name="keywords" content="package delivery, food delivery, document delivery, escrow delivery, secure delivery, Nigeria delivery, Lagos delivery, Movescrow">
+  <meta name="author" content="Movescrow">
+  <meta name="robots" content="index, follow">
+  <meta name="language" content="English">
+  <meta name="revisit-after" content="7 days">
+  <meta name="theme-color" content="#1E3A5F">
+  
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.movescrow.com/">
+  
+  <!-- Additional SEO -->
+  <meta name="geo.region" content="NG-LA">
+  <meta name="geo.placename" content="Lagos, Nigeria">
+  
+  <!-- Security Headers (also in vercel.json) -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <meta http-equiv="X-XSS-Protection" content="1; mode=block">
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.movescrow.com/">
+  <meta property="og:title" content="Movescrow - Secure Package & Food Delivery Platform">
+  <meta property="og:description" content="Join our waitlist to be among the first to experience secure, escrow-protected delivery services.">
+  <meta property="og:image" content="https://www.movescrow.com/icons/Icon-512.png">
+  
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://www.movescrow.com/">
+  <meta property="twitter:title" content="Movescrow - Secure Package & Food Delivery Platform">
+  <meta property="twitter:description" content="Join our waitlist to be among the first to experience secure, escrow-protected delivery services.">
+  <meta property="twitter:image" content="https://www.movescrow.com/icons/Icon-512.png">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="favicon.png">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+
+  <!-- Google Analytics - Replace G-XXXXXXXXXX with your actual Measurement ID -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-XXXXXXXXXX');
+  </script> -->
+  
+  <!-- Structured Data (JSON-LD) for SEO -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "Movescrow",
+    "url": "https://www.movescrow.com",
+    "logo": "https://www.movescrow.com/icons/Icon-512.png",
+    "description": "Secure, escrow-protected delivery platform for packages, food, and documents",
+    "sameAs": [
+      "https://facebook.com/movescrow",
+      "https://twitter.com/movescrow",
+      "https://instagram.com/movescrow",
+      "https://linkedin.com/company/movescrow"
+    ],
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "contactType": "Customer Service",
+      "email": "support@movescrow.com"
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "NG",
+      "addressRegion": "Lagos"
+    }
+  }
+  </script>
+  
+  <!-- Additional Structured Data for Website -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Movescrow",
+    "url": "https://www.movescrow.com",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://www.movescrow.com/?s={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+  
+  <!-- LocalBusiness Schema (if applicable) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Movescrow",
+    "image": "https://www.movescrow.com/icons/Icon-512.png",
+    "@id": "https://www.movescrow.com",
+    "url": "https://www.movescrow.com",
+    "telephone": "",
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": "NG",
+      "addressRegion": "Lagos"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 6.5244,
+      "longitude": 3.3792
+    },
+    "openingHoursSpecification": {
+      "@type": "OpeningHoursSpecification",
+      "dayOfWeek": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "opens": "00:00",
+      "closes": "23:59"
+    }
+  }
+  </script>
+  
+  <!-- Styles -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      background: linear-gradient(135deg, #1E3A5F 0%, #0F2A4F 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+      animation: fadeIn 1s ease-in;
+    }
+    
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .logo {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 30px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+      font-weight: bold;
+      color: #FF6B35;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+    
+    h1 {
+      font-size: 42px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 0%, #FF6B35 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .subtitle {
+      font-size: 20px;
+      color: rgba(255, 255, 255, 0.9);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .description {
+      font-size: 16px;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 40px;
+      line-height: 1.8;
+    }
+    
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+    
+    .feature {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 12px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .feature-icon {
+      font-size: 32px;
+      margin-bottom: 12px;
+    }
+    
+    .feature-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #FF6B35;
+      margin-bottom: 4px;
+    }
+    
+    .feature-desc {
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .waitlist-form {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 40px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      margin-bottom: 30px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    input[type="email"],
+    input[type="text"] {
+      width: 100%;
+      padding: 16px 20px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+    
+    input[type="email"]:focus,
+    input[type="text"]:focus {
+      outline: none;
+      border-color: #FF6B35;
+      background: rgba(255, 255, 255, 0.15);
+    }
+    
+    input[type="email"]::placeholder,
+    input[type="text"]::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #FF6B35 0%, #E55A2B 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(255, 107, 53, 0.4);
+    }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
+    .success-message {
+      display: none;
+      background: rgba(76, 175, 80, 0.2);
+      border: 1px solid rgba(76, 175, 80, 0.5);
+      color: #4CAF50;
+      padding: 16px;
+      border-radius: 12px;
+      margin-top: 20px;
+      font-weight: 500;
+    }
+    
+    .success-message.show {
+      display: block;
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 30px;
+    }
+    
+    .social-link {
+      width: 44px;
+      height: 44px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .social-link:hover {
+      background: rgba(255, 107, 53, 0.3);
+      transform: translateY(-3px);
+    }
+    
+    .footer {
+      margin-top: 40px;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+    
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 32px;
+      }
+      
+      .subtitle {
+        font-size: 18px;
+      }
+      
+      .description {
+        font-size: 14px;
+      }
+      
+      .waitlist-form {
+        padding: 30px 20px;
+      }
+      
+      .features {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">M</div>
+    
+    <h1>Movescrow</h1>
+    <p class="subtitle">Coming Soon</p>
+    <p class="description">
+      Secure, escrow-protected delivery platform for packages, food, and documents. 
+      Join our waitlist to be among the first to experience safe and reliable delivery services.
+    </p>
+    
+    <div class="features">
+      <div class="feature">
+        <div class="feature-icon">📦</div>
+        <div class="feature-title">Secure Delivery</div>
+        <div class="feature-desc">Escrow protection for all deliveries</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🚚</div>
+        <div class="feature-title">Fast & Reliable</div>
+        <div class="feature-desc">Real-time GPS tracking</div>
+      </div>
+      <div class="feature">
+        <div class="feature-icon">🔒</div>
+        <div class="feature-title">Safe Payments</div>
+        <div class="feature-desc">Secure escrow system</div>
+      </div>
+    </div>
+    
+    <div class="waitlist-form">
+      <h2 style="margin-bottom: 24px; font-size: 24px;">Join the Waitlist</h2>
+      <form id="waitlistForm" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <input 
+            type="text" 
+            id="name" 
+            name="name" 
+            placeholder="Your Name" 
+            required
+          >
+        </div>
+        <div class="form-group">
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="Your Email Address" 
+            required
+          >
+        </div>
+        <button type="submit" class="btn">Join Waitlist</button>
+        <div class="success-message" id="successMessage">
+          ✅ Thank you! We'll notify you when Movescrow launches.
+        </div>
+      </form>
+    </div>
+    
+    <div class="social-links">
+      <a href="https://facebook.com/movescrow" class="social-link" aria-label="Facebook" target="_blank" rel="noopener noreferrer">f</a>
+      <a href="https://twitter.com/movescrow" class="social-link" aria-label="Twitter" target="_blank" rel="noopener noreferrer">t</a>
+      <a href="https://instagram.com/movescrow" class="social-link" aria-label="Instagram" target="_blank" rel="noopener noreferrer">i</a>
+      <a href="https://linkedin.com/company/movescrow" class="social-link" aria-label="LinkedIn" target="_blank" rel="noopener noreferrer">in</a>
+    </div>
+    
+    <div class="footer">
+      <p>&copy; 2024 Movescrow. All rights reserved.</p>
+    </div>
+  </div>
+  
+  <script>
+    // API Configuration - Update with your actual backend URL
+    const API_BASE_URL = 'https://api.movescrow.com'; // Change to your backend URL
+    
+    async function handleSubmit(event) {
+      event.preventDefault();
+      
+      const name = document.getElementById('name').value;
+      const email = document.getElementById('email').value;
+      const submitButton = event.target.querySelector('.btn');
+      const successMessage = document.getElementById('successMessage');
+      
+      // Disable button during submission
+      submitButton.disabled = true;
+      submitButton.textContent = 'Joining...';
+      
+      try {
+        // Send to backend API
+        const response = await fetch(`${API_BASE_URL}/api/waitlist`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ name, email })
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          console.log('Success:', data);
+          
+          // Show success message
+          successMessage.classList.add('show');
+          document.getElementById('waitlistForm').reset();
+          
+          // Track conversion (if Google Analytics is enabled)
+          if (typeof gtag !== 'undefined') {
+            gtag('event', 'waitlist_signup', {
+              'event_category': 'engagement',
+              'event_label': 'waitlist'
+            });
+          }
+          
+          // Hide success message after 5 seconds
+          setTimeout(() => {
+            successMessage.classList.remove('show');
+          }, 5000);
+        } else {
+          throw new Error('Failed to join waitlist');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        
+        // Show error message
+        successMessage.textContent = '❌ Something went wrong. Please try again later.';
+        successMessage.style.background = 'rgba(229, 57, 53, 0.2)';
+        successMessage.style.borderColor = 'rgba(229, 57, 53, 0.5)';
+        successMessage.style.color = '#E53935';
+        successMessage.classList.add('show');
+        
+        setTimeout(() => {
+          successMessage.classList.remove('show');
+          // Reset to success styling
+          successMessage.textContent = '✅ Thank you! We\'ll notify you when Movescrow launches.';
+          successMessage.style.background = 'rgba(76, 175, 80, 0.2)';
+          successMessage.style.borderColor = 'rgba(76, 175, 80, 0.5)';
+          successMessage.style.color = '#4CAF50';
+        }, 5000);
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Join Waitlist';
+      }
+    }
+  </script>
+  
+  <!-- Preconnect for performance -->
+  <link rel="preconnect" href="https://api.movescrow.com">
+  <link rel="dns-prefetch" href="https://api.movescrow.com">
+  
+  <!-- Sitemap reference -->
+  <link rel="sitemap" type="application/xml" href="/sitemap.xml">
+</body>
+</html>

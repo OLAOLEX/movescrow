@@ -1,0 +1,35 @@
+{
+    "name": "Movescrow - Secure Package & Food Delivery Platform",
+    "short_name": "Movescrow",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#1E3A5F",
+    "theme_color": "#1E3A5F",
+    "description": "Secure, escrow-protected delivery platform for packages, food, and documents. Join our waitlist to be among the first to experience safe and reliable delivery services.",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "icons/Icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "icons/Icon-maskable-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "icons/Icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ]
+}
