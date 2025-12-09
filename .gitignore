@@ -26,16 +26,21 @@ env/
 ENV/
 .venv
 
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# Node.js
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-error.log
+
+# Build outputs
+dist/
+build/
+.next/
 
 # Environment variables
 .env
 .env.local
+.env.production
 .env.*.local
 
 # Database
@@ -43,13 +48,17 @@ ENV/
 *.sqlite
 *.sqlite3
 
-# Logs
-*.log
-logs/
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Flutter
 .dart_tool/
@@ -58,11 +67,23 @@ Thumbs.db
 .packages
 .pub-cache/
 .pub/
-/build/
+mobile/build/
+mobile/android/build/
+mobile/ios/build/
 
 # Testing
 .pytest_cache/
 .coverage
 htmlcov/
 
+# Logs
+*.log
+logs/
 
+# Vercel
+.vercel/
+
+# Temporary files
+*.tmp
+*.temp
+*.cache

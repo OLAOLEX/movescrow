@@ -18,6 +18,7 @@ Movescrow is a peer-to-peer logistics marketplace connecting senders, movers, an
 movescrow/
 ├── backend/          # FastAPI backend
 ├── mobile/           # Flutter mobile app
+├── web/              # Website (Coming Soon landing page)
 ├── docs/             # Documentation
 └── README.md
 ```
@@ -26,9 +27,14 @@ movescrow/
 
 - **Backend**: FastAPI (Python)
 - **Mobile**: Flutter (Dart)
+- **Website**: HTML/CSS/JavaScript (Static site)
 - **Database**: PostgreSQL
 - **Payment**: Paystack/Flutterwave
 - **Real-time**: Socket.IO / WebSockets
+
+## 🌐 Website
+
+The website is located in the `web/` folder. See [web/README.md](./web/README.md) for website details and [web/DEPLOYMENT_GUIDE.md](./web/DEPLOYMENT_GUIDE.md) for deployment instructions.
 
 ## 🎨 Brand Colors
 
@@ -42,9 +48,10 @@ See [BRANDING.md](./BRANDING.md) for complete branding guidelines.
 
 1. ✅ Set up backend structure
 2. ✅ Set up Flutter mobile app
-3. ⏳ Configure database
-4. ⏳ Integrate payment gateway
-5. ⏳ Build core features
+3. ✅ Website landing page
+4. ⏳ Configure database
+5. ⏳ Integrate payment gateway
+6. ⏳ Build core features
 
 ## 🚦 Getting Started
 
@@ -70,6 +77,10 @@ flutter run
 
 See [mobile/TESTING_GUIDE.md](./mobile/TESTING_GUIDE.md) for detailed testing instructions.
 
+### Website Setup
+
+The website files are in the `web/` folder. For deployment, see [web/DEPLOYMENT_GUIDE.md](./web/DEPLOYMENT_GUIDE.md).
+
 ## 📚 Documentation
 
 ### Business & Strategy
@@ -93,4 +104,3 @@ See [mobile/TESTING_GUIDE.md](./mobile/TESTING_GUIDE.md) for detailed testing in
 ---
 
 **Status**: Project structure initialized - Ready for development
-
