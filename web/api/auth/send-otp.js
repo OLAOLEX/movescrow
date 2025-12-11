@@ -61,18 +61,25 @@ export default async function handler(req, res) {
       return res.status(500).json({ error: 'Failed to save OTP' });
     }
 
-    // Send OTP via SMS
-    try {
-      await sendSMS(phone, `Your Movescrow OTP: ${otp}. Valid for 10 minutes.`);
-    } catch (smsError) {
-      console.error('Error sending SMS:', smsError);
-      // Still return success even if SMS fails (OTP saved to DB)
+    // Send OTP via SMS (skip if using universal test OTP)
+    if (otp !== '123456') {
+      try {
+        await sendSMS(phone, `Your Movescrow OTP: ${otp}. Valid for 10 minutes.`);
+      } catch (smsError) {
+        console.error('Error sending SMS:', smsError);
+        // Still return success even if SMS fails (OTP saved to DB)
+      }
+    } else {
+      console.log(`Test OTP ${otp} generated for ${phone} (SMS skipped - test mode)`);
     }
 
     return res.json({
       success: true,
-      message: 'OTP sent successfully',
-      expiresIn: 600 // 10 minutes in seconds
+      message: otp === '123456' 
+        ? 'OTP generated (test mode - use 123456)'
+        : 'OTP sent successfully',
+      expiresIn: 600, // 10 minutes in seconds
+      testMode: otp === '123456' // Indicate test mode
     });
   } catch (error) {
     console.error('Error in send-otp:', error);
