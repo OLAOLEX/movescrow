@@ -159,12 +159,15 @@
             type="text" 
             id="otp" 
             name="otp" 
-            placeholder="000000" 
+            placeholder="123456" 
             maxlength="6"
             pattern="[0-9]{6}"
             required
           />
         </div>
+        <p class="help-text" id="test-otp-hint" class="hidden" style="background: rgba(255, 107, 53, 0.1); padding: 0.75rem; border-radius: 0.5rem; margin-bottom: 1rem; color: #FF6B35; font-size: 0.875rem; border-left: 3px solid #FF6B35;">
+          💡 <strong>Test Mode:</strong> Use OTP <strong>123456</strong> for testing
+        </p>
         <button type="button" class="btn btn-primary" id="verify-otp-btn">
           Verify OTP
         </button>

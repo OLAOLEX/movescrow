@@ -378,13 +378,32 @@ async function sendOTP(phone) {
 
     const data = await response.json();
 
-    if (response.ok) {
+    if (response.ok && data.success) {
       // Show OTP input
-      document.getElementById('otp-section').classList.remove('hidden');
-      document.getElementById('send-otp-btn').textContent = 'OTP Sent!';
+      const otpSection = document.getElementById('otp-section');
+      const sendOtpBtn = document.getElementById('send-otp-btn');
+      
+      if (otpSection) {
+        otpSection.classList.remove('hidden');
+      }
+      
+      if (sendOtpBtn) {
+        sendOtpBtn.textContent = 'OTP Sent!';
+        sendOtpBtn.disabled = true;
+      }
+      
+      // Show test OTP hint if no SMS service
+      const testOtpHint = document.getElementById('test-otp-hint');
+      if (testOtpHint) {
+        testOtpHint.classList.remove('hidden');
+      }
+      
       startOTPTimer();
+      console.log('OTP sent successfully');
     } else {
-      showError(data.error || 'Failed to send OTP');
+      const errorMsg = data.error || 'Failed to send OTP';
+      console.error('OTP send error:', errorMsg);
+      showError(errorMsg);
     }
   } catch (error) {
     console.error('Error sending OTP:', error);
