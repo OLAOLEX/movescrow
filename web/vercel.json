@@ -71,6 +71,10 @@
     {
       "source": "/sitemap.xml",
       "destination": "/sitemap.xml"
+    },
+    {
+      "source": "/restaurant",
+      "destination": "/restaurant/index.html"
     }
   ]
 }
