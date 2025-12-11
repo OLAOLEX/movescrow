@@ -35,7 +35,34 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function initApp() {
-  // Check if user is logged in
+  // Check for order ID in URL (from magic link redirect)
+  const urlParams = new URLSearchParams(window.location.search);
+  const orderId = urlParams.get('order');
+
+  // Check if user is logged in via session token (from magic link)
+  const sessionToken = localStorage.getItem('restaurant_session_token');
+  if (sessionToken) {
+    // Verify session is still valid
+    const isValid = await verifySessionToken(sessionToken);
+    if (isValid) {
+      await loadRestaurantData();
+      showDashboard();
+      setupEventListeners();
+      subscribeToOrders();
+      // If orderId in URL, open that order's chat
+      if (orderId) {
+        setTimeout(() => openOrderChat(orderId), 500);
+      }
+      return;
+    } else {
+      // Invalid session, clear and show login
+      localStorage.removeItem('restaurant_session_token');
+      localStorage.removeItem('restaurant_id');
+      localStorage.removeItem('restaurant_name');
+    }
+  }
+
+  // Check if user is logged in via Supabase auth
   const session = await supabase?.auth.getSession();
   
   if (session?.data?.session) {
@@ -45,10 +72,70 @@ async function initApp() {
     showDashboard();
     setupEventListeners();
     subscribeToOrders();
+    // If orderId in URL, open that order's chat
+    if (orderId) {
+      setTimeout(() => openOrderChat(orderId), 500);
+    }
   } else {
     // Show login screen
     showLogin();
     setupLoginListeners();
+  }
+}
+
+// Verify session token from magic link
+async function verifySessionToken(token) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/verify-token?token=${encodeURIComponent(token)}`);
+    const data = await response.json();
+    
+    if (response.ok && data.success) {
+      // Set current restaurant from token data
+      currentRestaurant = {
+        id: data.restaurant.id,
+        name: data.restaurant.name,
+        phone: data.restaurant.phone,
+        whatsapp_phone: data.restaurant.whatsapp_phone,
+        address: data.restaurant.address
+      };
+      return true;
+    }
+    return false;
+  } catch (error) {
+    console.error('Error verifying session token:', error);
+    return false;
+  }
+}
+
+// Open order chat modal
+async function openOrderChat(orderId) {
+  if (!orderId) return;
+  
+  // Load order details
+  try {
+    const { data: order, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('id', orderId)
+      .single();
+
+    if (order) {
+      currentOrder = order;
+      // Show chat modal
+      const chatModal = document.getElementById('chat-modal');
+      if (chatModal) {
+        chatModal.classList.remove('hidden');
+        updateChatHeader(order);
+        loadChatMessages(orderId);
+        subscribeToChat(orderId);
+      }
+    }
+  } catch (error) {
+    console.error('Error loading order:', error);
+    // Fallback: try using the openChat function
+    if (typeof openChat === 'function') {
+      openChat(orderId);
+    }
   }
 }
 

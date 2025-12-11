@@ -77,8 +77,8 @@ export default async function handler(req, res) {
         expires_at: expiresAt.toISOString()
       });
 
-    const baseUrl = process.env.APP_URL || 'https://movescrow.com';
-    const magicLink = `${baseUrl}/restaurant/auth?token=${token}&order=${orderId}`;
+    const baseUrl = process.env.APP_URL || 'https://movescrow.vercel.app';
+    const magicLink = `${baseUrl}/restaurant/auth.html?token=${token}&order=${orderId}`;
 
     // Send notification based on preference
     const notificationPreference = restaurant.notification_preference || 'sms';
