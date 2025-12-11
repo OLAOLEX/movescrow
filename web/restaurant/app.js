@@ -382,9 +382,15 @@ async function sendOTP(phone) {
       // Show OTP input
       const otpSection = document.getElementById('otp-section');
       const sendOtpBtn = document.getElementById('send-otp-btn');
+      const phoneInput = document.getElementById('phone');
       
       if (otpSection) {
         otpSection.classList.remove('hidden');
+        otpSection.style.display = 'block';
+        otpSection.style.visibility = 'visible';
+        console.log('OTP section shown');
+      } else {
+        console.error('OTP section element not found!');
       }
       
       if (sendOtpBtn) {
@@ -392,17 +398,29 @@ async function sendOTP(phone) {
         sendOtpBtn.disabled = true;
       }
       
+      // Disable phone input
+      if (phoneInput) {
+        phoneInput.disabled = true;
+      }
+      
       // Show test OTP hint if no SMS service
       const testOtpHint = document.getElementById('test-otp-hint');
       if (testOtpHint) {
         testOtpHint.classList.remove('hidden');
+        testOtpHint.style.display = 'block';
+      }
+      
+      // Focus on OTP input
+      const otpInput = document.getElementById('otp');
+      if (otpInput) {
+        setTimeout(() => otpInput.focus(), 100);
       }
       
       startOTPTimer();
-      console.log('OTP sent successfully');
+      console.log('OTP sent successfully, OTP section should be visible');
     } else {
       const errorMsg = data.error || 'Failed to send OTP';
-      console.error('OTP send error:', errorMsg);
+      console.error('OTP send error:', errorMsg, data);
       showError(errorMsg);
     }
   } catch (error) {
