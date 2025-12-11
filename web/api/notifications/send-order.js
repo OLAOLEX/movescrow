@@ -83,6 +83,7 @@ export default async function handler(req, res) {
     // Send notification based on preference
     const notificationPreference = restaurant.notification_preference || 'sms';
     let notificationSent = false;
+    let errorDetails = [];
 
     if (notificationPreference === 'sms' && restaurant.phone) {
       const message = `Movescrow: You have a new order!
@@ -98,9 +99,13 @@ Reply STOP to opt out`;
       try {
         await sendSMS(restaurant.phone, message);
         notificationSent = true;
+        console.log('SMS notification sent successfully');
       } catch (error) {
         console.error('SMS send error:', error);
+        errorDetails.push(`SMS failed: ${error.message}`);
       }
+    } else if (notificationPreference === 'sms' && !restaurant.phone) {
+      errorDetails.push('SMS preferred but restaurant phone not set');
     }
 
     if ((notificationPreference === 'whatsapp' || !notificationSent) && restaurant.whatsapp_phone) {
@@ -115,13 +120,30 @@ View: ${magicLink}`;
       try {
         await sendWhatsApp(restaurant.whatsapp_phone, message);
         notificationSent = true;
+        console.log('WhatsApp notification sent successfully');
       } catch (error) {
         console.error('WhatsApp send error:', error);
+        errorDetails.push(`WhatsApp failed: ${error.message}`);
       }
+    } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
+      errorDetails.push('WhatsApp preferred but restaurant WhatsApp phone not set');
     }
 
     if (!notificationSent) {
-      return res.status(500).json({ error: 'Failed to send notification' });
+      return res.status(500).json({ 
+        error: 'Failed to send notification',
+        details: errorDetails,
+        restaurant: {
+          phone: restaurant.phone ? 'set' : 'missing',
+          whatsapp_phone: restaurant.whatsapp_phone ? 'set' : 'missing',
+          preference: notificationPreference
+        },
+        config: {
+          hasTermii: !!process.env.TERMII_API_KEY,
+          hasTwilio: !!(process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN),
+          hasWhatsApp: !!(process.env.WHATSAPP_ACCESS_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID)
+        }
+      });
     }
 
     return res.json({
