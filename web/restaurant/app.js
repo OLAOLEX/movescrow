@@ -29,31 +29,74 @@ let currentOrder = null;
 let ordersSubscription = null;
 let chatSubscription = null;
 
+// Helper: Safe timeout wrapper for async operations
+function withTimeout(promise, timeoutMs, errorMessage) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error(errorMessage)), timeoutMs)
+    )
+  ]);
+}
+
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
-  // Add timeout to ensure loading screen doesn't stay forever
-  setTimeout(() => {
-    initApp();
-  }, 100);
+  console.log('DOM loaded, initializing app...');
+  
+  // Start initialization immediately
+  initApp().catch(error => {
+    console.error('Critical initialization error:', error);
+    // Force show login screen on critical error
+    forceShowLogin();
+  });
 });
 
-// Fallback: If app doesn't initialize within 5 seconds, show login
+// Quick fallback: If app doesn't initialize within 2 seconds, show login
 setTimeout(() => {
   const loadingScreen = document.getElementById('loading-screen');
   const loginScreen = document.getElementById('login-screen');
   
   if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-    console.warn('App initialization timeout - showing login screen');
-    if (loginScreen) {
-      loadingScreen.classList.add('hidden');
-      loginScreen.classList.remove('hidden');
-      setupLoginListeners();
-    }
+    console.warn('Quick timeout (2s) - showing login screen');
+    forceShowLogin();
+  }
+}, 2000);
+
+// Ultimate fallback: If still loading after 5 seconds, force show login
+setTimeout(() => {
+  const loadingScreen = document.getElementById('loading-screen');
+  if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+    console.error('Ultimate timeout (5s) - forcing login screen');
+    forceShowLogin();
   }
 }, 5000);
 
+// Force show login screen (used by timeouts)
+function forceShowLogin() {
+  try {
+    const loadingScreen = document.getElementById('loading-screen');
+    const loginScreen = document.getElementById('login-screen');
+    const dashboard = document.getElementById('dashboard');
+    
+    if (loadingScreen) loadingScreen.classList.add('hidden');
+    if (loginScreen) loginScreen.classList.remove('hidden');
+    if (dashboard) dashboard.classList.add('hidden');
+    
+    // Try to setup listeners, but don't fail if it doesn't work
+    try {
+      setupLoginListeners();
+    } catch (e) {
+      console.warn('Could not setup login listeners:', e);
+    }
+  } catch (error) {
+    console.error('Error forcing login screen:', error);
+  }
+}
+
 async function initApp() {
   try {
+    console.log('initApp() started');
+    
     // Check for order ID in URL (from magic link redirect)
     const urlParams = new URLSearchParams(window.location.search);
     const orderId = urlParams.get('order');
@@ -61,10 +104,17 @@ async function initApp() {
     // Check if user is logged in via session token (from magic link)
     const sessionToken = localStorage.getItem('restaurant_session_token');
     if (sessionToken) {
+      console.log('Found session token, verifying...');
       try {
-        // Verify session is still valid
-        const isValid = await verifySessionToken(sessionToken);
+        // Verify session with timeout (max 1.5 seconds)
+        const isValid = await withTimeout(
+          verifySessionToken(sessionToken),
+          1500,
+          'Session verification timeout'
+        );
+        
         if (isValid) {
+          console.log('Session valid, loading dashboard...');
           await loadRestaurantData();
           showDashboard();
           setupEventListeners();
@@ -75,6 +125,7 @@ async function initApp() {
           }
           return;
         } else {
+          console.log('Session invalid, clearing...');
           // Invalid session, clear and show login
           localStorage.removeItem('restaurant_session_token');
           localStorage.removeItem('restaurant_id');
@@ -87,14 +138,22 @@ async function initApp() {
         localStorage.removeItem('restaurant_id');
         localStorage.removeItem('restaurant_name');
       }
+    } else {
+      console.log('No session token found');
     }
 
-    // Check if user is logged in via Supabase auth
+    // Check if user is logged in via Supabase auth (with timeout)
     if (supabase) {
+      console.log('Checking Supabase session...');
       try {
-        const session = await supabase.auth.getSession();
+        const session = await withTimeout(
+          supabase.auth.getSession(),
+          1500,
+          'Supabase session check timeout'
+        );
         
         if (session?.data?.session) {
+          console.log('Supabase session found, loading dashboard...');
           // User is logged in, load dashboard
           currentRestaurant = session.data.session.user;
           await loadRestaurantData();
@@ -106,41 +165,72 @@ async function initApp() {
             setTimeout(() => openOrderChat(orderId), 500);
           }
           return;
+        } else {
+          console.log('No Supabase session');
         }
       } catch (error) {
-        console.error('Supabase session error:', error);
+        console.warn('Supabase session check failed (this is OK if Supabase not configured):', error.message);
+        // Continue to login screen
       }
+    } else {
+      console.log('Supabase not initialized (this is OK)');
     }
 
     // No valid session found - show login screen
+    console.log('No valid session, showing login screen...');
     showLogin();
     setupLoginListeners();
   } catch (error) {
     console.error('Initialization error:', error);
     // Always show login on error
     showLogin();
-    setupLoginListeners();
+    try {
+      setupLoginListeners();
+    } catch (e) {
+      console.error('Error setting up login listeners:', e);
+    }
   }
 }
 
 // Verify session token from magic link
 async function verifySessionToken(token) {
   try {
-    const response = await fetch(`${API_BASE_URL}/auth/verify-token?token=${encodeURIComponent(token)}`);
-    const data = await response.json();
+    // Add AbortController for timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 1500);
     
-    if (response.ok && data.success) {
-      // Set current restaurant from token data
-      currentRestaurant = {
-        id: data.restaurant.id,
-        name: data.restaurant.name,
-        phone: data.restaurant.phone,
-        whatsapp_phone: data.restaurant.whatsapp_phone,
-        address: data.restaurant.address
-      };
-      return true;
+    try {
+      const response = await fetch(`${API_BASE_URL}/auth/verify-token?token=${encodeURIComponent(token)}`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        return false;
+      }
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        // Set current restaurant from token data
+        currentRestaurant = {
+          id: data.restaurant.id,
+          name: data.restaurant.name,
+          phone: data.restaurant.phone,
+          whatsapp_phone: data.restaurant.whatsapp_phone,
+          address: data.restaurant.address
+        };
+        return true;
+      }
+      return false;
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      if (fetchError.name === 'AbortError') {
+        console.warn('Session verification timeout');
+      }
+      throw fetchError;
     }
-    return false;
   } catch (error) {
     console.error('Error verifying session token:', error);
     return false;
@@ -762,5 +852,6 @@ window.updateOrderStatus = async (orderId) => {
   // TODO: Implement status update modal
   console.log('Update status for order:', orderId);
 };
+
 
 
