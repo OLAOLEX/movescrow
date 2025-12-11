@@ -8,7 +8,15 @@ import crypto from 'crypto';
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+// Initialize Supabase only if credentials are available
+let supabase = null;
+if (supabaseUrl && supabaseServiceKey) {
+  try {
+    supabase = createClient(supabaseUrl, supabaseServiceKey);
+  } catch (error) {
+    console.error('Failed to create Supabase client:', error);
+  }
+}
 
 export default async function handler(req, res) {
   // CORS headers
@@ -29,6 +37,10 @@ export default async function handler(req, res) {
 
     if (!restaurantId || !orderId) {
       return res.status(400).json({ error: 'Restaurant ID and Order ID are required' });
+    }
+
+    if (!supabase) {
+      return res.status(500).json({ error: 'Database not configured. Please set SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY environment variables.' });
     }
 
     // Get restaurant and order details
