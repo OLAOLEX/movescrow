@@ -40,31 +40,43 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Phone number and OTP are required' });
     }
 
-    // Get OTP from database
-    const { data: authData, error: authError } = await supabase
-      .from('restaurant_auth')
-      .select('*')
-      .eq('phone', phone)
-      .single();
-
-    if (authError || !authData) {
-      return res.status(404).json({ error: 'OTP not found. Please request a new OTP.' });
-    }
-
-    // Check if OTP is expired
-    if (new Date(authData.otp_expires_at) < new Date()) {
-      return res.status(400).json({ error: 'OTP expired. Please request a new one.' });
-    }
-
-    // Verify OTP
-    // Allow universal test OTP "123456" for testing (if no SMS service configured)
-    const hasSMSService = process.env.TERMII_API_KEY || (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN);
-    const isUniversalOTP = !hasSMSService && otp === '123456';
+    // Check for test mode first (no Supabase or no SMS service)
+    const hasSMSService = process.env.TERMII_API_KEY || (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER);
+    const isTestMode = !supabase || !hasSMSService;
     
-    if (authData.otp_code !== otp && !isUniversalOTP) {
-      // Also accept universal OTP even if different code was saved
-      if (otp !== '123456') {
-        return res.status(400).json({ error: 'Invalid OTP' });
+    // If test mode and OTP is 123456, accept it immediately
+    if (isTestMode && otp === '123456') {
+      console.log(`Test OTP 123456 accepted for ${phone} (test mode - no Supabase check needed)`);
+      // Skip database lookup, go straight to restaurant creation/login
+    } else {
+      // Verify OTP from database (only if Supabase is configured)
+      if (!supabase) {
+        return res.status(400).json({ error: 'Invalid OTP. Use 123456 for testing.' });
+      }
+      
+      const { data: authData, error: authError } = await supabase
+        .from('restaurant_auth')
+        .select('*')
+        .eq('phone', phone)
+        .single();
+
+      if (authError || !authData) {
+        // If no data in DB but test mode, allow 123456
+        if (isTestMode && otp === '123456') {
+          console.log(`Test OTP 123456 accepted for ${phone} (no DB entry found)`);
+        } else {
+          return res.status(404).json({ error: 'OTP not found. Please request a new OTP.' });
+        }
+      } else {
+        // Check if OTP is expired
+        if (authData.otp_expires_at && new Date(authData.otp_expires_at) < new Date()) {
+          return res.status(400).json({ error: 'OTP expired. Please request a new one.' });
+        }
+        
+        // Verify OTP matches
+        if (authData.otp_code !== otp) {
+          return res.status(400).json({ error: 'Invalid OTP' });
+        }
       }
     }
 
