@@ -4,19 +4,24 @@
  */
 
 // Supabase Configuration
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL || 'https://your-project.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || 'your-anon-key';
+// These can be set via environment variables or hardcoded for now
+const SUPABASE_URL = window.SUPABASE_URL || 'https://jgtvavugofqxlovakswb.supabase.co';
+const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'your-anon-key';
 
 // Initialize Supabase Client
 let supabase;
 try {
-  supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } else {
+    console.warn('Supabase not initialized - check SUPABASE_URL and SUPABASE_ANON_KEY');
+  }
 } catch (error) {
   console.error('Failed to initialize Supabase:', error);
 }
 
 // API Base URL
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
+const API_BASE_URL = window.API_BASE_URL || '/api';
 
 // State
 let currentRestaurant = null;
