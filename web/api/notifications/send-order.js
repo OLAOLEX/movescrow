@@ -119,22 +119,25 @@ Click the button below to view and manage this order:`;
 
       try {
         // Send WhatsApp message with interactive button
-        await sendWhatsAppWithButton(
+        const buttonResult = await sendWhatsAppWithButton(
           restaurant.whatsapp_phone, 
           messageText, 
           magicLink,
           `View Order ${order.order_ref}`
         );
         notificationSent = true;
-        console.log('WhatsApp notification sent successfully');
+        console.log('WhatsApp notification sent successfully with button:', buttonResult);
       } catch (error) {
-        console.error('WhatsApp send error:', error);
+        console.error('WhatsApp button send error:', error.message);
+        console.error('Full error:', error);
         // Fallback to plain text if button fails
+        // Note: For business-initiated messages, buttons might require approved templates
         try {
-          await sendWhatsApp(restaurant.whatsapp_phone, `${messageText}\n\n${magicLink}`);
+          await sendWhatsApp(restaurant.whatsapp_phone, `${messageText}\n\n🔗 ${magicLink}`);
           notificationSent = true;
           console.log('WhatsApp notification sent as fallback (plain text)');
         } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError);
           errorDetails.push(`WhatsApp failed: ${error.message}`);
         }
       }
@@ -333,15 +336,22 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
 
   if (!response.ok) {
     const error = await response.json();
-    console.error('WhatsApp button API error:', error);
+    const errorText = JSON.stringify(error, null, 2);
+    console.error('WhatsApp button API error:', errorText);
     
     // Check if token is expired
     if (error.error?.code === 190 || error.error?.error_subcode === 463) {
       throw new Error(`WhatsApp access token expired. Please update WHATSAPP_ACCESS_TOKEN in Vercel. See FIX_WHATSAPP_TOKEN_EXPIRATION.md`);
     }
     
+    // Common error: Buttons require templates for business-initiated messages
+    // Error code 131047 = Message template required
+    if (error.error?.code === 131047 || error.error?.message?.includes('template')) {
+      throw new Error(`WhatsApp requires message template for buttons in business-initiated messages. Falling back to plain text. Error: ${error.error?.message || errorText}`);
+    }
+    
     // If button format fails, throw error to trigger fallback
-    throw new Error(`WhatsApp button API error: ${JSON.stringify(error)}`);
+    throw new Error(`WhatsApp button API error: ${error.error?.message || errorText}`);
   }
 
   return response.json();
