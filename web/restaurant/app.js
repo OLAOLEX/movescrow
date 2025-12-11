@@ -31,53 +31,93 @@ let chatSubscription = null;
 
 // Initialize App
 document.addEventListener('DOMContentLoaded', () => {
-  initApp();
+  // Add timeout to ensure loading screen doesn't stay forever
+  setTimeout(() => {
+    initApp();
+  }, 100);
 });
 
-async function initApp() {
-  // Check for order ID in URL (from magic link redirect)
-  const urlParams = new URLSearchParams(window.location.search);
-  const orderId = urlParams.get('order');
-
-  // Check if user is logged in via session token (from magic link)
-  const sessionToken = localStorage.getItem('restaurant_session_token');
-  if (sessionToken) {
-    // Verify session is still valid
-    const isValid = await verifySessionToken(sessionToken);
-    if (isValid) {
-      await loadRestaurantData();
-      showDashboard();
-      setupEventListeners();
-      subscribeToOrders();
-      // If orderId in URL, open that order's chat
-      if (orderId) {
-        setTimeout(() => openOrderChat(orderId), 500);
-      }
-      return;
-    } else {
-      // Invalid session, clear and show login
-      localStorage.removeItem('restaurant_session_token');
-      localStorage.removeItem('restaurant_id');
-      localStorage.removeItem('restaurant_name');
+// Fallback: If app doesn't initialize within 5 seconds, show login
+setTimeout(() => {
+  const loadingScreen = document.getElementById('loading-screen');
+  const loginScreen = document.getElementById('login-screen');
+  
+  if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+    console.warn('App initialization timeout - showing login screen');
+    if (loginScreen) {
+      loadingScreen.classList.add('hidden');
+      loginScreen.classList.remove('hidden');
+      setupLoginListeners();
     }
   }
+}, 5000);
 
-  // Check if user is logged in via Supabase auth
-  const session = await supabase?.auth.getSession();
-  
-  if (session?.data?.session) {
-    // User is logged in, load dashboard
-    currentRestaurant = session.data.session.user;
-    await loadRestaurantData();
-    showDashboard();
-    setupEventListeners();
-    subscribeToOrders();
-    // If orderId in URL, open that order's chat
-    if (orderId) {
-      setTimeout(() => openOrderChat(orderId), 500);
+async function initApp() {
+  try {
+    // Check for order ID in URL (from magic link redirect)
+    const urlParams = new URLSearchParams(window.location.search);
+    const orderId = urlParams.get('order');
+
+    // Check if user is logged in via session token (from magic link)
+    const sessionToken = localStorage.getItem('restaurant_session_token');
+    if (sessionToken) {
+      try {
+        // Verify session is still valid
+        const isValid = await verifySessionToken(sessionToken);
+        if (isValid) {
+          await loadRestaurantData();
+          showDashboard();
+          setupEventListeners();
+          subscribeToOrders();
+          // If orderId in URL, open that order's chat
+          if (orderId) {
+            setTimeout(() => openOrderChat(orderId), 500);
+          }
+          return;
+        } else {
+          // Invalid session, clear and show login
+          localStorage.removeItem('restaurant_session_token');
+          localStorage.removeItem('restaurant_id');
+          localStorage.removeItem('restaurant_name');
+        }
+      } catch (error) {
+        console.error('Session verification error:', error);
+        // Clear invalid session and show login
+        localStorage.removeItem('restaurant_session_token');
+        localStorage.removeItem('restaurant_id');
+        localStorage.removeItem('restaurant_name');
+      }
     }
-  } else {
-    // Show login screen
+
+    // Check if user is logged in via Supabase auth
+    if (supabase) {
+      try {
+        const session = await supabase.auth.getSession();
+        
+        if (session?.data?.session) {
+          // User is logged in, load dashboard
+          currentRestaurant = session.data.session.user;
+          await loadRestaurantData();
+          showDashboard();
+          setupEventListeners();
+          subscribeToOrders();
+          // If orderId in URL, open that order's chat
+          if (orderId) {
+            setTimeout(() => openOrderChat(orderId), 500);
+          }
+          return;
+        }
+      } catch (error) {
+        console.error('Supabase session error:', error);
+      }
+    }
+
+    // No valid session found - show login screen
+    showLogin();
+    setupLoginListeners();
+  } catch (error) {
+    console.error('Initialization error:', error);
+    // Always show login on error
     showLogin();
     setupLoginListeners();
   }
@@ -329,6 +369,12 @@ function switchView(viewName) {
 // ============================================
 
 async function loadRestaurantData() {
+  // If we already have restaurant data from token, use it
+  if (currentRestaurant && currentRestaurant.id && !supabase) {
+    updateRestaurantUI();
+    return;
+  }
+
   if (!supabase || !currentRestaurant) return;
 
   try {
@@ -336,7 +382,7 @@ async function loadRestaurantData() {
     const { data, error } = await supabase
       .from('restaurants')
       .select('*')
-      .eq('phone', currentRestaurant.phone)
+      .eq('id', currentRestaurant.id || currentRestaurant.phone)
       .single();
 
     if (data) {
@@ -345,6 +391,10 @@ async function loadRestaurantData() {
     }
   } catch (error) {
     console.error('Error loading restaurant data:', error);
+    // Continue even if loading fails - use existing data
+    if (currentRestaurant) {
+      updateRestaurantUI();
+    }
   }
 }
 
