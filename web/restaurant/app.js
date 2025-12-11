@@ -232,7 +232,7 @@ async function initApp() {
       console.log('Supabase not initialized (this is OK)');
     }
 
-    // No valid session found - show login screen
+    // No valid session found - show login screen immediately
     console.log('No valid session, showing login screen...');
     showLogin();
     setupLoginListeners();
@@ -244,8 +244,15 @@ async function initApp() {
       setupLoginListeners();
     } catch (e) {
       console.error('Error setting up login listeners:', e);
+      // Last resort: force show login via DOM manipulation
+      forceShowLogin();
     }
   }
+}
+
+// Export for potential use from inline scripts (not really needed but doesn't hurt)
+if (typeof window !== 'undefined') {
+  window.forceShowLogin = forceShowLogin;
 }
 
 // Verify session token from magic link
