@@ -286,7 +286,13 @@ body {
 }
 
 .otp-section.hidden {
-  display: none;
+  display: none !important;
+  visibility: hidden !important;
+}
+
+.otp-section:not(.hidden) {
+  display: block !important;
+  visibility: visible !important;
 }
 
 .help-text {

@@ -346,8 +346,23 @@ function setupLoginListeners() {
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const phone = document.getElementById('phone').value;
+      e.stopPropagation();
+      
+      const phoneInput = document.getElementById('phone');
+      if (!phoneInput) {
+        console.error('Phone input not found');
+        return;
+      }
+      
+      const phone = phoneInput.value.trim();
+      if (!phone) {
+        showError('Please enter a phone number');
+        return;
+      }
+      
+      console.log('Form submitted, sending OTP for:', phone);
       await sendOTP(phone);
+      return false; // Prevent any default behavior
     });
   }
 
