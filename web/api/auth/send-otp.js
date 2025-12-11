@@ -52,31 +52,45 @@ export default async function handler(req, res) {
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
     // Save OTP to Supabase (if configured) or use in-memory storage for testing
+    let otpSaved = false;
     if (supabase) {
-      const { error: authError } = await supabase
-        .from('restaurant_auth')
-        .upsert({
-          phone,
-          otp_code: otp,
-          otp_expires_at: expiresAt.toISOString(),
-          updated_at: new Date().toISOString()
-        }, {
-          onConflict: 'phone'
-        });
+      try {
+        const { data, error: authError } = await supabase
+          .from('restaurant_auth')
+          .upsert({
+            phone,
+            otp_code: otp,
+            otp_expires_at: expiresAt.toISOString(),
+            updated_at: new Date().toISOString()
+          }, {
+            onConflict: 'phone'
+          })
+          .select();
 
-      if (authError) {
-        console.error('Error saving OTP to Supabase:', authError);
-        // For testing, continue even if Supabase fails
-        console.warn('Continuing in test mode without Supabase storage');
+        if (authError) {
+          console.error('Error saving OTP to Supabase:', authError);
+          console.error('Supabase URL:', supabaseUrl ? 'Set' : 'Not set');
+          console.error('Supabase Key:', supabaseServiceKey ? 'Set (length: ' + supabaseServiceKey.length + ')' : 'Not set');
+          // Continue anyway - we'll log the OTP for manual verification
+        } else {
+          otpSaved = true;
+          console.log('OTP saved to Supabase successfully:', data);
+        }
+      } catch (error) {
+        console.error('Exception saving OTP to Supabase:', error);
       }
     } else {
       console.log(`Test mode: OTP ${otp} generated for ${phone} (not saved to database)`);
     }
 
     // Send OTP via SMS (skip if using universal test OTP)
+    let smsSent = false;
     if (otp !== '123456') {
       try {
+        console.log('Attempting to send SMS via Termii...');
         await sendSMS(phone, `Your Movescrow OTP: ${otp}. Valid for 10 minutes.`);
+        smsSent = true;
+        console.log('SMS sent successfully via Termii');
       } catch (smsError) {
         console.error('Error sending SMS:', smsError);
         // Still return success even if SMS fails (OTP saved to DB)
@@ -84,14 +98,28 @@ export default async function handler(req, res) {
     } else {
       console.log(`Test OTP ${otp} generated for ${phone} (SMS skipped - test mode)`);
     }
+    
+    // Log OTP for debugging (remove in production)
+    console.log(`Generated OTP for ${phone}: ${otp} (Saved to DB: ${otpSaved}, SMS Sent: ${smsSent})`);
 
     return res.json({
       success: true,
       message: otp === '123456' 
         ? 'OTP generated (test mode - use 123456)'
-        : 'OTP sent successfully',
+        : smsSent 
+          ? 'OTP sent successfully via SMS'
+          : otpSaved
+            ? 'OTP generated and saved (SMS may not have been sent - check logs)'
+            : 'OTP generated (database save may have failed - check logs)',
       expiresIn: 600, // 10 minutes in seconds
-      testMode: otp === '123456' // Indicate test mode
+      testMode: otp === '123456', // Indicate test mode
+      // Include OTP in response for debugging (remove in production)
+      debug: {
+        otpSaved,
+        smsSent,
+        hasSupabase: !!supabase,
+        hasTermii: !!process.env.TERMII_API_KEY
+      }
     });
   } catch (error) {
     console.error('Error in send-otp:', error);
@@ -106,27 +134,49 @@ async function sendSMS(phone, message) {
   // Try Termii first (Nigerian SMS provider)
   if (process.env.TERMII_API_KEY) {
     try {
-      const response = await fetch('https://api.ng.termii.com/api/sms/send', {
+      const termiiUrl = 'https://api.ng.termii.com/api/sms/send';
+      const requestBody = {
+        to: phone,
+        from: 'Movescrow', // Your sender ID (needs to be approved by Termii)
+        sms: message,
+        type: 'plain',
+        channel: 'generic',
+        api_key: process.env.TERMII_API_KEY
+      };
+      
+      console.log('Sending SMS via Termii:', { url: termiiUrl, to: phone, from: requestBody.from });
+      
+      const response = await fetch(termiiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          to: phone,
-          from: 'Movescrow', // Your sender ID (needs to be approved by Termii)
-          sms: message,
-          type: 'plain',
-          channel: 'generic',
-          api_key: process.env.TERMII_API_KEY
-        })
+        body: JSON.stringify(requestBody)
       });
 
+      const responseData = await response.text();
+      console.log('Termii response status:', response.status);
+      console.log('Termii response:', responseData);
+
       if (response.ok) {
-        return;
+        try {
+          const jsonData = JSON.parse(responseData);
+          console.log('Termii SMS sent successfully:', jsonData);
+          return;
+        } catch (e) {
+          console.log('Termii response is not JSON, but status is OK');
+          return;
+        }
+      } else {
+        console.error('Termii SMS failed:', response.status, responseData);
+        throw new Error(`Termii API error: ${response.status} - ${responseData}`);
       }
     } catch (error) {
       console.error('Termii SMS error:', error);
+      throw error; // Re-throw to be caught by caller
     }
+  } else {
+    console.warn('TERMII_API_KEY not configured');
   }
 
   // Fallback to Twilio

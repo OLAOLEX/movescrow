@@ -52,11 +52,12 @@ export default async function handler(req, res) {
       isValidOTP = true;
     } else if (supabase) {
       // Verify OTP from database (only if Supabase is configured)
+      // Use maybeSingle() instead of single() to handle 0 rows gracefully
       const { data: authData, error: authError } = await supabase
         .from('restaurant_auth')
         .select('*')
         .eq('phone', phone)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle 0 rows
 
       if (authError) {
         console.error('Supabase query error:', authError);
