@@ -415,6 +415,11 @@ async function sendOTP(phone) {
 
 async function verifyOTP(phone, otp) {
   try {
+    if (!otp || otp.length !== 6) {
+      showError('Please enter a 6-digit OTP');
+      return;
+    }
+
     showLoading(true);
     const response = await fetch(`${API_BASE_URL}/auth/verify-otp`, {
       method: 'POST',
@@ -424,15 +429,28 @@ async function verifyOTP(phone, otp) {
 
     const data = await response.json();
 
-    if (response.ok) {
+    if (response.ok && data.success) {
       // Login successful
+      console.log('OTP verified successfully');
+      
+      // Store session token if provided
+      if (data.token) {
+        localStorage.setItem('restaurant_session_token', data.token);
+      }
+      if (data.restaurant) {
+        localStorage.setItem('restaurant_id', data.restaurant.id);
+        localStorage.setItem('restaurant_name', data.restaurant.name || phone);
+      }
+      
       currentRestaurant = data.restaurant;
       await loadRestaurantData();
       showDashboard();
       setupEventListeners();
       subscribeToOrders();
     } else {
-      showError(data.error || 'Invalid OTP');
+      const errorMsg = data.error || 'Invalid OTP';
+      console.error('OTP verification error:', errorMsg);
+      showError(errorMsg);
     }
   } catch (error) {
     console.error('Error verifying OTP:', error);
