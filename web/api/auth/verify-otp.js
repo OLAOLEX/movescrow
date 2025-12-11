@@ -106,7 +106,7 @@ export default async function handler(req, res) {
         .from('restaurants')
         .select('*')
         .eq('phone', phone)
-        .single();
+        .maybeSingle(); // Use maybeSingle() to handle 0 rows
 
       if (restaurantError || !data) {
         // Create new restaurant if doesn't exist
