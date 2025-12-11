@@ -19,6 +19,8 @@
       padding: 2rem;
       max-width: 400px;
       margin: 0 auto;
+      position: relative;
+      z-index: 1;
     }
     .auth-logo {
       width: 100px;
@@ -34,12 +36,13 @@
     .auth-title {
       font-size: 1.5rem;
       font-weight: 700;
-      background: linear-gradient(135deg, #1E3A5F 0%, #FF6B35 100%);
+      background: linear-gradient(135deg, #FFFFFF 0%, rgba(255, 255, 255, 0.9) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
       margin-bottom: 1rem;
       letter-spacing: -0.5px;
+      color: white; /* Fallback */
     }
     .auth-subtitle {
       color: rgba(255, 255, 255, 0.9);
@@ -57,6 +60,10 @@
       backdrop-filter: blur(10px);
       font-weight: 500;
     }
+  </style>
+  
+  <!-- Load Full Stylesheet -->
+  <link rel="stylesheet" href="/restaurant/styles.css">
   </style>
 </head>
 <body>
