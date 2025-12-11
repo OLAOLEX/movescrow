@@ -39,9 +39,19 @@ WhatsApp access tokens expire after:
      - `{app-secret}` = Your App Secret (from App Settings → Basic)
      - `{short-lived-token}` = Token from step 2
 
-   **Or use curl:**
-   ```bash
-   curl -X GET "https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=YOUR_APP_ID&client_secret=YOUR_APP_SECRET&fb_exchange_token=SHORT_LIVED_TOKEN"
+   **Or use PowerShell (copy entire command and replace values):**
+   ```powershell
+   $AppId = "YOUR_APP_ID"
+   $AppSecret = "YOUR_APP_SECRET"
+   $ShortToken = "YOUR_SHORT_LIVED_TOKEN"
+   $url = "https://graph.facebook.com/v18.0/oauth/access_token?grant_type=fb_exchange_token&client_id=$AppId&client_secret=$AppSecret&fb_exchange_token=$ShortToken"
+   Invoke-RestMethod -Uri $url
+   ```
+   
+   **Or use the interactive script:**
+   ```powershell
+   cd web
+   .\refresh-token-quick.ps1
    ```
 
    **Response:**
