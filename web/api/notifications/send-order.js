@@ -109,37 +109,28 @@ Reply STOP to opt out`;
     }
 
     if ((notificationPreference === 'whatsapp' || !notificationSent) && restaurant.whatsapp_phone) {
+      // Format message with a clickable link that looks like a button
+      // Note: WhatsApp requires templates for actual buttons in business-initiated messages
+      // This formatted message provides a better UX until template is approved
       const messageText = `🍽️ *New Order Received!*
 
-📦 Order: ${order.order_ref}
+📦 Order: *${order.order_ref}*
 👤 Customer: ${order.customer_code}
-💰 Amount: ₦${parseFloat(order.total_amount || 0).toLocaleString()}
+💰 Amount: *₦${parseFloat(order.total_amount || 0).toLocaleString()}*
 
-Click the button below to view and manage this order:`;
+👉 Tap the link below to view and manage:
+
+${magicLink}
+
+_This link opens in WhatsApp's in-app browser_`;
 
       try {
-        // Send WhatsApp message with interactive button
-        const buttonResult = await sendWhatsAppWithButton(
-          restaurant.whatsapp_phone, 
-          messageText, 
-          magicLink,
-          `View Order ${order.order_ref}`
-        );
+        await sendWhatsApp(restaurant.whatsapp_phone, messageText);
         notificationSent = true;
-        console.log('WhatsApp notification sent successfully with button:', buttonResult);
+        console.log('WhatsApp notification sent successfully');
       } catch (error) {
-        console.error('WhatsApp button send error:', error.message);
-        console.error('Full error:', error);
-        // Fallback to plain text if button fails
-        // Note: For business-initiated messages, buttons might require approved templates
-        try {
-          await sendWhatsApp(restaurant.whatsapp_phone, `${messageText}\n\n🔗 ${magicLink}`);
-          notificationSent = true;
-          console.log('WhatsApp notification sent as fallback (plain text)');
-        } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError);
-          errorDetails.push(`WhatsApp failed: ${error.message}`);
-        }
+        console.error('WhatsApp send error:', error.message);
+        errorDetails.push(`WhatsApp failed: ${error.message}`);
       }
     } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
       errorDetails.push('WhatsApp preferred but restaurant WhatsApp phone not set');
