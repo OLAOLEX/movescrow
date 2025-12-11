@@ -5,13 +5,29 @@
  */
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
 // Verify token from Meta Developer Console
 // Default: movescrow00secret (you can override via env var)
 const VERIFY_TOKEN = process.env.WHATSAPP_VERIFY_TOKEN || 'movescrow00secret';
+
+/**
+ * Initialize Supabase client (only when needed)
+ */
+function getSupabaseClient() {
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.warn('Supabase environment variables not set');
+    return null;
+  }
+
+  try {
+    return createClient(supabaseUrl, supabaseServiceKey);
+  } catch (error) {
+    console.error('Failed to create Supabase client:', error);
+    return null;
+  }
+}
 
 export default async function handler(req, res) {
   // CORS headers
@@ -48,19 +64,23 @@ export default async function handler(req, res) {
         return res.status(400).json({ error: 'Invalid webhook object' });
       }
 
+      const supabase = getSupabaseClient();
+
       // Process each entry
       for (const entry of body.entry || []) {
         const changes = entry.changes || [];
         
         for (const change of changes) {
-          if (change.value.messages) {
-            // Handle incoming messages
-            await handleIncomingMessages(change.value.messages, change.value.contacts);
+          if (change.value.messages && supabase) {
+            // Handle incoming messages (only if Supabase is available)
+            await handleIncomingMessages(change.value.messages, change.value.contacts, supabase);
+          } else if (change.value.messages && !supabase) {
+            console.warn('Received messages but Supabase not configured');
           }
 
-          if (change.value.statuses) {
+          if (change.value.statuses && supabase) {
             // Handle message status updates (sent, delivered, read)
-            await handleMessageStatuses(change.value.statuses);
+            await handleMessageStatuses(change.value.statuses, supabase);
           }
         }
       }
@@ -68,7 +88,8 @@ export default async function handler(req, res) {
       return res.status(200).send('OK');
     } catch (error) {
       console.error('Webhook error:', error);
-      return res.status(500).json({ error: 'Internal server error' });
+      // Return 200 to Meta even on error (to prevent retries on config issues)
+      return res.status(200).send('OK');
     }
   }
 
@@ -78,7 +99,11 @@ export default async function handler(req, res) {
 /**
  * Handle incoming WhatsApp messages
  */
-async function handleIncomingMessages(messages, contacts) {
+async function handleIncomingMessages(messages, contacts, supabase) {
+  if (!supabase) {
+    console.warn('Cannot handle messages: Supabase client not available');
+    return;
+  }
   for (const message of messages) {
     const fromNumber = message.from;
     const messageText = message.text?.body || '';
@@ -153,7 +178,11 @@ async function handleIncomingMessages(messages, contacts) {
 /**
  * Handle message status updates
  */
-async function handleMessageStatuses(statuses) {
+async function handleMessageStatuses(statuses, supabase) {
+  if (!supabase) {
+    console.warn('Cannot handle statuses: Supabase client not available');
+    return;
+  }
   for (const status of statuses) {
     const messageId = status.id;
     const statusType = status.status; // sent, delivered, read, failed
