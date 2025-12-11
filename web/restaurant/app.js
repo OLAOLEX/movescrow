@@ -486,11 +486,17 @@ async function sendOTP(phone) {
       
       if (otpSection) {
         otpSection.classList.remove('hidden');
-        otpSection.style.display = 'block';
-        otpSection.style.visibility = 'visible';
-        otpSection.style.opacity = '1';
+        // Remove any inline styles that might be blocking
+        otpSection.style.removeProperty('display');
+        otpSection.style.removeProperty('visibility');
+        otpSection.style.removeProperty('opacity');
+        // Set display to block with !important via style attribute
+        otpSection.style.setProperty('display', 'block', 'important');
+        otpSection.style.setProperty('visibility', 'visible', 'important');
+        otpSection.style.setProperty('opacity', '1', 'important');
         console.log('OTP section shown - classes:', otpSection.classList.toString());
         console.log('OTP section style:', otpSection.style.cssText);
+        console.log('OTP section computed display:', window.getComputedStyle(otpSection).display);
       } else {
         console.error('OTP section element not found!');
         showError('Error: OTP section not found in page');
