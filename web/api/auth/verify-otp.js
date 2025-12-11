@@ -44,26 +44,34 @@ export default async function handler(req, res) {
     const hasSMSService = process.env.TERMII_API_KEY || (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER);
     const isTestMode = !supabase || !hasSMSService;
     
+    let isValidOTP = false;
+    
     // If test mode and OTP is 123456, accept it immediately
     if (isTestMode && otp === '123456') {
       console.log(`Test OTP 123456 accepted for ${phone} (test mode - no Supabase check needed)`);
-      // Skip database lookup, go straight to restaurant creation/login
-    } else {
+      isValidOTP = true;
+    } else if (supabase) {
       // Verify OTP from database (only if Supabase is configured)
-      if (!supabase) {
-        return res.status(400).json({ error: 'Invalid OTP. Use 123456 for testing.' });
-      }
-      
       const { data: authData, error: authError } = await supabase
         .from('restaurant_auth')
         .select('*')
         .eq('phone', phone)
         .single();
 
-      if (authError || !authData) {
+      if (authError) {
+        console.error('Supabase query error:', authError);
+        // If query fails but test mode, allow 123456
+        if (isTestMode && otp === '123456') {
+          console.log(`Test OTP 123456 accepted for ${phone} (Supabase query failed)`);
+          isValidOTP = true;
+        } else {
+          return res.status(404).json({ error: 'OTP not found. Please request a new OTP.' });
+        }
+      } else if (!authData) {
         // If no data in DB but test mode, allow 123456
         if (isTestMode && otp === '123456') {
           console.log(`Test OTP 123456 accepted for ${phone} (no DB entry found)`);
+          isValidOTP = true;
         } else {
           return res.status(404).json({ error: 'OTP not found. Please request a new OTP.' });
         }
@@ -74,10 +82,19 @@ export default async function handler(req, res) {
         }
         
         // Verify OTP matches
-        if (authData.otp_code !== otp) {
+        if (authData.otp_code === otp) {
+          isValidOTP = true;
+        } else {
           return res.status(400).json({ error: 'Invalid OTP' });
         }
       }
+    } else {
+      // No Supabase and not test OTP
+      return res.status(400).json({ error: 'Invalid OTP. Use 123456 for testing or configure Supabase.' });
+    }
+    
+    if (!isValidOTP) {
+      return res.status(400).json({ error: 'Invalid OTP' });
     }
 
     // Get or create restaurant (use in-memory storage if Supabase not configured)
