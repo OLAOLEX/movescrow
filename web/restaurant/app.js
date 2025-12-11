@@ -39,9 +39,15 @@ function withTimeout(promise, timeoutMs, errorMessage) {
   ]);
 }
 
-// Initialize App
-document.addEventListener('DOMContentLoaded', () => {
-  console.log('DOM loaded, initializing app...');
+// Initialize App immediately
+let initializationStarted = false;
+let loginScreenShown = false;
+
+function initializeApp() {
+  if (initializationStarted) return;
+  initializationStarted = true;
+  
+  console.log('Initializing app...');
   
   // Start initialization immediately
   initApp().catch(error => {
@@ -49,47 +55,97 @@ document.addEventListener('DOMContentLoaded', () => {
     // Force show login screen on critical error
     forceShowLogin();
   });
-});
+}
 
-// Quick fallback: If app doesn't initialize within 2 seconds, show login
+// Initialize on DOM ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeApp);
+} else {
+  // DOM already loaded
+  initializeApp();
+}
+
+// Immediate fallback: Show login after 500ms if still loading
 setTimeout(() => {
-  const loadingScreen = document.getElementById('loading-screen');
-  const loginScreen = document.getElementById('login-screen');
-  
-  if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-    console.warn('Quick timeout (2s) - showing login screen');
-    forceShowLogin();
+  if (!loginScreenShown) {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+      console.warn('Immediate timeout (500ms) - showing login screen');
+      forceShowLogin();
+    }
+  }
+}, 500);
+
+// Quick fallback: If app doesn't initialize within 1 second, show login
+setTimeout(() => {
+  if (!loginScreenShown) {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+      console.warn('Quick timeout (1s) - showing login screen');
+      forceShowLogin();
+    }
+  }
+}, 1000);
+
+// Ultimate fallback: If still loading after 2 seconds, force show login
+setTimeout(() => {
+  if (!loginScreenShown) {
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+      console.error('Ultimate timeout (2s) - forcing login screen');
+      forceShowLogin();
+    }
   }
 }, 2000);
 
-// Ultimate fallback: If still loading after 5 seconds, force show login
-setTimeout(() => {
-  const loadingScreen = document.getElementById('loading-screen');
-  if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-    console.error('Ultimate timeout (5s) - forcing login screen');
-    forceShowLogin();
-  }
-}, 5000);
-
 // Force show login screen (used by timeouts)
 function forceShowLogin() {
+  if (loginScreenShown) return; // Already shown
+  loginScreenShown = true;
+  
   try {
+    console.log('Force showing login screen...');
+    
     const loadingScreen = document.getElementById('loading-screen');
     const loginScreen = document.getElementById('login-screen');
     const dashboard = document.getElementById('dashboard');
     
-    if (loadingScreen) loadingScreen.classList.add('hidden');
-    if (loginScreen) loginScreen.classList.remove('hidden');
-    if (dashboard) dashboard.classList.add('hidden');
+    // Hide loading screen
+    if (loadingScreen) {
+      loadingScreen.classList.add('hidden');
+      loadingScreen.style.display = 'none'; // Force hide
+    }
+    
+    // Show login screen
+    if (loginScreen) {
+      loginScreen.classList.remove('hidden');
+      loginScreen.style.display = 'block'; // Force show
+    }
+    
+    // Hide dashboard
+    if (dashboard) {
+      dashboard.classList.add('hidden');
+      dashboard.style.display = 'none'; // Force hide
+    }
     
     // Try to setup listeners, but don't fail if it doesn't work
     try {
       setupLoginListeners();
+      console.log('Login screen shown and listeners set up');
     } catch (e) {
       console.warn('Could not setup login listeners:', e);
     }
   } catch (error) {
     console.error('Error forcing login screen:', error);
+    // Last resort: try to show login screen via inline styles
+    const loginScreen = document.getElementById('login-screen');
+    if (loginScreen) {
+      loginScreen.style.cssText = 'display: block !important; visibility: visible !important;';
+    }
+    const loadingScreen = document.getElementById('loading-screen');
+    if (loadingScreen) {
+      loadingScreen.style.cssText = 'display: none !important; visibility: hidden !important;';
+    }
   }
 }
 
@@ -389,13 +445,26 @@ function showLoading(show) {
 }
 
 function showLogin() {
+  loginScreenShown = true;
+  
   const loadingScreen = document.getElementById('loading-screen');
   const loginScreen = document.getElementById('login-screen');
   const dashboard = document.getElementById('dashboard');
   
-  if (loadingScreen) loadingScreen.classList.add('hidden');
-  if (loginScreen) loginScreen.classList.remove('hidden');
-  if (dashboard) dashboard.classList.add('hidden');
+  if (loadingScreen) {
+    loadingScreen.classList.add('hidden');
+    loadingScreen.style.display = 'none';
+  }
+  if (loginScreen) {
+    loginScreen.classList.remove('hidden');
+    loginScreen.style.display = 'block';
+  }
+  if (dashboard) {
+    dashboard.classList.add('hidden');
+    dashboard.style.display = 'none';
+  }
+  
+  console.log('Login screen shown');
 }
 
 function showDashboard() {

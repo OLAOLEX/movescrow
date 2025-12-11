@@ -83,12 +83,28 @@
     const orderId = urlParams.get('order');
 
     if (!token) {
-      document.getElementById('error').textContent = 'Invalid link. No token provided.';
-      document.getElementById('error').style.display = 'block';
-      document.querySelector('.spinner').style.display = 'none';
+      const errorEl = document.getElementById('error');
+      const spinner = document.querySelector('.spinner');
+      if (errorEl) {
+        errorEl.textContent = 'Invalid link. No token provided.';
+        errorEl.style.display = 'block';
+      }
+      if (spinner) spinner.style.display = 'none';
+      
+      // Redirect to main dashboard after 2 seconds
+      setTimeout(() => {
+        window.location.href = '/restaurant/';
+      }, 2000);
     } else {
-      // Verify token and redirect to dashboard
-      verifyTokenAndRedirect(token, orderId);
+      // Verify token and redirect to dashboard (with timeout)
+      const timeoutId = setTimeout(() => {
+        console.warn('Token verification timeout, redirecting...');
+        window.location.href = '/restaurant/';
+      }, 3000);
+      
+      verifyTokenAndRedirect(token, orderId).finally(() => {
+        clearTimeout(timeoutId);
+      });
     }
 
     async function verifyTokenAndRedirect(token, orderId) {

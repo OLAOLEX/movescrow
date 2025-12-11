@@ -56,9 +56,31 @@
     .hidden { display: none !important; }
     
     /* Ensure screens start in correct state */
-    #login-screen { display: none; }
-    #dashboard { display: none; }
-    #loading-screen { display: flex; }
+    #login-screen { 
+      display: none !important; 
+      visibility: hidden;
+    }
+    #dashboard { 
+      display: none !important; 
+      visibility: hidden;
+    }
+    #loading-screen { 
+      display: flex !important; 
+      visibility: visible;
+    }
+    
+    /* Force hide loading when hidden class is added */
+    #loading-screen.hidden {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
+    }
+    
+    /* Force show login when hidden class is removed */
+    #login-screen:not(.hidden) {
+      display: block !important;
+      visibility: visible !important;
+    }
   </style>
   
   <!-- Supabase Client -->
