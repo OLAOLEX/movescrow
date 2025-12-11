@@ -80,8 +80,40 @@
     #login-screen:not(.hidden) {
       display: block !important;
       visibility: visible !important;
+      opacity: 1 !important;
+    }
+    
+    /* Additional safety - ensure login screen can be shown */
+    .login-screen {
+      display: block;
+      opacity: 1;
+    }
+    
+    .login-screen.hidden {
+      display: none !important;
+      visibility: hidden !important;
+      opacity: 0 !important;
     }
   </style>
+  
+  <!-- Immediate inline script to handle timeout before module loads -->
+  <script>
+    // This runs IMMEDIATELY, before anything else
+    setTimeout(function() {
+      var ls = document.getElementById('loading-screen');
+      var login = document.getElementById('login-screen');
+      if (ls && !ls.classList.contains('hidden')) {
+        if (ls) {
+          ls.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
+          ls.classList.add('hidden');
+        }
+        if (login) {
+          login.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+          login.classList.remove('hidden');
+        }
+      }
+    }, 400);
+  </script>
   
   <!-- Supabase Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
