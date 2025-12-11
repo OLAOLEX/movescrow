@@ -1,0 +1,7 @@
+COPY AND PASTE THIS ENTIRE BLOCK INTO POWERSHELL:
+
+$restaurantId = "c18cc33b-cd8c-4049-8a28-9412b29c851c"
+$orderId = "03772f87-7318-4358-9af1-9935f221dfe8"
+$body = @{ restaurantId = $restaurantId; orderId = $orderId } | ConvertTo-Json
+Invoke-RestMethod -Uri "https://movescrow.vercel.app/api/notifications/send-order" -Method POST -Body $body -ContentType "application/json"
+

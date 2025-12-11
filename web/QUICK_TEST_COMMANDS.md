@@ -15,17 +15,24 @@ $body = @{ restaurantId = "c18cc33b-cd8c-4049-8a28-9412b29c851c"; orderId = "037
 
 ## 📝 Multi-Line (Easier to Read)
 
-### Option 1: Use Test Script
+### Option 1: Use Test Script (If Execution Policy Allows)
 
-1. Navigate to web folder:
-   ```powershell
-   cd C:\MOVESCROW\web
-   ```
+**If you get "running scripts is disabled" error:**
 
-2. Run the test script:
-   ```powershell
-   .\test-notification.ps1
-   ```
+**Fix A: Bypass for this script only:**
+```powershell
+cd C:\MOVESCROW\web
+powershell -ExecutionPolicy Bypass -File .\test-notification.ps1
+```
+
+**Fix B: Enable scripts for current session:**
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+cd C:\MOVESCROW\web
+.\test-notification.ps1
+```
+
+**Fix C: Just use the inline commands below (easiest)**
 
 ---
 
