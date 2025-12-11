@@ -32,9 +32,10 @@
             android:value="2" />
         
         <!-- Google Maps API Key -->
+        <!-- API key is loaded from local.properties via manifestPlaceholders in build.gradle.kts -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBhdml5ZeP4kjyx3nOL4TTa5XuyRZQ3Hzw"/>
+            android:value="${MAPS_API_KEY}"/>
     </application>
     
     <!-- Location Permissions for Google Maps -->
