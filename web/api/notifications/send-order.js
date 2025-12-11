@@ -109,28 +109,39 @@ Reply STOP to opt out`;
     }
 
     if ((notificationPreference === 'whatsapp' || !notificationSent) && restaurant.whatsapp_phone) {
-      // Format message with a clickable link that looks like a button
-      // Note: WhatsApp requires templates for actual buttons in business-initiated messages
-      // This formatted message provides a better UX until template is approved
       const messageText = `🍽️ *New Order Received!*
 
 📦 Order: *${order.order_ref}*
 👤 Customer: ${order.customer_code}
 💰 Amount: *₦${parseFloat(order.total_amount || 0).toLocaleString()}*
 
-👉 Tap the link below to view and manage:
-
-${magicLink}
-
-_This link opens in WhatsApp's in-app browser_`;
+Tap the button below to view and manage this order:`;
 
       try {
-        await sendWhatsApp(restaurant.whatsapp_phone, messageText);
+        // Try sending with interactive button first (works within 24-hour window)
+        // If customer has messaged you before, buttons work without templates
+        const buttonResult = await sendWhatsAppWithButton(
+          restaurant.whatsapp_phone,
+          messageText,
+          magicLink,
+          `View Order ${order.order_ref}`
+        );
         notificationSent = true;
-        console.log('WhatsApp notification sent successfully');
+        console.log('WhatsApp notification sent successfully with button:', buttonResult);
       } catch (error) {
-        console.error('WhatsApp send error:', error.message);
-        errorDetails.push(`WhatsApp failed: ${error.message}`);
+        console.error('WhatsApp button send error:', error.message);
+        // Fallback to plain text if button fails (outside 24h window or not initiated)
+        try {
+          const fallbackMessage = `${messageText}
+
+👉 ${magicLink}`;
+          await sendWhatsApp(restaurant.whatsapp_phone, fallbackMessage);
+          notificationSent = true;
+          console.log('WhatsApp notification sent as fallback (plain text)');
+        } catch (fallbackError) {
+          console.error('Fallback also failed:', fallbackError);
+          errorDetails.push(`WhatsApp failed: ${error.message}`);
+        }
       }
     } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
       errorDetails.push('WhatsApp preferred but restaurant WhatsApp phone not set');
@@ -274,8 +285,7 @@ async function sendWhatsApp(phone, message) {
 
 /**
  * Send WhatsApp message with interactive button (deep link)
- * This creates a button that opens the link in WhatsApp's in-app browser
- * Note: For business-initiated messages, buttons work within 24-hour customer service window
+ * Works within 24-hour customer service window (when user has messaged you first)
  */
 async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText = 'View Order') {
   const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
@@ -292,7 +302,7 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
   const trimmedButtonText = buttonText.substring(0, 20);
 
   // Use interactive message with URL button
-  // This opens the URL in WhatsApp's in-app browser
+  // This works within 24-hour window when customer has messaged you
   const response = await fetch(
     `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
     {
@@ -333,12 +343,6 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
     // Check if token is expired
     if (error.error?.code === 190 || error.error?.error_subcode === 463) {
       throw new Error(`WhatsApp access token expired. Please update WHATSAPP_ACCESS_TOKEN in Vercel. See FIX_WHATSAPP_TOKEN_EXPIRATION.md`);
-    }
-    
-    // Common error: Buttons require templates for business-initiated messages
-    // Error code 131047 = Message template required
-    if (error.error?.code === 131047 || error.error?.message?.includes('template')) {
-      throw new Error(`WhatsApp requires message template for buttons in business-initiated messages. Falling back to plain text. Error: ${error.error?.message || errorText}`);
     }
     
     // If button format fails, throw error to trigger fallback
