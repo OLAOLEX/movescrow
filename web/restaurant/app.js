@@ -423,10 +423,21 @@ function updateRestaurantUI() {
 // ============================================
 
 async function loadOrders() {
-  if (!supabase || !currentRestaurant) return;
+  if (!currentRestaurant || !currentRestaurant.id) {
+    renderOrders([]);
+    updateOrdersBadge(0);
+    return;
+  }
+
+  // If Supabase not available, show empty state
+  if (!supabase) {
+    console.warn('Supabase not available - cannot load orders');
+    renderOrders([]);
+    updateOrdersBadge(0);
+    return;
+  }
 
   try {
-    showLoading(true);
     const { data, error } = await supabase
       .from('orders')
       .select('*')
@@ -434,14 +445,19 @@ async function loadOrders() {
       .in('status', ['pending', 'paid', 'preparing', 'ready'])
       .order('created_at', { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      console.error('Error loading orders:', error);
+      renderOrders([]);
+      updateOrdersBadge(0);
+      return;
+    }
 
     renderOrders(data || []);
     updateOrdersBadge(data?.length || 0);
   } catch (error) {
     console.error('Error loading orders:', error);
-  } finally {
-    showLoading(false);
+    renderOrders([]);
+    updateOrdersBadge(0);
   }
 }
 
@@ -502,25 +518,36 @@ function updateOrdersBadge(count) {
 }
 
 function subscribeToOrders() {
-  if (!supabase || !currentRestaurant) return;
+  // Only subscribe if Supabase is available and Realtime is enabled
+  if (!supabase || !currentRestaurant || !currentRestaurant.id) {
+    // Still try to load orders manually
+    loadOrders();
+    return;
+  }
 
-  // Subscribe to real-time order updates
-  ordersSubscription = supabase
-    .channel('orders')
-    .on(
-      'postgres_changes',
-      {
-        event: '*',
-        schema: 'public',
-        table: 'orders',
-        filter: `restaurant_id=eq.${currentRestaurant.id}`
-      },
-      (payload) => {
-        console.log('Order update:', payload);
-        loadOrders(); // Reload orders on any change
-      }
-    )
-    .subscribe();
+  try {
+    // Subscribe to real-time order updates
+    ordersSubscription = supabase
+      .channel('orders')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'orders',
+          filter: `restaurant_id=eq.${currentRestaurant.id}`
+        },
+        (payload) => {
+          console.log('Order update:', payload);
+          loadOrders(); // Reload orders on any change
+        }
+      )
+      .subscribe();
+  } catch (error) {
+    console.warn('Realtime subscription failed, using polling:', error);
+    // Fallback to manual loading
+    loadOrders();
+  }
 }
 
 // ============================================
