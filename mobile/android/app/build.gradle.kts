@@ -5,11 +5,24 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Read local.properties file
-val localProperties = java.util.Properties()
-val localPropertiesFile = rootProject.file("local.properties")
-if (localPropertiesFile.exists()) {
-    localProperties.load(java.io.FileInputStream(localPropertiesFile))
+// Read local.properties file for API key
+val mapsApiKey = run {
+    val localPropertiesFile = rootProject.file("local.properties")
+    if (localPropertiesFile.exists()) {
+        val lines = localPropertiesFile.readLines()
+        val apiKeyLine = lines.find { it.startsWith("MAPS_API_KEY=") }
+        val key = apiKeyLine?.substringAfter("=")?.trim() ?: ""
+        // Debug output to verify key is loaded
+        println("=== DEBUG: Maps API Key ===")
+        println("Key loaded: ${if (key.isNotEmpty()) "YES (${key.length} chars)" else "NO - EMPTY!"}")
+        if (key.isNotEmpty()) {
+            println("First 10 chars: ${key.take(10)}...")
+        }
+        key
+    } else {
+        println("=== DEBUG: local.properties not found ===")
+        ""
+    }
 }
 
 android {
@@ -37,7 +50,6 @@ android {
         versionName = flutter.versionName
         
         // Google Maps API Key from local.properties (secure)
-        val mapsApiKey = localProperties.getProperty("MAPS_API_KEY") ?: ""
         manifestPlaceholders["MAPS_API_KEY"] = mapsApiKey
     }
 

@@ -1,0 +1,18 @@
+{
+  "name": "movescrow-web",
+  "version": "1.0.0",
+  "description": "Movescrow Restaurant Dashboard Web App",
+  "main": "index.html",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=18.x"
+  }
+}
+
