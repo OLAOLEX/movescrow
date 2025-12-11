@@ -299,15 +299,23 @@ function showLoading(show) {
 }
 
 function showLogin() {
-  document.getElementById('loading-screen').classList.add('hidden');
-  document.getElementById('login-screen').classList.remove('hidden');
-  document.getElementById('dashboard').classList.add('hidden');
+  const loadingScreen = document.getElementById('loading-screen');
+  const loginScreen = document.getElementById('login-screen');
+  const dashboard = document.getElementById('dashboard');
+  
+  if (loadingScreen) loadingScreen.classList.add('hidden');
+  if (loginScreen) loginScreen.classList.remove('hidden');
+  if (dashboard) dashboard.classList.add('hidden');
 }
 
 function showDashboard() {
-  document.getElementById('loading-screen').classList.add('hidden');
-  document.getElementById('login-screen').classList.add('hidden');
-  document.getElementById('dashboard').classList.remove('hidden');
+  const loadingScreen = document.getElementById('loading-screen');
+  const loginScreen = document.getElementById('login-screen');
+  const dashboard = document.getElementById('dashboard');
+  
+  if (loadingScreen) loadingScreen.classList.add('hidden');
+  if (loginScreen) loginScreen.classList.add('hidden');
+  if (dashboard) dashboard.classList.remove('hidden');
 }
 
 function showError(message) {
