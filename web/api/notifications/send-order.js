@@ -253,6 +253,12 @@ async function sendWhatsApp(phone, message) {
 
   if (!response.ok) {
     const error = await response.json();
+    
+    // Check if token is expired
+    if (error.error?.code === 190 || error.error?.error_subcode === 463) {
+      throw new Error(`WhatsApp access token expired. Please update WHATSAPP_ACCESS_TOKEN in Vercel. See FIX_WHATSAPP_TOKEN_EXPIRATION.md`);
+    }
+    
     throw new Error(`WhatsApp API error: ${JSON.stringify(error)}`);
   }
 

@@ -63,6 +63,16 @@ export default async function handler(req, res) {
     if (!response.ok) {
       const error = await response.json();
       console.error('WhatsApp API error:', error);
+      
+      // Check if token is expired
+      if (error.error?.code === 190 || error.error?.error_subcode === 463) {
+        return res.status(401).json({ 
+          error: 'WhatsApp access token expired',
+          message: 'Please update WHATSAPP_ACCESS_TOKEN in Vercel environment variables. See FIX_WHATSAPP_TOKEN_EXPIRATION.md for instructions.',
+          details: error
+        });
+      }
+      
       return res.status(response.status).json({ error: 'Failed to send message', details: error });
     }
 
