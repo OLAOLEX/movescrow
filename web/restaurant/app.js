@@ -355,25 +355,36 @@ function setupLoginListeners() {
 
   // Handle Send OTP button click (preferred method)
   if (sendOtpBtn) {
+    console.log('Setting up Send OTP button click handler');
     sendOtpBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
       
+      console.log('Send OTP button clicked!');
+      
       const phoneInput = document.getElementById('phone');
       if (!phoneInput) {
         console.error('Phone input not found');
+        showError('Phone input not found');
         return;
       }
       
       const phone = phoneInput.value.trim();
+      console.log('Phone value from input:', phone);
+      
       if (!phone) {
+        console.warn('No phone number entered');
         showError('Please enter a phone number');
         return;
       }
       
-      console.log('Send OTP clicked, sending OTP for:', phone);
+      console.log('Calling sendOTP with phone:', phone);
       await sendOTP(phone);
+      console.log('sendOTP completed');
     });
+    console.log('Send OTP button handler attached');
+  } else {
+    console.error('Send OTP button not found!');
   }
 
   if (verifyOtpBtn) {
@@ -424,39 +435,79 @@ function setupLoginListeners() {
 }
 
 async function sendOTP(phone) {
+  console.log('sendOTP called with phone:', phone);
+  
+  if (!phone || !phone.trim()) {
+    console.error('No phone number provided');
+    showError('Please enter a phone number');
+    return;
+  }
+
   try {
+    console.log('Showing loading...');
     showLoading(true);
-    const response = await fetch(`${API_BASE_URL}/auth/send-otp`, {
+    
+    const apiUrl = `${API_BASE_URL}/auth/send-otp`;
+    console.log('Calling API:', apiUrl);
+    console.log('Request body:', { phone });
+    
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone })
+      body: JSON.stringify({ phone: phone.trim() })
     });
 
-    const data = await response.json();
+    console.log('Response status:', response.status);
+    
+    let data;
+    try {
+      data = await response.json();
+      console.log('Response data:', data);
+    } catch (jsonError) {
+      console.error('Error parsing JSON response:', jsonError);
+      const text = await response.text();
+      console.error('Response text:', text);
+      showError('Invalid response from server. Please try again.');
+      showLoading(false);
+      return;
+    }
 
     if (response.ok && data.success) {
+      console.log('OTP sent successfully, showing OTP section...');
+      
       // Show OTP input
       const otpSection = document.getElementById('otp-section');
       const sendOtpBtn = document.getElementById('send-otp-btn');
       const phoneInput = document.getElementById('phone');
       
+      console.log('OTP section element:', otpSection);
+      console.log('Send OTP button:', sendOtpBtn);
+      console.log('Phone input:', phoneInput);
+      
       if (otpSection) {
         otpSection.classList.remove('hidden');
         otpSection.style.display = 'block';
         otpSection.style.visibility = 'visible';
-        console.log('OTP section shown');
+        otpSection.style.opacity = '1';
+        console.log('OTP section shown - classes:', otpSection.classList.toString());
+        console.log('OTP section style:', otpSection.style.cssText);
       } else {
         console.error('OTP section element not found!');
+        showError('Error: OTP section not found in page');
+        showLoading(false);
+        return;
       }
       
       if (sendOtpBtn) {
         sendOtpBtn.textContent = 'OTP Sent!';
         sendOtpBtn.disabled = true;
+        console.log('Send OTP button updated');
       }
       
       // Disable phone input
       if (phoneInput) {
         phoneInput.disabled = true;
+        console.log('Phone input disabled');
       }
       
       // Show test OTP hint if no SMS service
@@ -464,12 +515,20 @@ async function sendOTP(phone) {
       if (testOtpHint) {
         testOtpHint.classList.remove('hidden');
         testOtpHint.style.display = 'block';
+        console.log('Test OTP hint shown');
+      } else {
+        console.warn('Test OTP hint element not found');
       }
       
       // Focus on OTP input
       const otpInput = document.getElementById('otp');
       if (otpInput) {
-        setTimeout(() => otpInput.focus(), 100);
+        setTimeout(() => {
+          otpInput.focus();
+          console.log('OTP input focused');
+        }, 100);
+      } else {
+        console.warn('OTP input element not found');
       }
       
       startOTPTimer();
@@ -481,8 +540,10 @@ async function sendOTP(phone) {
     }
   } catch (error) {
     console.error('Error sending OTP:', error);
-    showError('Network error. Please try again.');
+    console.error('Error stack:', error.stack);
+    showError('Network error. Please check console for details.');
   } finally {
+    console.log('Hiding loading...');
     showLoading(false);
   }
 }
