@@ -109,21 +109,34 @@ Reply STOP to opt out`;
     }
 
     if ((notificationPreference === 'whatsapp' || !notificationSent) && restaurant.whatsapp_phone) {
-      const message = `Movescrow: You have a new order!
+      const messageText = `🍽️ *New Order Received!*
 
-Order: ${order.order_ref}
-Customer: Order ${order.customer_code}
-Amount: ₦${parseFloat(order.total_amount || 0).toLocaleString()}
+📦 Order: ${order.order_ref}
+👤 Customer: ${order.customer_code}
+💰 Amount: ₦${parseFloat(order.total_amount || 0).toLocaleString()}
 
-View: ${magicLink}`;
+Click the button below to view and manage this order:`;
 
       try {
-        await sendWhatsApp(restaurant.whatsapp_phone, message);
+        // Send WhatsApp message with interactive button
+        await sendWhatsAppWithButton(
+          restaurant.whatsapp_phone, 
+          messageText, 
+          magicLink,
+          `View Order ${order.order_ref}`
+        );
         notificationSent = true;
         console.log('WhatsApp notification sent successfully');
       } catch (error) {
         console.error('WhatsApp send error:', error);
-        errorDetails.push(`WhatsApp failed: ${error.message}`);
+        // Fallback to plain text if button fails
+        try {
+          await sendWhatsApp(restaurant.whatsapp_phone, `${messageText}\n\n${magicLink}`);
+          notificationSent = true;
+          console.log('WhatsApp notification sent as fallback (plain text)');
+        } catch (fallbackError) {
+          errorDetails.push(`WhatsApp failed: ${error.message}`);
+        }
       }
     } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
       errorDetails.push('WhatsApp preferred but restaurant WhatsApp phone not set');
@@ -260,6 +273,75 @@ async function sendWhatsApp(phone, message) {
     }
     
     throw new Error(`WhatsApp API error: ${JSON.stringify(error)}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Send WhatsApp message with interactive button (deep link)
+ * This creates a button that opens the link in WhatsApp's in-app browser
+ * Note: For business-initiated messages, buttons work within 24-hour customer service window
+ */
+async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText = 'View Order') {
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
+
+  if (!phoneNumberId || !accessToken) {
+    throw new Error('WhatsApp API not configured');
+  }
+
+  // Format phone number (remove + and ensure international format)
+  const formattedPhone = phone.replace(/^\+/, '').replace(/\s/g, '');
+  
+  // Ensure button text is max 20 characters (WhatsApp limit)
+  const trimmedButtonText = buttonText.substring(0, 20);
+
+  // Use interactive message with URL button
+  // This opens the URL in WhatsApp's in-app browser
+  const response = await fetch(
+    `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: formattedPhone,
+        type: 'interactive',
+        interactive: {
+          type: 'button',
+          body: {
+            text: messageText
+          },
+          action: {
+            buttons: [
+              {
+                type: 'url',
+                url: buttonUrl,
+                title: trimmedButtonText
+              }
+            ]
+          }
+        }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    const error = await response.json();
+    console.error('WhatsApp button API error:', error);
+    
+    // Check if token is expired
+    if (error.error?.code === 190 || error.error?.error_subcode === 463) {
+      throw new Error(`WhatsApp access token expired. Please update WHATSAPP_ACCESS_TOKEN in Vercel. See FIX_WHATSAPP_TOKEN_EXPIRATION.md`);
+    }
+    
+    // If button format fails, throw error to trigger fallback
+    throw new Error(`WhatsApp button API error: ${JSON.stringify(error)}`);
   }
 
   return response.json();
