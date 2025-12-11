@@ -177,6 +177,17 @@ WHERE id = 'c18cc33b-cd8c-4049-8a28-9412b29c851c';
 
 ---
 
+## 📝 Quick Setup Summary
+
+**If you want to skip SMS for now and test with WhatsApp:**
+
+1. Just add `+2348060800971` to Meta's allowed recipient list
+2. Update restaurant: `UPDATE restaurants SET whatsapp_phone = '+2348060800971', notification_preference = 'whatsapp' WHERE id = 'your-restaurant-id';`
+3. Test - will use WhatsApp instead of SMS
+4. Add SMS provider later when ready
+
+---
+
 ## 🆚 Twilio vs Termii (Nigerian SMS Provider)
 
 ### Termii (Recommended for Nigeria)
