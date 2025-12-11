@@ -343,8 +343,19 @@ function setupLoginListeners() {
   const verifyOtpBtn = document.getElementById('verify-otp-btn');
   const resendOtpBtn = document.getElementById('resend-otp-btn');
 
+  // Handle form submission (prevent default)
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      return false;
+    }, true); // Use capture phase
+  }
+
+  // Handle Send OTP button click (preferred method)
+  if (sendOtpBtn) {
+    sendOtpBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
       
@@ -360,23 +371,53 @@ function setupLoginListeners() {
         return;
       }
       
-      console.log('Form submitted, sending OTP for:', phone);
+      console.log('Send OTP clicked, sending OTP for:', phone);
       await sendOTP(phone);
-      return false; // Prevent any default behavior
     });
   }
 
   if (verifyOtpBtn) {
-    verifyOtpBtn.addEventListener('click', async () => {
-      const phone = document.getElementById('phone').value;
-      const otp = document.getElementById('otp').value;
+    verifyOtpBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const phoneInput = document.getElementById('phone');
+      const otpInput = document.getElementById('otp');
+      
+      if (!phoneInput || !otpInput) {
+        showError('Phone or OTP input not found');
+        return;
+      }
+      
+      const phone = phoneInput.value.trim();
+      const otp = otpInput.value.trim();
+      
+      if (!phone || !otp) {
+        showError('Please enter both phone number and OTP');
+        return;
+      }
+      
       await verifyOTP(phone, otp);
     });
   }
 
   if (resendOtpBtn) {
-    resendOtpBtn.addEventListener('click', async () => {
-      const phone = document.getElementById('phone').value;
+    resendOtpBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const phoneInput = document.getElementById('phone');
+      if (!phoneInput) {
+        console.error('Phone input not found');
+        return;
+      }
+      
+      const phone = phoneInput.value.trim();
+      if (!phone) {
+        showError('Phone number is required');
+        return;
+      }
+      
       await sendOTP(phone);
     });
   }
