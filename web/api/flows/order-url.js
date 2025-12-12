@@ -85,9 +85,13 @@ export default async function handler(req, res) {
     const baseUrl = process.env.APP_URL || 'https://movescrow.com';
     const orderUrl = `${baseUrl}/restaurant/order.html?session=${encodeURIComponent(sessionToken)}&order=${order_id}`;
 
-    // WhatsApp Flow expects this format
+    // WhatsApp Flow expects this format (data_api_version 3.0)
     return res.json({
-      order_url: orderUrl
+      version: "3.0",
+      screen: "ORDER_SCREEN",
+      data: {
+        order_url: orderUrl
+      }
     });
   } catch (error) {
     console.error('Error in flow order-url:', error);

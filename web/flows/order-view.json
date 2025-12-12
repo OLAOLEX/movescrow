@@ -1,27 +1,28 @@
 {
-  "version": "3.0",
+  "version": "7.1",
+  "data_api_version": "3.0",
+  "endpoint_uri": "https://movescrow.com/api/flows/order-url",
+  "routing_model": {
+    "ORDER_SCREEN": []
+  },
   "screens": [
     {
-      "id": "order_screen",
+      "id": "ORDER_SCREEN",
       "title": "Order Management",
-      "data": {},
-      "type": "DETAIL",
-      "content": {
-        "type": "webview",
-        "url": "{{flow.data.order_url}}",
-        "height": "TALL"
-      },
-      "actions": {
-        "navigate": {
-          "next": {
-            "name": "get_order_url",
-            "endpoint": "https://movescrow.com/api/flows/order-url",
-            "method": "POST",
-            "data": {
-              "order_id": "{{order_id}}"
-            }
-          }
+      "data": {
+        "order_url": {
+          "type": "string"
         }
+      },
+      "layout": {
+        "type": "SingleColumnLayout",
+        "children": [
+          {
+            "type": "WebView",
+            "url": "${data.order_url}",
+            "height": "TALL"
+          }
+        ]
       }
     }
   ]
