@@ -8,6 +8,23 @@ This guide will help you test the complete WhatsApp WebView order flow.
 2. ✅ Supabase configured with required tables
 3. ✅ Restaurant phone number added to WhatsApp allowed list
 4. ✅ Restaurant record exists in Supabase
+5. ⚠️ **IMPORTANT**: Run `ADD_ORDER_COLUMNS.sql` first (see below)
+
+## Step 0: Add Required Columns (DO THIS FIRST!)
+
+Before creating test orders, run this SQL in your **Supabase SQL Editor**:
+
+```sql
+-- Add missing columns to orders table
+ALTER TABLE orders 
+  ADD COLUMN IF NOT EXISTS items JSONB,
+  ADD COLUMN IF NOT EXISTS customer_name TEXT,
+  ADD COLUMN IF NOT EXISTS delivery_address TEXT,
+  ADD COLUMN IF NOT EXISTS special_instructions TEXT,
+  ADD COLUMN IF NOT EXISTS ready_time_minutes INT;
+```
+
+Or simply run the file `ADD_ORDER_COLUMNS.sql` which is in the `web/` directory.
 
 ## Step 1: Create Test Order in Supabase
 
