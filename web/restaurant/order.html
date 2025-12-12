@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Order Management - Movescrow</title>
+  <meta name="description" content="View and manage your order">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <link rel="apple-touch-icon" href="/icons/Icon-192.png">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="/restaurant/styles.css">
+  
+  <!-- Critical CSS for order page -->
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      margin: 0; 
+      padding: 0; 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #1E3A5F 0%, #0F2A4F 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .order-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    }
+    .order-header {
+      text-align: center;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+    .order-header h1 {
+      font-size: 24px;
+      color: #1E3A5F;
+      margin-bottom: 8px;
+    }
+    .order-id {
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+    .order-details {
+      margin-bottom: 24px;
+    }
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .detail-row:last-child {
+      border-bottom: none;
+    }
+    .detail-label {
+      font-weight: 600;
+      color: #666;
+      font-size: 14px;
+    }
+    .detail-value {
+      color: #333;
+      text-align: right;
+      flex: 1;
+      margin-left: 20px;
+      font-size: 14px;
+    }
+    .items-list {
+      margin-top: 8px;
+    }
+    .item-line {
+      padding: 4px 0;
+      color: #555;
+    }
+    .actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .btn {
+      flex: 1;
+      padding: 14px 20px;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-accept {
+      background: linear-gradient(135deg, #28a745 0%, #218838 100%);
+      color: white;
+    }
+    .btn-accept:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+    }
+    .btn-reject {
+      background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+      color: white;
+    }
+    .btn-reject:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+    }
+    .pricing-section {
+      margin-top: 24px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      display: none;
+    }
+    .pricing-section.active {
+      display: block;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #333;
+      font-size: 14px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: #FF6B35;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, #FF6B35 0%, #E55A2B 100%);
+      color: white;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+    }
+    .message {
+      display: none;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+    }
+    .message-success {
+      background: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+    .message-error {
+      background: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+    .message.show {
+      display: block;
+    }
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: #666;
+    }
+    .status-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+    .status-pending {
+      background: #fff3cd;
+      color: #856404;
+    }
+    .status-accepted {
+      background: #d4edda;
+      color: #155724;
+    }
+    .status-rejected {
+      background: #f8d7da;
+      color: #721c24;
+    }
+  </style>
+</head>
+<body>
+  <div class="order-container">
+    <!-- Header -->
+    <header class="order-header">
+      <h1>🍽️ New Order Request</h1>
+      <div class="order-id" id="orderId">Loading...</div>
+    </header>
+
+    <!-- Order Details -->
+    <section class="order-details" id="orderDetails">
+      <div class="loading">Loading order details...</div>
+    </section>
+
+    <!-- Action Buttons (Only shown if order is pending) -->
+    <section class="actions" id="actionButtons" style="display: none;">
+      <button class="btn btn-accept" id="acceptBtn">
+        ✅ Accept Order
+      </button>
+      <button class="btn btn-reject" id="rejectBtn">
+        ❌ Reject Order
+      </button>
+    </section>
+
+    <!-- Pricing Form (Shown after accept) -->
+    <section class="pricing-section" id="pricingSection">
+      <h2 style="margin-bottom: 20px; color: #1E3A5F;">Set Price & Ready Time</h2>
+      <div class="form-group">
+        <label for="totalAmount">Total Amount (₦)</label>
+        <input type="number" id="totalAmount" placeholder="e.g. 4700" required min="0" step="0.01">
+      </div>
+      <div class="form-group">
+        <label for="readyTime">Ready in (minutes)</label>
+        <input type="number" id="readyTime" placeholder="e.g. 30" min="5" max="120" required>
+      </div>
+      <button class="btn btn-primary" id="submitPriceBtn">Confirm Price</button>
+    </section>
+
+    <!-- Order Status (If already processed) -->
+    <section class="order-status" id="orderStatus" style="display: none;">
+      <div class="status-badge" id="statusBadge"></div>
+      <div class="status-message" id="statusMessage"></div>
+    </section>
+
+    <!-- Status Messages -->
+    <div class="message" id="message"></div>
+  </div>
+
+  <script>
+    // API Base URL
+    const API_BASE_URL = window.API_BASE_URL || 'https://www.movescrow.com/api';
+    
+    // Get session token and order ID from URL
+    function getSessionToken() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('session');
+    }
+    
+    function getOrderId() {
+      const urlParams = new URLSearchParams(window.location.search);
+      return urlParams.get('order');
+    }
+    
+    // Show message
+    function showMessage(text, type = 'info') {
+      const messageEl = document.getElementById('message');
+      messageEl.textContent = text;
+      messageEl.className = `message message-${type} show`;
+      
+      setTimeout(() => {
+        messageEl.classList.remove('show');
+      }, 5000);
+    }
+    
+    // Load order details
+    async function loadOrderDetails() {
+      const orderId = getOrderId();
+      const sessionToken = getSessionToken();
+      
+      if (!orderId) {
+        showMessage('Order ID not found in URL', 'error');
+        return;
+      }
+      
+      document.getElementById('orderId').textContent = `Order #${orderId}`;
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/orders/${orderId}?session=${sessionToken}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to load order');
+        }
+        
+        const order = await response.json();
+        displayOrderDetails(order);
+        
+        // Check if already accepted/rejected
+        if (order.status === 'accepted') {
+          showPriceForm();
+          document.getElementById('actionButtons').style.display = 'none';
+        } else if (order.status === 'rejected') {
+          showRejectedMessage(order);
+          document.getElementById('actionButtons').style.display = 'none';
+        } else if (order.status === 'pending') {
+          document.getElementById('actionButtons').style.display = 'flex';
+        }
+      } catch (error) {
+        showMessage('Failed to load order details', 'error');
+        console.error(error);
+      }
+    }
+    
+    // Display order details
+    function displayOrderDetails(order) {
+      const container = document.getElementById('orderDetails');
+      
+      // Format items
+      let itemsHtml = '<div class="items-list">';
+      if (order.items && Array.isArray(order.items)) {
+        order.items.forEach(item => {
+          itemsHtml += `<div class="item-line">• ${item.name || item.item_name} × ${item.quantity}</div>`;
+        });
+      } else if (order.items) {
+        itemsHtml += `<div class="item-line">${order.items}</div>`;
+      }
+      itemsHtml += '</div>';
+      
+      container.innerHTML = `
+        <div class="detail-row">
+          <span class="detail-label">Customer:</span>
+          <span class="detail-value">${order.customer_name || order.customer_code || 'N/A'}</span>
+        </div>
+        <div class="detail-row">
+          <span class="detail-label">Items:</span>
+          <span class="detail-value">${itemsHtml}</span>
+        </div>
+        ${order.special_instructions ? `
+        <div class="detail-row">
+          <span class="detail-label">Special Instructions:</span>
+          <span class="detail-value">${order.special_instructions}</span>
+        </div>
+        ` : ''}
+        <div class="detail-row">
+          <span class="detail-label">Delivery Address:</span>
+          <span class="detail-value">${order.delivery_address || order.deliveryAddress || 'N/A'}</span>
+        </div>
+      `;
+    }
+    
+    // Accept order
+    async function acceptOrder() {
+      const orderId = getOrderId();
+      const sessionToken = getSessionToken();
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/orders/${orderId}/accept`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ session: sessionToken })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to accept order');
+        }
+        
+        showPriceForm();
+        document.getElementById('actionButtons').style.display = 'none';
+        showMessage('✅ Order accepted! Please set the price.', 'success');
+      } catch (error) {
+        showMessage(error.message || 'Failed to accept order', 'error');
+        console.error(error);
+      }
+    }
+    
+    // Reject order
+    async function rejectOrder() {
+      const orderId = getOrderId();
+      const sessionToken = getSessionToken();
+      
+      const reason = prompt('Please enter reason for rejection:\n1. Item finished\n2. Restaurant closed\n3. Kitchen busy\n4. Minimum order not met\n5. Other');
+      
+      if (!reason) return;
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/orders/${orderId}/reject`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ 
+            session: sessionToken,
+            reason: reason 
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to reject order');
+        }
+        
+        showMessage('❌ Order rejected. Customer has been notified.', 'success');
+        document.getElementById('actionButtons').style.display = 'none';
+        
+        setTimeout(() => {
+          window.close(); // Close webview
+        }, 2000);
+      } catch (error) {
+        showMessage(error.message || 'Failed to reject order', 'error');
+        console.error(error);
+      }
+    }
+    
+    // Show price form
+    function showPriceForm() {
+      document.getElementById('pricingSection').classList.add('active');
+    }
+    
+    // Submit price
+    async function submitPrice() {
+      const orderId = getOrderId();
+      const sessionToken = getSessionToken();
+      const totalAmount = document.getElementById('totalAmount').value;
+      const readyTime = document.getElementById('readyTime').value;
+      
+      if (!totalAmount || !readyTime) {
+        showMessage('Please fill all fields', 'error');
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${API_BASE_URL}/orders/${orderId}/set-price`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            session: sessionToken,
+            price: parseFloat(totalAmount),
+            ready_time: parseInt(readyTime)
+          })
+        });
+        
+        if (!response.ok) {
+          const error = await response.json();
+          throw new Error(error.message || 'Failed to set price');
+        }
+        
+        showMessage('✅ Order accepted! Price set successfully. Customer has been notified.', 'success');
+        
+        setTimeout(() => {
+          window.close(); // Close webview
+        }, 3000);
+      } catch (error) {
+        showMessage(error.message || 'Failed to set price', 'error');
+        console.error(error);
+      }
+    }
+    
+    // Show rejected message
+    function showRejectedMessage(order) {
+      document.getElementById('orderStatus').style.display = 'block';
+      document.getElementById('statusBadge').textContent = 'Rejected';
+      document.getElementById('statusBadge').className = 'status-badge status-rejected';
+      document.getElementById('statusMessage').textContent = `Reason: ${order.rejection_reason || order.rejection_details || 'Not specified'}`;
+    }
+    
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      loadOrderDetails();
+      
+      // Event listeners
+      document.getElementById('acceptBtn').addEventListener('click', acceptOrder);
+      document.getElementById('rejectBtn').addEventListener('click', rejectOrder);
+      document.getElementById('submitPriceBtn').addEventListener('click', submitPrice);
+    });
+  </script>
+</body>
+</html>
+

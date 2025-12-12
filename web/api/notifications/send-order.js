@@ -4,6 +4,7 @@
  */
 import { createClient } from '@supabase/supabase-js';
 import crypto from 'crypto';
+import { generateSessionToken } from '../utils/session-token.js';
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -64,21 +65,23 @@ export default async function handler(req, res) {
       return res.status(404).json({ error: 'Order not found' });
     }
 
-    // Generate magic link
-    const token = crypto.randomBytes(32).toString('hex');
+    // Generate secure session token for deep link
+    const sessionToken = generateSessionToken(restaurant.phone, orderId, 24);
     const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
 
-    // Save session
+    // Save session to database
     await supabase
       .from('restaurant_sessions')
       .insert({
         restaurant_id: restaurantId,
-        token,
+        token: sessionToken,
         expires_at: expiresAt.toISOString()
       });
 
-    const baseUrl = process.env.APP_URL || 'https://movescrow.vercel.app';
-    const magicLink = `${baseUrl}/restaurant/auth.html?token=${token}&order=${orderId}`;
+    // Generate deep link URL for WebView
+    const baseUrl = process.env.APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://www.movescrow.com';
+    const deepLinkUrl = `${baseUrl}/restaurant/order.html?session=${encodeURIComponent(sessionToken)}&order=${orderId}`;
+    const magicLink = deepLinkUrl; // Keep for backward compatibility
 
     // Send notification based on preference
     const notificationPreference = restaurant.notification_preference || 'sms';
@@ -123,8 +126,8 @@ Tap the button below to view and manage this order:`;
         const buttonResult = await sendWhatsAppWithButton(
           restaurant.whatsapp_phone,
           messageText,
-          magicLink,
-          `View Order ${order.order_ref}`
+          deepLinkUrl,
+          `📋 View & Respond`
         );
         notificationSent = true;
         console.log('WhatsApp notification sent successfully with button:', buttonResult);
