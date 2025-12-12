@@ -109,9 +109,10 @@ export default async function handler(req, res) {
       console.log(`Test mode: OTP ${otp} generated for ${phone} (not saved to database)`);
     }
 
-    // Send OTP via SMS (skip if using universal test OTP)
+    // Send OTP via SMS (skip if using universal test OTP to save credits)
     let smsSent = false;
     let smsError = null;
+    // Don't send SMS if using universal test OTP (saves credits)
     if (otp !== '123456') {
       try {
         console.log('Attempting to send SMS via Termii...');
