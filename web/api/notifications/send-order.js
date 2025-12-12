@@ -356,11 +356,11 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
     }
   );
   
-  const responseText = await response.text();
-  console.log('WhatsApp API response status:', response.status);
-  console.log('WhatsApp API response:', responseText);
-
   if (!response.ok) {
+    const responseText = await response.text();
+    console.log('WhatsApp API response status:', response.status);
+    console.log('WhatsApp API error response:', responseText);
+    
     let error;
     try {
       error = JSON.parse(responseText);
@@ -387,6 +387,9 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
     throw new Error(`WhatsApp button API error: ${error.error?.message || errorText}`);
   }
 
-  return response.json();
+  const result = await response.json();
+  console.log('WhatsApp API response status:', response.status);
+  console.log('WhatsApp API success response:', JSON.stringify(result, null, 2));
+  return result;
 }
 
