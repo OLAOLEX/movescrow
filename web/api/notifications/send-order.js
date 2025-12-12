@@ -138,17 +138,28 @@ ${order.delivery_address ? `📍 Delivery: ${order.delivery_address}\n` : ''}${o
 Tap below to view and respond:`;
 
       try {
-        // Send with link in message (URL buttons require domain whitelisting in Meta Business)
-        // To enable in-app WebView, whitelist domain in Meta Business Manager
-        const messageWithLink = `${messageText}
+        // Try interactive button if domain is whitelisted, fallback to link
+        const buttonResult = await sendWhatsAppWithButton(
+          restaurant.whatsapp_phone,
+          messageText,
+          deepLinkUrl,
+          `📋 View & Respond`
+        );
+        notificationSent = true;
+        console.log('WhatsApp notification sent with button:', buttonResult);
+      } catch (buttonError) {
+        console.error('Button failed, trying plain link:', buttonError.message);
+        try {
+          const messageWithLink = `${messageText}
 
 👉 View and respond: ${magicLink}`;
-        await sendWhatsApp(restaurant.whatsapp_phone, messageWithLink);
-        notificationSent = true;
-        console.log('WhatsApp notification sent with link');
-      } catch (error) {
-        console.error('WhatsApp send error:', error);
-        errorDetails.push(`WhatsApp failed: ${error.message}`);
+          await sendWhatsApp(restaurant.whatsapp_phone, messageWithLink);
+          notificationSent = true;
+          console.log('WhatsApp notification sent with plain link');
+        } catch (linkError) {
+          console.error('Plain link also failed:', linkError);
+          errorDetails.push(`WhatsApp failed: ${buttonError.message} (button) and ${linkError.message} (link)`);
+        }
       }
     } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
       errorDetails.push('WhatsApp preferred but restaurant WhatsApp phone not set');
@@ -329,17 +340,16 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
         to: formattedPhone,
         type: 'interactive',
         interactive: {
-          type: 'button',
+          type: 'cta_url',
           body: {
             text: messageText
           },
           action: {
-            buttons: [
-              {
-                type: 'url',
-                url: buttonUrl
-              }
-            ]
+            name: 'cta_url',
+            parameters: {
+              display_text: trimmedButtonText,
+              url: buttonUrl
+            }
           }
         }
       })
@@ -365,10 +375,10 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
       throw new Error(`WhatsApp access token expired. Please update WHATSAPP_ACCESS_TOKEN in Vercel.`);
     }
     
-    // Common error: domain not whitelisted or invalid button format
+    // Common error: domain not whitelisted or invalid format
     if (error.error?.code === 100) {
-      if (error.error?.message?.includes('url') || error.error?.message?.includes('button')) {
-        throw new Error(`Invalid button format: ${error.error.message}`);
+      if (error.error?.message?.includes('cta_url') || error.error?.message?.includes('interactive')) {
+        throw new Error(`Invalid CTA URL format: ${error.error.message}`);
       }
       throw new Error(`Domain not whitelisted in Meta Business. Add ${new URL(buttonUrl).origin} to whitelisted domains.`);
     }
