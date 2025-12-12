@@ -53,8 +53,14 @@ export default async function handler(req, res) {
 
     // Save OTP to Supabase (if configured) or use in-memory storage for testing
     let otpSaved = false;
+    let supabaseError = null;
     if (supabase) {
       try {
+        console.log('Attempting to save OTP to Supabase...');
+        console.log('Phone:', phone);
+        console.log('OTP:', otp);
+        console.log('Expires at:', expiresAt.toISOString());
+        
         const { data, error: authError } = await supabase
           .from('restaurant_auth')
           .upsert({
@@ -68,16 +74,25 @@ export default async function handler(req, res) {
           .select();
 
         if (authError) {
+          supabaseError = authError;
           console.error('Error saving OTP to Supabase:', authError);
+          console.error('Error code:', authError.code);
+          console.error('Error message:', authError.message);
+          console.error('Error details:', authError.details);
+          console.error('Error hint:', authError.hint);
           console.error('Supabase URL:', supabaseUrl ? 'Set' : 'Not set');
           console.error('Supabase Key:', supabaseServiceKey ? 'Set (length: ' + supabaseServiceKey.length + ')' : 'Not set');
-          // Continue anyway - we'll log the OTP for manual verification
-        } else {
+          // Continue anyway - we'll return OTP in response for manual testing
+        } else if (data) {
           otpSaved = true;
           console.log('OTP saved to Supabase successfully:', data);
+        } else {
+          console.warn('Supabase upsert returned no data and no error');
         }
       } catch (error) {
+        supabaseError = error;
         console.error('Exception saving OTP to Supabase:', error);
+        console.error('Exception stack:', error.stack);
       }
     } else {
       console.log(`Test mode: OTP ${otp} generated for ${phone} (not saved to database)`);
