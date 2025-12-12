@@ -15,6 +15,7 @@ Run this SQL in Supabase SQL Editor to create a test order:
 
 ```sql
 -- First, ensure you have a restaurant (using existing schema structure)
+-- Note: notification_preference column doesn't exist - code defaults to WhatsApp if whatsapp_phone exists
 INSERT INTO restaurants (id, phone, name, whatsapp_phone, status)
 VALUES (
   gen_random_uuid(),
@@ -25,7 +26,8 @@ VALUES (
 )
 ON CONFLICT (phone) DO UPDATE SET 
   whatsapp_phone = EXCLUDED.whatsapp_phone,
-  name = EXCLUDED.name;
+  name = EXCLUDED.name,
+  status = EXCLUDED.status;
 
 -- Get the restaurant ID
 SELECT id, phone, name, whatsapp_phone FROM restaurants WHERE phone = '+2348060800971';
