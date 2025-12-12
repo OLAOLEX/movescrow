@@ -96,24 +96,7 @@
     }
   </style>
   
-  <!-- Immediate inline script to handle timeout before module loads -->
-  <script>
-    // This runs IMMEDIATELY, before anything else
-    setTimeout(function() {
-      var ls = document.getElementById('loading-screen');
-      var login = document.getElementById('login-screen');
-      if (ls && !ls.classList.contains('hidden')) {
-        if (ls) {
-          ls.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
-          ls.classList.add('hidden');
-        }
-        if (login) {
-          login.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
-          login.classList.remove('hidden');
-        }
-      }
-    }, 400);
-  </script>
+  <!-- No aggressive inline script - let app.js handle initialization properly -->
   
   <!-- Supabase Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -423,51 +406,8 @@
     </div>
   </div>
 
-  <!-- Scripts -->
-  <!-- Inline fallback script - runs immediately before module -->
-  <script>
-    // Immediate fallback to show login screen
-    // This runs synchronously, before any modules load
-    (function() {
-      'use strict';
-      
-      // Function to force show login screen
-      function forceShowLoginNow() {
-        try {
-          var loadingScreen = document.getElementById('loading-screen');
-          var loginScreen = document.getElementById('login-screen');
-          var dashboard = document.getElementById('dashboard');
-          
-          if (loadingScreen) {
-            loadingScreen.classList.add('hidden');
-            loadingScreen.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -1 !important;';
-          }
-          
-          if (loginScreen) {
-            loginScreen.classList.remove('hidden');
-            loginScreen.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
-          }
-          
-          if (dashboard) {
-            dashboard.style.cssText = 'display: none !important; visibility: hidden !important;';
-          }
-          
-          console.log('Login screen forced visible via inline script');
-        } catch (e) {
-          console.error('Error in inline fallback:', e);
-        }
-      }
-      
-      // Show login screen after 300ms as ultimate fallback
-      setTimeout(forceShowLoginNow, 300);
-      
-      // Also show login screen after 1 second
-      setTimeout(forceShowLoginNow, 1000);
-      
-      // Final fallback after 2 seconds
-      setTimeout(forceShowLoginNow, 2000);
-    })();
-  </script>
+        <!-- Scripts -->
+        <!-- Let app.js handle initialization - no aggressive fallbacks -->
   
   <!-- Main app module -->
   <script type="module" src="/restaurant/app.js"></script>

@@ -4,20 +4,27 @@
  */
 
 // Supabase Configuration
-// These can be set via environment variables or hardcoded for now
+// Get from window config or use defaults (should be set via server-side or config)
 const SUPABASE_URL = window.SUPABASE_URL || 'https://jgtvavugofqxlovakswb.supabase.co';
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'your-anon-key';
+// Only use Supabase if we have a valid anon key (not placeholder)
+const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || null;
 
-// Initialize Supabase Client
-let supabase;
+// Initialize Supabase Client (only if we have valid credentials)
+let supabase = null;
 try {
-  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+  // Only initialize if we have both URL and a valid key (not placeholder)
+  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY && 
+      SUPABASE_ANON_KEY !== 'your-anon-key' && 
+      SUPABASE_ANON_KEY.length > 20) {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('Supabase client initialized successfully');
   } else {
-    console.warn('Supabase not initialized - check SUPABASE_URL and SUPABASE_ANON_KEY');
+    console.warn('Supabase not initialized - missing or invalid credentials');
+    console.warn('This is OK if you are using API-only authentication (sessions via API)');
   }
 } catch (error) {
   console.error('Failed to initialize Supabase:', error);
+  supabase = null; // Ensure it's null on error
 }
 
 // API Base URL
@@ -65,38 +72,27 @@ if (document.readyState === 'loading') {
   initializeApp();
 }
 
-// Immediate fallback: Show login after 500ms if still loading
+// Gentle fallback: Only show login if still loading after reasonable time (3 seconds)
+// This gives the app time to verify sessions and load dashboard
 setTimeout(() => {
-  if (!loginScreenShown) {
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-      console.warn('Immediate timeout (500ms) - showing login screen');
-      forceShowLogin();
+  const loadingScreen = document.getElementById('loading-screen');
+  const loginScreen = document.getElementById('login-screen');
+  const dashboard = document.getElementById('dashboard');
+  
+  // Only interfere if loading screen is still visible AND nothing else is shown
+  if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
+    // Check if dashboard or login is already showing
+    const dashboardVisible = dashboard && !dashboard.classList.contains('hidden');
+    const loginVisible = loginScreen && !loginScreen.classList.contains('hidden');
+    
+    if (!dashboardVisible && !loginVisible) {
+      // Nothing is showing - safe to show login as fallback
+      console.warn('Initialization timeout (3s) - showing login screen as fallback');
+      showLogin();
+      loginScreenShown = true;
     }
   }
-}, 500);
-
-// Quick fallback: If app doesn't initialize within 1 second, show login
-setTimeout(() => {
-  if (!loginScreenShown) {
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-      console.warn('Quick timeout (1s) - showing login screen');
-      forceShowLogin();
-    }
-  }
-}, 1000);
-
-// Ultimate fallback: If still loading after 2 seconds, force show login
-setTimeout(() => {
-  if (!loginScreenShown) {
-    const loadingScreen = document.getElementById('loading-screen');
-    if (loadingScreen && !loadingScreen.classList.contains('hidden')) {
-      console.error('Ultimate timeout (2s) - forcing login screen');
-      forceShowLogin();
-    }
-  }
-}, 2000);
+}, 3000);
 
 // Force show login screen (used by timeouts)
 function forceShowLogin() {
