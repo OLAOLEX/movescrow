@@ -267,14 +267,18 @@ async function sendSMS(phone, message) {
             errorMessage = responseText || errorMessage;
           }
           
-          // If not a sender ID error, throw immediately
-          if (response.status !== 404 || !errorMessage.includes('ApplicationSenderId')) {
+          // If not a sender ID error, throw immediately (this should not be reached if continue was called above)
+          // Only reach here if the error parsing failed or it's a different type of 404
+          if (response.status === 404 && errorMessage.includes('ApplicationSenderId')) {
+            // Sender ID error - continue to next one
+            console.warn(`Sender ID "${senderId}" not found (404 from error message), trying next...`);
+            lastError = new Error(`Sender ID "${senderId}" not approved: ${errorMessage}`);
+            continue; // Try next sender ID
+          } else {
+            // Different error - throw immediately
             console.error('Termii SMS failed:', response.status, errorMessage);
             throw new Error(`Termii API error (${response.status}): ${errorMessage}`);
           }
-          
-          // Otherwise, continue to next sender ID
-          lastError = new Error(`Termii API error (${response.status}): ${errorMessage}`);
         }
       } catch (error) {
         // Network or other errors - don't try other sender IDs
