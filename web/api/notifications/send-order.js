@@ -143,8 +143,9 @@ Tap below to view and respond:`;
         if (flowId) {
           // Generate flow token (secure token for this Flow session)
           const flowToken = generateSessionToken(restaurant.phone, orderId, 24);
+          // Flow only accepts static data - order_id, not full URLs
           const flowParams = {
-            order_url: deepLinkUrl
+            order_id: orderId
           };
           
           const flowResult = await sendWhatsAppFlow(
@@ -467,9 +468,9 @@ async function sendWhatsAppFlow(phone, flowId, flowToken, params = {}) {
               flow_cta: 'View Order',
               flow_action: 'navigate',
               flow_action_payload: {
-                screen: 'main',
+                screen: 'order_screen',
                 data: {
-                  '1': params.order_url
+                  order_id: orderId  // Only static data allowed in Flow
                 }
               }
             }

@@ -2,13 +2,15 @@
   "version": "3.0",
   "screens": [
     {
-      "id": "main",
+      "id": "order_screen",
       "title": "Order Management",
-      "data": {
-        "url": "{{1}}"
-      },
-      "type": "NAVIGATE"
+      "data": {},
+      "type": "DETAIL",
+      "content": {
+        "type": "webview",
+        "url": "https://movescrow.com/restaurant/flow-order.html?order_id={{order_id}}",
+        "height": "TALL"
+      }
     }
   ]
 }
-
