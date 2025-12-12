@@ -346,9 +346,9 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
           action: {
             buttons: [
               {
-                type: 'url',
-                url: buttonUrl,
-                title: trimmedButtonText
+                type: 'cta_url',
+                title: trimmedButtonText,
+                url: buttonUrl
               }
             ]
           }
@@ -376,8 +376,11 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
       throw new Error(`WhatsApp access token expired. Please update WHATSAPP_ACCESS_TOKEN in Vercel.`);
     }
     
-    // Common error: domain not whitelisted (code 100)
-    if (error.error?.code === 100 || error.error?.message?.includes('domain')) {
+    // Common error: domain not whitelisted or invalid button format
+    if (error.error?.code === 100) {
+      if (error.error?.message?.includes('url') || error.error?.message?.includes('button')) {
+        throw new Error(`Invalid button format: ${error.error.message}`);
+      }
       throw new Error(`Domain not whitelisted in Meta Business. Add ${new URL(buttonUrl).origin} to whitelisted domains.`);
     }
     
