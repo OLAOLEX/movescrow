@@ -393,3 +393,76 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
   return result;
 }
 
+/**
+ * Send WhatsApp Flow message (in-app WebView)
+ * Requires Flow to be created and approved in Meta Business Manager
+ */
+async function sendWhatsAppFlow(phone, flowId, flowToken, params = {}) {
+  const phoneNumberId = process.env.WHATSAPP_PHONE_NUMBER_ID;
+  const accessToken = process.env.WHATSAPP_ACCESS_TOKEN;
+
+  if (!phoneNumberId || !accessToken) {
+    throw new Error('WhatsApp API not configured');
+  }
+
+  // Format phone number
+  const formattedPhone = phone.replace(/^\+/, '').replace(/\s/g, '');
+
+  const response = await fetch(
+    `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
+      },
+      body: JSON.stringify({
+        messaging_product: 'whatsapp',
+        recipient_type: 'individual',
+        to: formattedPhone,
+        type: 'interactive',
+        interactive: {
+          type: 'flow',
+          header: {
+            type: 'text',
+            text: 'Order Management'
+          },
+          body: {
+            text: 'Tap below to view and manage your order:'
+          },
+          footer: {
+            text: 'Movescrow'
+          },
+          action: {
+            name: 'flow',
+            parameters: {
+              flow_message_version: '3',
+              flow_token: flowToken,
+              flow_id: flowId,
+              flow_cta: 'View Order',
+              flow_action: 'navigate',
+              flow_action_payload: params
+            }
+          }
+        }
+      })
+    }
+  );
+
+  if (!response.ok) {
+    const responseText = await response.text();
+    let error;
+    try {
+      error = JSON.parse(responseText);
+    } catch (e) {
+      error = { error: { message: responseText } };
+    }
+    console.error('WhatsApp Flow API error:', JSON.stringify(error, null, 2));
+    throw new Error(`WhatsApp Flow API error: ${error.error?.message || responseText}`);
+  }
+
+  const result = await response.json();
+  console.log('WhatsApp Flow sent successfully:', JSON.stringify(result, null, 2));
+  return result;
+}
+

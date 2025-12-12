@@ -1,0 +1,31 @@
+{
+  "version": "4.0",
+  "screens": [
+    {
+      "id": "order-details",
+      "title": "Order Details",
+      "data": {
+        "url": "{{1}}"
+      },
+      "type": "NAVIGATE",
+      "navigation": {
+        "next": {
+          "type": "FLOW",
+          "name": "order-actions"
+        }
+      }
+    },
+    {
+      "id": "order-actions",
+      "title": "Order Actions",
+      "type": "DETAIL",
+      "content": {
+        "type": "webview",
+        "url": "{{1}}",
+        "header": "Order Management"
+      }
+    }
+  ],
+  "data": {}
+}
+
