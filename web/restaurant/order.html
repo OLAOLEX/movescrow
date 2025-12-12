@@ -360,12 +360,15 @@
       const sessionToken = getSessionToken();
       
       try {
-        const response = await fetch(`${API_BASE_URL}/orders/${orderId}/accept`, {
+        const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ session: sessionToken })
+          body: JSON.stringify({ 
+            action: 'accept',
+            session: sessionToken 
+          })
         });
         
         if (!response.ok) {
@@ -392,12 +395,13 @@
       if (!reason) return;
       
       try {
-        const response = await fetch(`${API_BASE_URL}/orders/${orderId}/reject`, {
+        const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({ 
+            action: 'reject',
             session: sessionToken,
             reason: reason 
           })
@@ -438,12 +442,13 @@
       }
       
       try {
-        const response = await fetch(`${API_BASE_URL}/orders/${orderId}/set-price`, {
+        const response = await fetch(`${API_BASE_URL}/orders/${orderId}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
+            action: 'set-price',
             session: sessionToken,
             price: parseFloat(totalAmount),
             ready_time: parseInt(readyTime)
