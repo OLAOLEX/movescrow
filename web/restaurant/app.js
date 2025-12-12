@@ -642,10 +642,16 @@ async function verifyOTP(phone, otp) {
       }
       
       currentRestaurant = data.restaurant;
-      await loadRestaurantData();
+      // Load restaurant data (non-blocking - app continues even if it fails)
+      loadRestaurantData().catch(error => {
+        console.warn('Failed to load restaurant data from Supabase, using session data:', error);
+        // Continue anyway - we have restaurant data from verify-otp response
+        updateRestaurantUI();
+      });
+      
       showDashboard();
       setupEventListeners();
-      subscribeToOrders();
+      subscribeToOrders(); // This is already disabled/non-blocking
     } else {
       const errorMsg = data.error || 'Invalid OTP';
       console.error('OTP verification error:', errorMsg);
