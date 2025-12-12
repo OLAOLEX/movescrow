@@ -358,11 +358,19 @@ function setupLoginListeners() {
   // Handle Send OTP button click (preferred method)
   if (sendOtpBtn) {
     console.log('Setting up Send OTP button click handler');
+    let isSendingOTP = false; // Prevent duplicate clicks
     sendOtpBtn.addEventListener('click', async (e) => {
       e.preventDefault();
       e.stopPropagation();
+      e.stopImmediatePropagation();
       
       console.log('Send OTP button clicked!');
+      
+      // Prevent duplicate clicks
+      if (isSendingOTP || sendOtpBtn.disabled) {
+        console.log('OTP send already in progress or button disabled, ignoring click');
+        return;
+      }
       
       const phoneInput = document.getElementById('phone');
       if (!phoneInput) {
@@ -380,9 +388,19 @@ function setupLoginListeners() {
         return;
       }
       
-      console.log('Calling sendOTP with phone:', phone);
-      await sendOTP(phone);
-      console.log('sendOTP completed');
+      isSendingOTP = true;
+      sendOtpBtn.disabled = true;
+      
+      try {
+        console.log('Calling sendOTP with phone:', phone);
+        await sendOTP(phone);
+        console.log('sendOTP completed');
+      } catch (error) {
+        console.error('Error in sendOTP:', error);
+        // Re-enable button on error (success will keep it disabled)
+        sendOtpBtn.disabled = false;
+        isSendingOTP = false;
+      }
     });
     console.log('Send OTP button handler attached');
   } else {
