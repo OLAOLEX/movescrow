@@ -646,14 +646,16 @@ async function verifyOTP(phone, otp) {
       }
       
       currentRestaurant = data.restaurant;
-      // Load restaurant data (non-blocking - app continues even if it fails)
+      
+      // Show dashboard immediately (non-blocking)
+      showDashboard();
+      
+      // Load restaurant data in background (non-blocking - app continues even if it fails)
       loadRestaurantData().catch(error => {
         console.warn('Failed to load restaurant data from Supabase, using session data:', error);
         // Continue anyway - we have restaurant data from verify-otp response
-        updateRestaurantUI();
       });
       
-      showDashboard();
       setupEventListeners();
       subscribeToOrders(); // This is already disabled/non-blocking
     } else {
