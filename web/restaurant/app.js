@@ -173,8 +173,12 @@ async function initApp() {
         
         if (isValid) {
           console.log('Session valid, loading dashboard...');
-          await loadRestaurantData();
+          // Show dashboard immediately (non-blocking)
           showDashboard();
+          // Load data in background (non-blocking)
+          loadRestaurantData().catch(error => {
+            console.warn('Failed to load restaurant data:', error);
+          });
           setupEventListeners();
           subscribeToOrders();
           // If orderId in URL, open that order's chat
