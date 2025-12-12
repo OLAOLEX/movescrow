@@ -50,7 +50,15 @@ export default async function handler(req, res) {
     if (isTestMode && otp === '123456') {
       console.log(`Test OTP 123456 accepted for ${phone} (test mode - no Supabase check needed)`);
       isValidOTP = true;
-    } else if (supabase) {
+    } else if (!supabase) {
+      // No Supabase configured - only accept test OTP
+      if (otp === '123456') {
+        console.log(`Test OTP 123456 accepted for ${phone} (no Supabase configured)`);
+        isValidOTP = true;
+      } else {
+        return res.status(400).json({ error: 'Invalid OTP. Use 123456 for testing or configure Supabase.' });
+      }
+    } else {
       // Verify OTP from database (only if Supabase is configured)
       // Use maybeSingle() instead of single() to handle 0 rows gracefully
       const { data: authData, error: authError } = await supabase

@@ -102,6 +102,10 @@ export default async function handler(req, res) {
     // Log OTP for debugging (remove in production)
     console.log(`Generated OTP for ${phone}: ${otp} (Saved to DB: ${otpSaved}, SMS Sent: ${smsSent})`);
 
+    // If Supabase save failed but we have Supabase configured, include OTP in response for debugging
+    // This allows manual testing while we fix the database issue
+    const shouldIncludeOTP = !otpSaved && supabase;
+    
     return res.json({
       success: true,
       message: otp === '123456' 
@@ -113,12 +117,23 @@ export default async function handler(req, res) {
             : 'OTP generated (database save may have failed - check logs)',
       expiresIn: 600, // 10 minutes in seconds
       testMode: otp === '123456', // Indicate test mode
-      // Include OTP in response for debugging (remove in production)
+      // Include OTP in response for debugging if database save failed
+      ...(shouldIncludeOTP && { otp: otp }), // Only include if save failed
       debug: {
         otpSaved,
         smsSent,
         hasSupabase: !!supabase,
-        hasTermii: !!process.env.TERMII_API_KEY
+        hasTermii: !!process.env.TERMII_API_KEY,
+        supabaseUrl: supabaseUrl ? 'Set' : 'Not set',
+        supabaseKey: supabaseServiceKey ? `Set (${supabaseServiceKey.length} chars)` : 'Not set',
+        ...(supabaseError && { 
+          supabaseError: {
+            code: supabaseError.code,
+            message: supabaseError.message,
+            details: supabaseError.details,
+            hint: supabaseError.hint
+          }
+        })
       }
     });
   } catch (error) {
