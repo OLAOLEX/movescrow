@@ -319,8 +319,12 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
   // Format phone number (remove + and ensure international format)
   const formattedPhone = phone.replace(/^\+/, '').replace(/\s/g, '');
   
-  // Ensure button text is max 20 characters (WhatsApp limit)
+  // Ensure button text is max 20 characters (WhatsApp limit for URL buttons)
   const trimmedButtonText = buttonText.substring(0, 20);
+  
+  // Extract domain for whitelist check
+  const urlObj = new URL(buttonUrl);
+  const domain = urlObj.hostname;
 
   // Use interactive message with URL button
   // This works within 24-hour window when customer has messaged you
