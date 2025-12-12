@@ -81,8 +81,6 @@ export default async function handler(req, res) {
         // 1. DB save failed (common issue we're debugging)
         // 2. OTP expired or already used
         // 3. Wrong phone number
-        // For now, if test mode, allow 123456
-        // Otherwise, we need to be stricter - but for debugging, let's log this
         console.warn(`OTP not found in database for phone ${phone}, OTP: ${otp}`);
         console.warn('This could mean: DB save failed, OTP expired, or wrong phone number');
         
@@ -90,15 +88,16 @@ export default async function handler(req, res) {
           console.log(`Test OTP 123456 accepted for ${phone} (no DB entry found)`);
           isValidOTP = true;
         } else {
-          // OTP not in DB - reject it
-          // In production, this should be rejected
-          // For now, we're debugging DB save issues, so provide helpful error
+          // OTP not in DB - provide helpful error message
+          // NOTE: For production, we should reject OTPs not in DB for security
+          // For now, we're debugging DB save issues
           return res.status(404).json({ 
-            error: 'OTP not found in database. This may mean the OTP wasn\'t saved. Please request a new OTP and check Vercel logs for database errors.',
+            error: 'OTP not found in database. This may mean the OTP wasn\'t saved during the send step. Please request a new OTP.',
             debug: {
               phone: phone,
               otpProvided: otp,
-              suggestion: 'If you received an OTP in the response from send-otp API, the database save likely failed. Check Vercel function logs for Supabase errors.'
+              suggestion: 'Check Vercel function logs for Supabase errors when sending OTP. If send-otp returned an OTP in the response, the database save likely failed.',
+              action: 'Request a new OTP and check Vercel logs for database errors'
             }
           });
         }
