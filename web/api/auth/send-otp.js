@@ -41,12 +41,13 @@ export default async function handler(req, res) {
     }
 
     // Generate 6-digit OTP
-    // For testing: Use universal OTP "123456" if no SMS service configured OR no Supabase
-    // In production, use random OTP
+    // TODO: Before production, change USE_UNIVERSAL_TEST_OTP to false
+    const USE_UNIVERSAL_TEST_OTP = true; // Set to false in production to enable real OTPs and SMS
+    
     const hasSMSService = process.env.TERMII_API_KEY || (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER);
-    const useTestOTP = !supabase || !hasSMSService;
+    const useTestOTP = USE_UNIVERSAL_TEST_OTP || !supabase || !hasSMSService;
     const otp = useTestOTP 
-      ? '123456' // Universal test OTP when no SMS service or Supabase
+      ? '123456' // Universal test OTP - saves SMS credits during development
       : Math.floor(100000 + Math.random() * 900000).toString();
     
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
