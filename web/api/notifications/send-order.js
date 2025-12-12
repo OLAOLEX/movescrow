@@ -138,27 +138,52 @@ ${order.delivery_address ? `📍 Delivery: ${order.delivery_address}\n` : ''}${o
 Tap below to view and respond:`;
 
       try {
-        // Try interactive button if domain is whitelisted, fallback to link
-        const buttonResult = await sendWhatsAppWithButton(
-          restaurant.whatsapp_phone,
-          messageText,
-          deepLinkUrl,
-          `📋 View & Respond`
-        );
-        notificationSent = true;
-        console.log('WhatsApp notification sent with button:', buttonResult);
-      } catch (buttonError) {
-        console.error('Button failed, trying plain link:', buttonError.message);
+        // Try WhatsApp Flow first (in-app WebView - requires Flow ID)
+        const flowId = process.env.WHATSAPP_FLOW_ID;
+        if (flowId) {
+          // Generate flow token (secure token for this Flow session)
+          const flowToken = generateSessionToken(restaurant.phone, orderId, 24);
+          const flowParams = {
+            order_url: deepLinkUrl
+          };
+          
+          const flowResult = await sendWhatsAppFlow(
+            restaurant.whatsapp_phone,
+            flowId,
+            flowToken,
+            flowParams
+          );
+          notificationSent = true;
+          console.log('WhatsApp Flow sent successfully:', flowResult);
+        } else {
+          throw new Error('WHATSAPP_FLOW_ID not configured, trying CTA button');
+        }
+      } catch (flowError) {
+        console.error('Flow failed, trying CTA URL button:', flowError.message);
         try {
-          const messageWithLink = `${messageText}
+          // Fallback to CTA URL button (works if domain whitelisted)
+          const buttonResult = await sendWhatsAppWithButton(
+            restaurant.whatsapp_phone,
+            messageText,
+            deepLinkUrl,
+            `📋 View & Respond`
+          );
+          notificationSent = true;
+          console.log('WhatsApp notification sent with CTA URL button:', buttonResult);
+        } catch (buttonError) {
+          console.error('CTA URL button failed, trying plain link:', buttonError.message);
+          try {
+            // Final fallback to plain text with link
+            const messageWithLink = `${messageText}
 
 👉 View and respond: ${magicLink}`;
-          await sendWhatsApp(restaurant.whatsapp_phone, messageWithLink);
-          notificationSent = true;
-          console.log('WhatsApp notification sent with plain link');
-        } catch (linkError) {
-          console.error('Plain link also failed:', linkError);
-          errorDetails.push(`WhatsApp failed: ${buttonError.message} (button) and ${linkError.message} (link)`);
+            await sendWhatsApp(restaurant.whatsapp_phone, messageWithLink);
+            notificationSent = true;
+            console.log('WhatsApp notification sent with plain link');
+          } catch (linkError) {
+            console.error('Plain link also failed:', linkError);
+            errorDetails.push(`WhatsApp failed: Flow(${flowError.message}), CTA(${buttonError.message}), Link(${linkError.message})`);
+          }
         }
       }
     } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
@@ -441,7 +466,12 @@ async function sendWhatsAppFlow(phone, flowId, flowToken, params = {}) {
               flow_id: flowId,
               flow_cta: 'View Order',
               flow_action: 'navigate',
-              flow_action_payload: params
+              flow_action_payload: {
+                screen: 'main',
+                data: {
+                  '1': params.order_url
+                }
+              }
             }
           }
         }
