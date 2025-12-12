@@ -79,7 +79,7 @@ export default async function handler(req, res) {
       });
 
     // Generate deep link URL for WebView (must be whitelisted in Meta Business)
-    const baseUrl = process.env.APP_URL || 'https://www.movescrow.com';
+    const baseUrl = process.env.APP_URL || 'https://movescrow.com';
     const deepLinkUrl = `${baseUrl}/restaurant/order.html?session=${encodeURIComponent(sessionToken)}&order=${orderId}`;
     const magicLink = deepLinkUrl; // Keep for backward compatibility
 
