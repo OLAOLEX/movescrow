@@ -224,6 +224,6 @@ export default async function handler(req, res) {
 }
 
 function generateSessionToken() {
-  return require('crypto').randomBytes(32).toString('hex');
+  return crypto.randomBytes(32).toString('hex');
 }
 
