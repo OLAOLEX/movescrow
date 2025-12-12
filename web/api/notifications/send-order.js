@@ -138,54 +138,19 @@ ${order.delivery_address ? `📍 Delivery: ${order.delivery_address}\n` : ''}${o
 Tap below to view and respond:`;
 
       try {
-        // Try WhatsApp Flow first (in-app WebView - requires Flow ID)
-        const flowId = process.env.WHATSAPP_FLOW_ID;
-        if (flowId) {
-          // Generate flow token (secure token for this Flow session)
-          const flowToken = generateSessionToken(restaurant.phone, orderId, 24);
-          // Flow only accepts static data - order_id, not full URLs
-          const flowParams = {
-            order_id: orderId
-          };
-          
-          const flowResult = await sendWhatsAppFlow(
-            restaurant.whatsapp_phone,
-            flowId,
-            flowToken,
-            flowParams
-          );
-          notificationSent = true;
-          console.log('WhatsApp Flow sent successfully:', flowResult);
-        } else {
-          throw new Error('WHATSAPP_FLOW_ID not configured, trying CTA button');
-        }
-      } catch (flowError) {
-        console.error('Flow failed, trying CTA URL button:', flowError.message);
-        try {
-          // Fallback to CTA URL button (works if domain whitelisted)
-          const buttonResult = await sendWhatsAppWithButton(
-            restaurant.whatsapp_phone,
-            messageText,
-            deepLinkUrl,
-            `📋 View & Respond`
-          );
-          notificationSent = true;
-          console.log('WhatsApp notification sent with CTA URL button:', buttonResult);
-        } catch (buttonError) {
-          console.error('CTA URL button failed, trying plain link:', buttonError.message);
-          try {
-            // Final fallback to plain text with link
-            const messageWithLink = `${messageText}
+        // Send simple WhatsApp message with link to restaurant dashboard
+        // Restaurants access via dedicated dashboard (simpler than WhatsApp Flow)
+        const messageWithLink = `${messageText}
 
-👉 View and respond: ${magicLink}`;
-            await sendWhatsApp(restaurant.whatsapp_phone, messageWithLink);
-            notificationSent = true;
-            console.log('WhatsApp notification sent with plain link');
-          } catch (linkError) {
-            console.error('Plain link also failed:', linkError);
-            errorDetails.push(`WhatsApp failed: Flow(${flowError.message}), CTA(${buttonError.message}), Link(${linkError.message})`);
-          }
-        }
+👉 View order: ${magicLink}
+
+Or visit: ${baseUrl}/restaurant`;
+        await sendWhatsApp(restaurant.whatsapp_phone, messageWithLink);
+        notificationSent = true;
+        console.log('WhatsApp notification sent with dashboard link');
+      } catch (whatsappError) {
+        console.error('WhatsApp send error:', whatsappError);
+        errorDetails.push(`WhatsApp failed: ${whatsappError.message}`);
       }
     } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
       errorDetails.push('WhatsApp preferred but restaurant WhatsApp phone not set');
