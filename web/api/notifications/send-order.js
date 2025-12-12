@@ -78,8 +78,8 @@ export default async function handler(req, res) {
         expires_at: expiresAt.toISOString()
       });
 
-    // Generate deep link URL for WebView
-    const baseUrl = process.env.APP_URL || process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://www.movescrow.com';
+    // Generate deep link URL for WebView (must be whitelisted in Meta Business)
+    const baseUrl = process.env.APP_URL || 'https://www.movescrow.com';
     const deepLinkUrl = `${baseUrl}/restaurant/order.html?session=${encodeURIComponent(sessionToken)}&order=${orderId}`;
     const magicLink = deepLinkUrl; // Keep for backward compatibility
 
@@ -150,7 +150,8 @@ Tap below to view and respond:`;
         console.log('WhatsApp notification sent successfully with button:', buttonResult);
       } catch (error) {
         console.error('WhatsApp button send error:', error.message);
-        // Fallback to plain text if button fails (outside 24h window or not initiated)
+        console.error('Button error details:', error);
+        // Fallback to plain text if button fails (outside 24h window, domain not whitelisted, or not initiated)
         try {
           const fallbackMessage = `${messageText}
 
@@ -323,6 +324,7 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
 
   // Use interactive message with URL button
   // This works within 24-hour window when customer has messaged you
+  // IMPORTANT: The domain in buttonUrl MUST be whitelisted in Meta Business Manager
   const response = await fetch(
     `https://graph.facebook.com/v18.0/${phoneNumberId}/messages`,
     {
@@ -354,15 +356,29 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
       })
     }
   );
+  
+  const responseText = await response.text();
+  console.log('WhatsApp API response status:', response.status);
+  console.log('WhatsApp API response:', responseText);
 
   if (!response.ok) {
-    const error = await response.json();
+    let error;
+    try {
+      error = JSON.parse(responseText);
+    } catch (e) {
+      error = { error: { message: responseText } };
+    }
     const errorText = JSON.stringify(error, null, 2);
     console.error('WhatsApp button API error:', errorText);
     
     // Check if token is expired
     if (error.error?.code === 190 || error.error?.error_subcode === 463) {
-      throw new Error(`WhatsApp access token expired. Please update WHATSAPP_ACCESS_TOKEN in Vercel. See FIX_WHATSAPP_TOKEN_EXPIRATION.md`);
+      throw new Error(`WhatsApp access token expired. Please update WHATSAPP_ACCESS_TOKEN in Vercel.`);
+    }
+    
+    // Common error: domain not whitelisted (code 100)
+    if (error.error?.code === 100 || error.error?.message?.includes('domain')) {
+      throw new Error(`Domain not whitelisted in Meta Business. Add ${new URL(buttonUrl).origin} to whitelisted domains.`);
     }
     
     // If button format fails, throw error to trigger fallback
