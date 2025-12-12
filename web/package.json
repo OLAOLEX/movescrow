@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Movescrow Restaurant Dashboard Web App",
   "main": "index.html",
+  "type": "module",
   "scripts": {
     "dev": "vercel dev",
     "deploy": "vercel --prod"
