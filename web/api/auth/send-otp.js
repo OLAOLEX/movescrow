@@ -110,14 +110,18 @@ export default async function handler(req, res) {
 
     // Send OTP via SMS (skip if using universal test OTP)
     let smsSent = false;
+    let smsError = null;
     if (otp !== '123456') {
       try {
         console.log('Attempting to send SMS via Termii...');
         await sendSMS(phone, `Your Movescrow OTP: ${otp}. Valid for 10 minutes.`);
         smsSent = true;
         console.log('SMS sent successfully via Termii');
-      } catch (smsError) {
-        console.error('Error sending SMS:', smsError);
+      } catch (smsErrorCaught) {
+        smsError = smsErrorCaught;
+        console.error('Error sending SMS:', smsErrorCaught);
+        console.error('SMS Error name:', smsErrorCaught.name);
+        console.error('SMS Error message:', smsErrorCaught.message);
         // Still return success even if SMS fails (OTP saved to DB)
       }
     } else {
@@ -151,12 +155,19 @@ export default async function handler(req, res) {
         hasTermii: !!process.env.TERMII_API_KEY,
         supabaseUrl: supabaseUrl ? 'Set' : 'Not set',
         supabaseKey: supabaseServiceKey ? `Set (${supabaseServiceKey.length} chars)` : 'Not set',
+        termiiKeyLength: process.env.TERMII_API_KEY ? process.env.TERMII_API_KEY.length : 0,
         ...(supabaseError && { 
           supabaseError: {
             code: supabaseError.code,
             message: supabaseError.message,
             details: supabaseError.details,
             hint: supabaseError.hint
+          }
+        }),
+        ...(smsError && {
+          smsError: {
+            name: smsError.name,
+            message: smsError.message
           }
         })
       }
