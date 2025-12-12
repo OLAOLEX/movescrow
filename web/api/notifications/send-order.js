@@ -138,31 +138,17 @@ ${order.delivery_address ? `📍 Delivery: ${order.delivery_address}\n` : ''}${o
 Tap below to view and respond:`;
 
       try {
-        // Try sending with interactive button first (works within 24-hour window)
-        // If customer has messaged you before, buttons work without templates
-        const buttonResult = await sendWhatsAppWithButton(
-          restaurant.whatsapp_phone,
-          messageText,
-          deepLinkUrl,
-          `📋 View & Respond`
-        );
-        notificationSent = true;
-        console.log('WhatsApp notification sent successfully with button:', buttonResult);
-      } catch (error) {
-        console.error('WhatsApp button send error:', error.message);
-        console.error('Button error details:', error);
-        // Fallback to plain text if button fails (outside 24h window, domain not whitelisted, or not initiated)
-        try {
-          const fallbackMessage = `${messageText}
+        // Send with link in message (URL buttons require domain whitelisting in Meta Business)
+        // To enable in-app WebView, whitelist domain in Meta Business Manager
+        const messageWithLink = `${messageText}
 
-👉 ${magicLink}`;
-          await sendWhatsApp(restaurant.whatsapp_phone, fallbackMessage);
-          notificationSent = true;
-          console.log('WhatsApp notification sent as fallback (plain text)');
-        } catch (fallbackError) {
-          console.error('Fallback also failed:', fallbackError);
-          errorDetails.push(`WhatsApp failed: ${error.message}`);
-        }
+👉 View and respond: ${magicLink}`;
+        await sendWhatsApp(restaurant.whatsapp_phone, messageWithLink);
+        notificationSent = true;
+        console.log('WhatsApp notification sent with link');
+      } catch (error) {
+        console.error('WhatsApp send error:', error);
+        errorDetails.push(`WhatsApp failed: ${error.message}`);
       }
     } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
       errorDetails.push('WhatsApp preferred but restaurant WhatsApp phone not set');
