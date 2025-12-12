@@ -205,7 +205,21 @@ export default async function handler(req, res) {
     });
   } catch (error) {
     console.error('Error in verify-otp:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    console.error('Error stack:', error.stack);
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    
+    // Return proper JSON error response
+    try {
+      return res.status(500).json({ 
+        error: 'Internal server error',
+        message: error.message || 'An unexpected error occurred'
+      });
+    } catch (responseError) {
+      // If we can't even send JSON, something is very wrong
+      console.error('Failed to send error response:', responseError);
+      return res.status(500).send('Internal server error');
+    }
   }
 }
 
