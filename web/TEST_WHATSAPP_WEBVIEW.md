@@ -33,32 +33,30 @@ ON CONFLICT (phone) DO UPDATE SET
 SELECT id, phone, name, whatsapp_phone FROM restaurants WHERE phone = '+2348060800971';
 
 -- Create a test order (replace restaurant_id with the ID from above)
--- Note: Using columns that exist in your schema
+-- IMPORTANT: First run ADD_ORDER_COLUMNS.sql to add required columns!
 INSERT INTO orders (
   id,
   restaurant_id,
-  customer_id,
   order_ref,
+  customer_code,
+  customer_name,
   total_amount,
   status,
   items,
   delivery_address,
-  special_instructions,
-  customer_code,
-  customer_name
+  special_instructions
 )
 VALUES (
   gen_random_uuid(),
   'YOUR_RESTAURANT_ID_HERE',  -- Replace with restaurant ID from above
-  'test-customer-123',
   'ORD-' || to_char(now(), 'YYYYMMDD') || '-' || substr(md5(random()::text), 1, 6),
+  'CUST-001',
+  'Test Customer',
   0,  -- No price yet, restaurant will set it
   'pending',
   '[{"name": "Jollof Rice", "quantity": 2}, {"name": "Fried Chicken", "quantity": 1}]'::jsonb,
   '123 Test Street, Lagos, Nigeria',
-  'Extra spicy please',
-  'CUST-001',
-  'Test Customer'
+  'Extra spicy please'
 )
 RETURNING id, order_ref;
 ```
