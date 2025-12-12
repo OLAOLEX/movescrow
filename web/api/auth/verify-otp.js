@@ -77,12 +77,30 @@ export default async function handler(req, res) {
           return res.status(404).json({ error: 'OTP not found. Please request a new OTP.' });
         }
       } else if (!authData) {
-        // If no data in DB but test mode, allow 123456
+        // OTP not found in database - this could mean:
+        // 1. DB save failed (common issue we're debugging)
+        // 2. OTP expired or already used
+        // 3. Wrong phone number
+        // For now, if test mode, allow 123456
+        // Otherwise, we need to be stricter - but for debugging, let's log this
+        console.warn(`OTP not found in database for phone ${phone}, OTP: ${otp}`);
+        console.warn('This could mean: DB save failed, OTP expired, or wrong phone number');
+        
         if (isTestMode && otp === '123456') {
           console.log(`Test OTP 123456 accepted for ${phone} (no DB entry found)`);
           isValidOTP = true;
         } else {
-          return res.status(404).json({ error: 'OTP not found. Please request a new OTP.' });
+          // OTP not in DB - reject it
+          // In production, this should be rejected
+          // For now, we're debugging DB save issues, so provide helpful error
+          return res.status(404).json({ 
+            error: 'OTP not found in database. This may mean the OTP wasn\'t saved. Please request a new OTP and check Vercel logs for database errors.',
+            debug: {
+              phone: phone,
+              otpProvided: otp,
+              suggestion: 'If you received an OTP in the response from send-otp API, the database save likely failed. Check Vercel function logs for Supabase errors.'
+            }
+          });
         }
       } else {
         // Check if OTP is expired
@@ -97,13 +115,11 @@ export default async function handler(req, res) {
           return res.status(400).json({ error: 'Invalid OTP' });
         }
       }
-    } else {
-      // No Supabase and not test OTP
-      return res.status(400).json({ error: 'Invalid OTP. Use 123456 for testing or configure Supabase.' });
     }
     
+    // Final check - if still not valid, reject
     if (!isValidOTP) {
-      return res.status(400).json({ error: 'Invalid OTP' });
+      return res.status(400).json({ error: 'Invalid OTP. Please check and try again.' });
     }
 
     // Get or create restaurant (use in-memory storage if Supabase not configured)
