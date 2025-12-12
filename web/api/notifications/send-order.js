@@ -126,12 +126,12 @@ Reply STOP to opt out`;
         itemsList = 'View order details';
       }
 
-      const messageText = `🍽️ *Movescrow: New Order Request!*
+      const messageText = `🍽️ Movescrow: New Order Request!
 
-📦 Order: *${order.order_ref || order.id}*
+📦 Order: ${order.order_ref || order.id}
 👤 Customer: ${order.customer_code || order.customer_name || 'Customer'}
 
-*Items:*
+Items:
 ${itemsList}
 
 ${order.delivery_address ? `📍 Delivery: ${order.delivery_address}\n` : ''}${order.special_instructions ? `📝 Note: ${order.special_instructions}\n` : ''}
