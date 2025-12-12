@@ -293,10 +293,6 @@ async function sendSMS(phone, message) {
       throw new Error(`All Termii sender IDs failed. Last error: ${lastError.message}. Please approve "Movescrow" sender ID in Termii dashboard or set TERMII_SENDER_ID env var.`);
     }
     throw new Error('No sender IDs configured');
-    } catch (error) {
-      console.error('Termii SMS error:', error);
-      throw error; // Re-throw to be caught by caller
-    }
   } else {
     console.warn('TERMII_API_KEY not configured');
   }
