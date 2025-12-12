@@ -463,12 +463,19 @@ async function sendOTP(phone) {
     
     let data;
     try {
+      // Clone response to avoid "body stream already read" error
+      const clonedResponse = response.clone();
       data = await response.json();
       console.log('Response data:', data);
     } catch (jsonError) {
       console.error('Error parsing JSON response:', jsonError);
-      const text = await response.text();
-      console.error('Response text:', text);
+      try {
+        // Try to read text if JSON parsing failed
+        const text = await response.text();
+        console.error('Response text:', text);
+      } catch (textError) {
+        console.error('Error reading response text:', textError);
+      }
       showError('Invalid response from server. Please try again.');
       showLoading(false);
       return;
