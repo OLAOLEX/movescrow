@@ -211,7 +211,10 @@ async function sendSMS(phone, message) {
           api_key: process.env.TERMII_API_KEY
         };
       
-      console.log('Sending SMS via Termii:', { url: termiiUrl, to: phone, from: requestBody.from });
+        console.log(`Trying sender ID: ${senderId}`);
+        console.log('URL:', termiiUrl);
+        console.log('To:', phone);
+        console.log('From:', senderId);
       
       const response = await fetch(termiiUrl, {
         method: 'POST',
@@ -221,23 +224,71 @@ async function sendSMS(phone, message) {
         body: JSON.stringify(requestBody)
       });
 
-      const responseData = await response.text();
-      console.log('Termii response status:', response.status);
-      console.log('Termii response:', responseData);
+        const responseText = await response.text();
+        console.log(`Termii response status for ${senderId}:`, response.status);
+        console.log(`Termii response text:`, responseText);
 
-      if (response.ok) {
-        try {
-          const jsonData = JSON.parse(responseData);
-          console.log('Termii SMS sent successfully:', jsonData);
-          return;
-        } catch (e) {
-          console.log('Termii response is not JSON, but status is OK');
-          return;
+        if (response.ok) {
+          try {
+            const jsonData = JSON.parse(responseText);
+            // Check if response indicates success
+            if (jsonData.code === 404 && jsonData.message && jsonData.message.includes('ApplicationSenderId not found')) {
+              // This sender ID doesn't exist, try next one
+              console.warn(`Sender ID "${senderId}" not found, trying next...`);
+              lastError = new Error(`Sender ID "${senderId}" not approved: ${jsonData.message}`);
+              continue; // Try next sender ID
+            }
+            console.log(`Termii SMS sent successfully using sender ID: ${senderId}`, jsonData);
+            return; // Success!
+          } catch (parseError) {
+            // If status is OK but not JSON, assume success
+            if (parseError.name === 'SyntaxError') {
+              console.log(`Termii response is not JSON, but status is OK - assuming success with ${senderId}`);
+              return; // Success!
+            }
+            throw parseError;
+          }
+        } else {
+          // Parse error response
+          let errorMessage = `HTTP ${response.status}`;
+          try {
+            const errorData = JSON.parse(responseText);
+            errorMessage = errorData.message || errorData.error || errorMessage;
+            
+            // If it's a sender ID not found error, try next sender ID
+            if (response.status === 404 && errorData.message && errorData.message.includes('ApplicationSenderId not found')) {
+              console.warn(`Sender ID "${senderId}" not found (404), trying next...`);
+              lastError = new Error(`Sender ID "${senderId}" not approved: ${errorData.message}`);
+              continue; // Try next sender ID
+            }
+            
+            console.error(`Termii API error with ${senderId}:`, errorData);
+          } catch (e) {
+            errorMessage = responseText || errorMessage;
+          }
+          
+          // If not a sender ID error, throw immediately
+          if (response.status !== 404 || !errorMessage.includes('ApplicationSenderId')) {
+            console.error('Termii SMS failed:', response.status, errorMessage);
+            throw new Error(`Termii API error (${response.status}): ${errorMessage}`);
+          }
+          
+          // Otherwise, continue to next sender ID
+          lastError = new Error(`Termii API error (${response.status}): ${errorMessage}`);
         }
-      } else {
-        console.error('Termii SMS failed:', response.status, responseData);
-        throw new Error(`Termii API error: ${response.status} - ${responseData}`);
+      } catch (error) {
+        // Network or other errors - don't try other sender IDs
+        console.error('Termii SMS error:', error);
+        throw error;
       }
+    }
+    
+    // If we get here, all sender IDs failed
+    if (lastError) {
+      console.error('All sender IDs failed. Last error:', lastError.message);
+      throw new Error(`All Termii sender IDs failed. Last error: ${lastError.message}. Please approve "Movescrow" sender ID in Termii dashboard or set TERMII_SENDER_ID env var.`);
+    }
+    throw new Error('No sender IDs configured');
     } catch (error) {
       console.error('Termii SMS error:', error);
       throw error; // Re-throw to be caught by caller
