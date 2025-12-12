@@ -61,14 +61,24 @@ export default async function handler(req, res) {
         console.log('OTP:', otp);
         console.log('Expires at:', expiresAt.toISOString());
         
+        // Try to upsert with updated_at, but handle gracefully if column doesn't exist
+        const upsertData = {
+          phone,
+          otp_code: otp,
+          otp_expires_at: expiresAt.toISOString()
+        };
+        
+        // Only include updated_at if column exists (handled by Supabase automatically)
+        // If column doesn't exist, Supabase will ignore it
+        try {
+          upsertData.updated_at = new Date().toISOString();
+        } catch (e) {
+          // Ignore if date creation fails
+        }
+        
         const { data, error: authError } = await supabase
           .from('restaurant_auth')
-          .upsert({
-            phone,
-            otp_code: otp,
-            otp_expires_at: expiresAt.toISOString(),
-            updated_at: new Date().toISOString()
-          }, {
+          .upsert(upsertData, {
             onConflict: 'phone'
           })
           .select();

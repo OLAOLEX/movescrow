@@ -118,6 +118,10 @@ CREATE INDEX IF NOT EXISTS idx_chat_messages_order_id ON chat_messages(order_id)
 2. Run this test query:
 
 ```sql
+-- First, check if updated_at column exists, if not add it
+ALTER TABLE restaurant_auth 
+ADD COLUMN IF NOT EXISTS updated_at TIMESTAMPTZ DEFAULT NOW();
+
 -- Test insert into restaurant_auth
 INSERT INTO restaurant_auth (phone, otp_code, otp_expires_at)
 VALUES ('+2348060800971', '123456', NOW() + INTERVAL '10 minutes')
