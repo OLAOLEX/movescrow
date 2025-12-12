@@ -214,8 +214,12 @@ async function initApp() {
           console.log('Supabase session found, loading dashboard...');
           // User is logged in, load dashboard
           currentRestaurant = session.data.session.user;
-          await loadRestaurantData();
+          // Show dashboard first (non-blocking)
           showDashboard();
+          // Load data in background (non-blocking)
+          loadRestaurantData().catch(error => {
+            console.warn('Failed to load restaurant data:', error);
+          });
           setupEventListeners();
           subscribeToOrders();
           // If orderId in URL, open that order's chat
@@ -717,13 +721,36 @@ function showLogin() {
 }
 
 function showDashboard() {
+  console.log('showDashboard() called');
   const loadingScreen = document.getElementById('loading-screen');
   const loginScreen = document.getElementById('login-screen');
   const dashboard = document.getElementById('dashboard');
   
-  if (loadingScreen) loadingScreen.classList.add('hidden');
-  if (loginScreen) loginScreen.classList.add('hidden');
-  if (dashboard) dashboard.classList.remove('hidden');
+  console.log('Elements found:', { loadingScreen: !!loadingScreen, loginScreen: !!loginScreen, dashboard: !!dashboard });
+  
+  if (loadingScreen) {
+    loadingScreen.classList.add('hidden');
+    loadingScreen.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
+    console.log('Loading screen hidden');
+  }
+  
+  if (loginScreen) {
+    loginScreen.classList.add('hidden');
+    loginScreen.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
+    console.log('Login screen hidden');
+  }
+  
+  if (dashboard) {
+    dashboard.classList.remove('hidden');
+    // Force show dashboard with inline styles
+    dashboard.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+    console.log('Dashboard shown');
+    console.log('Dashboard computed display:', window.getComputedStyle(dashboard).display);
+  } else {
+    console.error('Dashboard element not found!');
+  }
+  
+  console.log('showDashboard() completed');
 }
 
 function showError(message) {
