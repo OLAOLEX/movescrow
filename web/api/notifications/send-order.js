@@ -350,8 +350,7 @@ async function sendWhatsAppWithButton(phone, messageText, buttonUrl, buttonText 
           action: {
             buttons: [
               {
-                type: 'cta_url',
-                title: trimmedButtonText,
+                type: 'url',
                 url: buttonUrl
               }
             ]
