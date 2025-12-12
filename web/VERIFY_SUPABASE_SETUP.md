@@ -337,3 +337,7 @@ You know Supabase is working when:
 1. Send OTP → Should save to `restaurant_auth` table
 2. Verify OTP → Should find OTP in database and create restaurant + session
 
+
+
+
+

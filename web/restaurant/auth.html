@@ -139,3 +139,122 @@
 </body>
 </html>
 
+
+      }, 3000);
+      
+      verifyTokenAndRedirect(token, orderId).finally(() => {
+        clearTimeout(timeoutId);
+      });
+    }
+
+    async function verifyTokenAndRedirect(token, orderId) {
+      try {
+        const response = await fetch(`/api/auth/verify-token?token=${encodeURIComponent(token)}`);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Store session token
+          localStorage.setItem('restaurant_session_token', token);
+          localStorage.setItem('restaurant_id', data.restaurant.id);
+          localStorage.setItem('restaurant_name', data.restaurant.name);
+
+          // Redirect to dashboard with order if specified
+          let redirectUrl = '/restaurant/index.html';
+          if (orderId) {
+            redirectUrl += `?order=${encodeURIComponent(orderId)}`;
+          }
+          
+          window.location.href = redirectUrl;
+        } else {
+          throw new Error(data.error || 'Authentication failed');
+        }
+      } catch (error) {
+        console.error('Auth error:', error);
+        document.getElementById('error').textContent = 'Authentication failed: ' + error.message;
+        document.getElementById('error').style.display = 'block';
+        document.querySelector('.spinner').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
+
+
+      }, 3000);
+      
+      verifyTokenAndRedirect(token, orderId).finally(() => {
+        clearTimeout(timeoutId);
+      });
+    }
+
+    async function verifyTokenAndRedirect(token, orderId) {
+      try {
+        const response = await fetch(`/api/auth/verify-token?token=${encodeURIComponent(token)}`);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Store session token
+          localStorage.setItem('restaurant_session_token', token);
+          localStorage.setItem('restaurant_id', data.restaurant.id);
+          localStorage.setItem('restaurant_name', data.restaurant.name);
+
+          // Redirect to dashboard with order if specified
+          let redirectUrl = '/restaurant/index.html';
+          if (orderId) {
+            redirectUrl += `?order=${encodeURIComponent(orderId)}`;
+          }
+          
+          window.location.href = redirectUrl;
+        } else {
+          throw new Error(data.error || 'Authentication failed');
+        }
+      } catch (error) {
+        console.error('Auth error:', error);
+        document.getElementById('error').textContent = 'Authentication failed: ' + error.message;
+        document.getElementById('error').style.display = 'block';
+        document.querySelector('.spinner').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
+
+      }, 3000);
+      
+      verifyTokenAndRedirect(token, orderId).finally(() => {
+        clearTimeout(timeoutId);
+      });
+    }
+
+    async function verifyTokenAndRedirect(token, orderId) {
+      try {
+        const response = await fetch(`/api/auth/verify-token?token=${encodeURIComponent(token)}`);
+        const data = await response.json();
+
+        if (response.ok && data.success) {
+          // Store session token
+          localStorage.setItem('restaurant_session_token', token);
+          localStorage.setItem('restaurant_id', data.restaurant.id);
+          localStorage.setItem('restaurant_name', data.restaurant.name);
+
+          // Redirect to dashboard with order if specified
+          let redirectUrl = '/restaurant/index.html';
+          if (orderId) {
+            redirectUrl += `?order=${encodeURIComponent(orderId)}`;
+          }
+          
+          window.location.href = redirectUrl;
+        } else {
+          throw new Error(data.error || 'Authentication failed');
+        }
+      } catch (error) {
+        console.error('Auth error:', error);
+        document.getElementById('error').textContent = 'Authentication failed: ' + error.message;
+        document.getElementById('error').style.display = 'block';
+        document.querySelector('.spinner').style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
+

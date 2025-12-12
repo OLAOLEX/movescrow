@@ -334,3 +334,588 @@ async function sendSMS(phone, message) {
   console.log(`SMS not sent. Phone: ${phone}, Message: ${message}`);
 }
 
+
+        ? 'OTP generated (test mode - use 123456)'
+        : smsSent 
+          ? 'OTP sent successfully via SMS'
+          : otpSaved
+            ? 'OTP generated and saved (SMS may not have been sent - check logs)'
+            : 'OTP generated (database save may have failed - check logs)',
+      expiresIn: 600, // 10 minutes in seconds
+      testMode: otp === '123456', // Indicate test mode
+      // Include OTP in response for debugging if database save failed
+      ...(shouldIncludeOTP && { otp: otp }), // Only include if save failed
+      debug: {
+        otpSaved,
+        smsSent,
+        hasSupabase: !!supabase,
+        hasTermii: !!process.env.TERMII_API_KEY,
+        supabaseUrl: supabaseUrl ? 'Set' : 'Not set',
+        supabaseKey: supabaseServiceKey ? `Set (${supabaseServiceKey.length} chars)` : 'Not set',
+        termiiKeyLength: process.env.TERMII_API_KEY ? process.env.TERMII_API_KEY.length : 0,
+        ...(supabaseError && { 
+          supabaseError: {
+            code: supabaseError.code,
+            message: supabaseError.message,
+            details: supabaseError.details,
+            hint: supabaseError.hint
+          }
+        }),
+        ...(smsError && {
+          smsError: {
+            name: smsError.name,
+            message: smsError.message
+          }
+        })
+      }
+    });
+  } catch (error) {
+    console.error('Error in send-otp:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+/**
+ * Send SMS using Termii or Twilio
+ */
+async function sendSMS(phone, message) {
+  // Try Termii first (Nigerian SMS provider)
+  if (process.env.TERMII_API_KEY) {
+    // Try sender IDs in order of preference
+    // 1. Custom sender ID from env var (if set)
+    // 2. "Movescrow" (needs approval)
+    // 3. Default sender IDs that work without approval
+    const senderIds = [
+      process.env.TERMII_SENDER_ID, // Custom from env var
+      'Movescrow', // Your brand name (needs approval)
+      'Talert', // Default Termii sender ID (usually works)
+      'SecureOTP', // Another default
+      'N-Alert' // Nigerian default
+    ].filter(Boolean); // Remove undefined values
+    
+    let lastError = null;
+    
+    // Try each sender ID until one works
+    for (const senderId of senderIds) {
+      try {
+        const termiiUrl = 'https://api.ng.termii.com/api/sms/send';
+        const requestBody = {
+          to: phone,
+          from: senderId,
+          sms: message,
+          type: 'plain',
+          channel: 'generic',
+          api_key: process.env.TERMII_API_KEY
+        };
+      
+        console.log(`Trying sender ID: ${senderId}`);
+        console.log('URL:', termiiUrl);
+        console.log('To:', phone);
+        console.log('From:', senderId);
+      
+      const response = await fetch(termiiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+        const responseText = await response.text();
+        console.log(`Termii response status for ${senderId}:`, response.status);
+        console.log(`Termii response text:`, responseText);
+
+        if (response.ok) {
+          try {
+            const jsonData = JSON.parse(responseText);
+            // Check if response indicates success
+            if (jsonData.code === 404 && jsonData.message && jsonData.message.includes('ApplicationSenderId not found')) {
+              // This sender ID doesn't exist, try next one
+              console.warn(`Sender ID "${senderId}" not found, trying next...`);
+              lastError = new Error(`Sender ID "${senderId}" not approved: ${jsonData.message}`);
+              continue; // Try next sender ID
+            }
+            console.log(`Termii SMS sent successfully using sender ID: ${senderId}`, jsonData);
+            return; // Success!
+          } catch (parseError) {
+            // If status is OK but not JSON, assume success
+            if (parseError.name === 'SyntaxError') {
+              console.log(`Termii response is not JSON, but status is OK - assuming success with ${senderId}`);
+              return; // Success!
+            }
+            throw parseError;
+          }
+        } else {
+          // Parse error response
+          let errorMessage = `HTTP ${response.status}`;
+          try {
+            const errorData = JSON.parse(responseText);
+            errorMessage = errorData.message || errorData.error || errorMessage;
+            
+            // If it's a sender ID not found error, try next sender ID
+            if (response.status === 404 && errorData.message && errorData.message.includes('ApplicationSenderId not found')) {
+              console.warn(`Sender ID "${senderId}" not found (404), trying next...`);
+              lastError = new Error(`Sender ID "${senderId}" not approved: ${errorData.message}`);
+              continue; // Try next sender ID
+            }
+            
+            console.error(`Termii API error with ${senderId}:`, errorData);
+          } catch (e) {
+            errorMessage = responseText || errorMessage;
+          }
+          
+          // If not a sender ID error, throw immediately (this should not be reached if continue was called above)
+          // Only reach here if the error parsing failed or it's a different type of 404
+          if (response.status === 404 && errorMessage.includes('ApplicationSenderId')) {
+            // Sender ID error - continue to next one
+            console.warn(`Sender ID "${senderId}" not found (404 from error message), trying next...`);
+            lastError = new Error(`Sender ID "${senderId}" not approved: ${errorMessage}`);
+            continue; // Try next sender ID
+          } else {
+            // Different error - throw immediately
+            console.error('Termii SMS failed:', response.status, errorMessage);
+            throw new Error(`Termii API error (${response.status}): ${errorMessage}`);
+          }
+        }
+      } catch (error) {
+        // Network or other errors - don't try other sender IDs
+        console.error('Termii SMS error:', error);
+        throw error;
+      }
+    }
+    
+    // If we get here, all sender IDs failed
+    if (lastError) {
+      console.error('All sender IDs failed. Last error:', lastError.message);
+      throw new Error(`All Termii sender IDs failed. Last error: ${lastError.message}. Please approve "Movescrow" sender ID in Termii dashboard or set TERMII_SENDER_ID env var.`);
+    }
+    throw new Error('No sender IDs configured');
+  } else {
+    console.warn('TERMII_API_KEY not configured');
+  }
+
+  // Fallback to Twilio
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+    try {
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+
+      const response = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString('base64')}`
+          },
+          body: new URLSearchParams({
+            To: phone,
+            From: fromNumber,
+            Body: message
+          })
+        }
+      );
+
+      if (response.ok) {
+        return;
+      }
+    } catch (error) {
+      console.error('Twilio SMS error:', error);
+    }
+  }
+
+  // If both fail, log for manual sending
+  console.log(`SMS not sent. Phone: ${phone}, Message: ${message}`);
+}
+
+
+        ? 'OTP generated (test mode - use 123456)'
+        : smsSent 
+          ? 'OTP sent successfully via SMS'
+          : otpSaved
+            ? 'OTP generated and saved (SMS may not have been sent - check logs)'
+            : 'OTP generated (database save may have failed - check logs)',
+      expiresIn: 600, // 10 minutes in seconds
+      testMode: otp === '123456', // Indicate test mode
+      // Include OTP in response for debugging if database save failed
+      ...(shouldIncludeOTP && { otp: otp }), // Only include if save failed
+      debug: {
+        otpSaved,
+        smsSent,
+        hasSupabase: !!supabase,
+        hasTermii: !!process.env.TERMII_API_KEY,
+        supabaseUrl: supabaseUrl ? 'Set' : 'Not set',
+        supabaseKey: supabaseServiceKey ? `Set (${supabaseServiceKey.length} chars)` : 'Not set',
+        termiiKeyLength: process.env.TERMII_API_KEY ? process.env.TERMII_API_KEY.length : 0,
+        ...(supabaseError && { 
+          supabaseError: {
+            code: supabaseError.code,
+            message: supabaseError.message,
+            details: supabaseError.details,
+            hint: supabaseError.hint
+          }
+        }),
+        ...(smsError && {
+          smsError: {
+            name: smsError.name,
+            message: smsError.message
+          }
+        })
+      }
+    });
+  } catch (error) {
+    console.error('Error in send-otp:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+/**
+ * Send SMS using Termii or Twilio
+ */
+async function sendSMS(phone, message) {
+  // Try Termii first (Nigerian SMS provider)
+  if (process.env.TERMII_API_KEY) {
+    // Try sender IDs in order of preference
+    // 1. Custom sender ID from env var (if set)
+    // 2. "Movescrow" (needs approval)
+    // 3. Default sender IDs that work without approval
+    const senderIds = [
+      process.env.TERMII_SENDER_ID, // Custom from env var
+      'Movescrow', // Your brand name (needs approval)
+      'Talert', // Default Termii sender ID (usually works)
+      'SecureOTP', // Another default
+      'N-Alert' // Nigerian default
+    ].filter(Boolean); // Remove undefined values
+    
+    let lastError = null;
+    
+    // Try each sender ID until one works
+    for (const senderId of senderIds) {
+      try {
+        const termiiUrl = 'https://api.ng.termii.com/api/sms/send';
+        const requestBody = {
+          to: phone,
+          from: senderId,
+          sms: message,
+          type: 'plain',
+          channel: 'generic',
+          api_key: process.env.TERMII_API_KEY
+        };
+      
+        console.log(`Trying sender ID: ${senderId}`);
+        console.log('URL:', termiiUrl);
+        console.log('To:', phone);
+        console.log('From:', senderId);
+      
+      const response = await fetch(termiiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+        const responseText = await response.text();
+        console.log(`Termii response status for ${senderId}:`, response.status);
+        console.log(`Termii response text:`, responseText);
+
+        if (response.ok) {
+          try {
+            const jsonData = JSON.parse(responseText);
+            // Check if response indicates success
+            if (jsonData.code === 404 && jsonData.message && jsonData.message.includes('ApplicationSenderId not found')) {
+              // This sender ID doesn't exist, try next one
+              console.warn(`Sender ID "${senderId}" not found, trying next...`);
+              lastError = new Error(`Sender ID "${senderId}" not approved: ${jsonData.message}`);
+              continue; // Try next sender ID
+            }
+            console.log(`Termii SMS sent successfully using sender ID: ${senderId}`, jsonData);
+            return; // Success!
+          } catch (parseError) {
+            // If status is OK but not JSON, assume success
+            if (parseError.name === 'SyntaxError') {
+              console.log(`Termii response is not JSON, but status is OK - assuming success with ${senderId}`);
+              return; // Success!
+            }
+            throw parseError;
+          }
+        } else {
+          // Parse error response
+          let errorMessage = `HTTP ${response.status}`;
+          try {
+            const errorData = JSON.parse(responseText);
+            errorMessage = errorData.message || errorData.error || errorMessage;
+            
+            // If it's a sender ID not found error, try next sender ID
+            if (response.status === 404 && errorData.message && errorData.message.includes('ApplicationSenderId not found')) {
+              console.warn(`Sender ID "${senderId}" not found (404), trying next...`);
+              lastError = new Error(`Sender ID "${senderId}" not approved: ${errorData.message}`);
+              continue; // Try next sender ID
+            }
+            
+            console.error(`Termii API error with ${senderId}:`, errorData);
+          } catch (e) {
+            errorMessage = responseText || errorMessage;
+          }
+          
+          // If not a sender ID error, throw immediately (this should not be reached if continue was called above)
+          // Only reach here if the error parsing failed or it's a different type of 404
+          if (response.status === 404 && errorMessage.includes('ApplicationSenderId')) {
+            // Sender ID error - continue to next one
+            console.warn(`Sender ID "${senderId}" not found (404 from error message), trying next...`);
+            lastError = new Error(`Sender ID "${senderId}" not approved: ${errorMessage}`);
+            continue; // Try next sender ID
+          } else {
+            // Different error - throw immediately
+            console.error('Termii SMS failed:', response.status, errorMessage);
+            throw new Error(`Termii API error (${response.status}): ${errorMessage}`);
+          }
+        }
+      } catch (error) {
+        // Network or other errors - don't try other sender IDs
+        console.error('Termii SMS error:', error);
+        throw error;
+      }
+    }
+    
+    // If we get here, all sender IDs failed
+    if (lastError) {
+      console.error('All sender IDs failed. Last error:', lastError.message);
+      throw new Error(`All Termii sender IDs failed. Last error: ${lastError.message}. Please approve "Movescrow" sender ID in Termii dashboard or set TERMII_SENDER_ID env var.`);
+    }
+    throw new Error('No sender IDs configured');
+  } else {
+    console.warn('TERMII_API_KEY not configured');
+  }
+
+  // Fallback to Twilio
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+    try {
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+
+      const response = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString('base64')}`
+          },
+          body: new URLSearchParams({
+            To: phone,
+            From: fromNumber,
+            Body: message
+          })
+        }
+      );
+
+      if (response.ok) {
+        return;
+      }
+    } catch (error) {
+      console.error('Twilio SMS error:', error);
+    }
+  }
+
+  // If both fail, log for manual sending
+  console.log(`SMS not sent. Phone: ${phone}, Message: ${message}`);
+}
+
+
+        ? 'OTP generated (test mode - use 123456)'
+        : smsSent 
+          ? 'OTP sent successfully via SMS'
+          : otpSaved
+            ? 'OTP generated and saved (SMS may not have been sent - check logs)'
+            : 'OTP generated (database save may have failed - check logs)',
+      expiresIn: 600, // 10 minutes in seconds
+      testMode: otp === '123456', // Indicate test mode
+      // Include OTP in response for debugging if database save failed
+      ...(shouldIncludeOTP && { otp: otp }), // Only include if save failed
+      debug: {
+        otpSaved,
+        smsSent,
+        hasSupabase: !!supabase,
+        hasTermii: !!process.env.TERMII_API_KEY,
+        supabaseUrl: supabaseUrl ? 'Set' : 'Not set',
+        supabaseKey: supabaseServiceKey ? `Set (${supabaseServiceKey.length} chars)` : 'Not set',
+        termiiKeyLength: process.env.TERMII_API_KEY ? process.env.TERMII_API_KEY.length : 0,
+        ...(supabaseError && { 
+          supabaseError: {
+            code: supabaseError.code,
+            message: supabaseError.message,
+            details: supabaseError.details,
+            hint: supabaseError.hint
+          }
+        }),
+        ...(smsError && {
+          smsError: {
+            name: smsError.name,
+            message: smsError.message
+          }
+        })
+      }
+    });
+  } catch (error) {
+    console.error('Error in send-otp:', error);
+    return res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+/**
+ * Send SMS using Termii or Twilio
+ */
+async function sendSMS(phone, message) {
+  // Try Termii first (Nigerian SMS provider)
+  if (process.env.TERMII_API_KEY) {
+    // Try sender IDs in order of preference
+    // 1. Custom sender ID from env var (if set)
+    // 2. "Movescrow" (needs approval)
+    // 3. Default sender IDs that work without approval
+    const senderIds = [
+      process.env.TERMII_SENDER_ID, // Custom from env var
+      'Movescrow', // Your brand name (needs approval)
+      'Talert', // Default Termii sender ID (usually works)
+      'SecureOTP', // Another default
+      'N-Alert' // Nigerian default
+    ].filter(Boolean); // Remove undefined values
+    
+    let lastError = null;
+    
+    // Try each sender ID until one works
+    for (const senderId of senderIds) {
+      try {
+        const termiiUrl = 'https://api.ng.termii.com/api/sms/send';
+        const requestBody = {
+          to: phone,
+          from: senderId,
+          sms: message,
+          type: 'plain',
+          channel: 'generic',
+          api_key: process.env.TERMII_API_KEY
+        };
+      
+        console.log(`Trying sender ID: ${senderId}`);
+        console.log('URL:', termiiUrl);
+        console.log('To:', phone);
+        console.log('From:', senderId);
+      
+      const response = await fetch(termiiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      });
+
+        const responseText = await response.text();
+        console.log(`Termii response status for ${senderId}:`, response.status);
+        console.log(`Termii response text:`, responseText);
+
+        if (response.ok) {
+          try {
+            const jsonData = JSON.parse(responseText);
+            // Check if response indicates success
+            if (jsonData.code === 404 && jsonData.message && jsonData.message.includes('ApplicationSenderId not found')) {
+              // This sender ID doesn't exist, try next one
+              console.warn(`Sender ID "${senderId}" not found, trying next...`);
+              lastError = new Error(`Sender ID "${senderId}" not approved: ${jsonData.message}`);
+              continue; // Try next sender ID
+            }
+            console.log(`Termii SMS sent successfully using sender ID: ${senderId}`, jsonData);
+            return; // Success!
+          } catch (parseError) {
+            // If status is OK but not JSON, assume success
+            if (parseError.name === 'SyntaxError') {
+              console.log(`Termii response is not JSON, but status is OK - assuming success with ${senderId}`);
+              return; // Success!
+            }
+            throw parseError;
+          }
+        } else {
+          // Parse error response
+          let errorMessage = `HTTP ${response.status}`;
+          try {
+            const errorData = JSON.parse(responseText);
+            errorMessage = errorData.message || errorData.error || errorMessage;
+            
+            // If it's a sender ID not found error, try next sender ID
+            if (response.status === 404 && errorData.message && errorData.message.includes('ApplicationSenderId not found')) {
+              console.warn(`Sender ID "${senderId}" not found (404), trying next...`);
+              lastError = new Error(`Sender ID "${senderId}" not approved: ${errorData.message}`);
+              continue; // Try next sender ID
+            }
+            
+            console.error(`Termii API error with ${senderId}:`, errorData);
+          } catch (e) {
+            errorMessage = responseText || errorMessage;
+          }
+          
+          // If not a sender ID error, throw immediately (this should not be reached if continue was called above)
+          // Only reach here if the error parsing failed or it's a different type of 404
+          if (response.status === 404 && errorMessage.includes('ApplicationSenderId')) {
+            // Sender ID error - continue to next one
+            console.warn(`Sender ID "${senderId}" not found (404 from error message), trying next...`);
+            lastError = new Error(`Sender ID "${senderId}" not approved: ${errorMessage}`);
+            continue; // Try next sender ID
+          } else {
+            // Different error - throw immediately
+            console.error('Termii SMS failed:', response.status, errorMessage);
+            throw new Error(`Termii API error (${response.status}): ${errorMessage}`);
+          }
+        }
+      } catch (error) {
+        // Network or other errors - don't try other sender IDs
+        console.error('Termii SMS error:', error);
+        throw error;
+      }
+    }
+    
+    // If we get here, all sender IDs failed
+    if (lastError) {
+      console.error('All sender IDs failed. Last error:', lastError.message);
+      throw new Error(`All Termii sender IDs failed. Last error: ${lastError.message}. Please approve "Movescrow" sender ID in Termii dashboard or set TERMII_SENDER_ID env var.`);
+    }
+    throw new Error('No sender IDs configured');
+  } else {
+    console.warn('TERMII_API_KEY not configured');
+  }
+
+  // Fallback to Twilio
+  if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN && process.env.TWILIO_PHONE_NUMBER) {
+    try {
+      const accountSid = process.env.TWILIO_ACCOUNT_SID;
+      const authToken = process.env.TWILIO_AUTH_TOKEN;
+      const fromNumber = process.env.TWILIO_PHONE_NUMBER;
+
+      const response = await fetch(
+        `https://api.twilio.com/2010-04-01/Accounts/${accountSid}/Messages.json`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'Authorization': `Basic ${Buffer.from(`${accountSid}:${authToken}`).toString('base64')}`
+          },
+          body: new URLSearchParams({
+            To: phone,
+            From: fromNumber,
+            Body: message
+          })
+        }
+      );
+
+      if (response.ok) {
+        return;
+      }
+    } catch (error) {
+      console.error('Twilio SMS error:', error);
+    }
+  }
+
+  // If both fail, log for manual sending
+  console.log(`SMS not sent. Phone: ${phone}, Message: ${message}`);
+}
+

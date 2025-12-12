@@ -14,24 +14,24 @@ This guide will help you test the complete WhatsApp WebView order flow.
 Run this SQL in Supabase SQL Editor to create a test order:
 
 ```sql
--- First, ensure you have a restaurant
-INSERT INTO restaurants (id, phone, name, whatsapp_phone, notification_preference, status)
+-- First, ensure you have a restaurant (using existing schema structure)
+INSERT INTO restaurants (id, phone, name, whatsapp_phone, status)
 VALUES (
   gen_random_uuid(),
   '+2348060800971',  -- Replace with your test phone number
   'Test Restaurant',
-  '+2348060800971',  -- Replace with your test phone number  
-  'whatsapp',
+  '+2348060800971',  -- Replace with your test phone number (same as phone if not separate)
   'active'
 )
 ON CONFLICT (phone) DO UPDATE SET 
   whatsapp_phone = EXCLUDED.whatsapp_phone,
-  notification_preference = EXCLUDED.notification_preference;
+  name = EXCLUDED.name;
 
 -- Get the restaurant ID
-SELECT id, phone, name FROM restaurants WHERE phone = '+2348060800971';
+SELECT id, phone, name, whatsapp_phone FROM restaurants WHERE phone = '+2348060800971';
 
 -- Create a test order (replace restaurant_id with the ID from above)
+-- Note: Using columns that exist in your schema
 INSERT INTO orders (
   id,
   restaurant_id,
@@ -82,19 +82,19 @@ Invoke-RestMethod -Uri "https://www.movescrow.com/api/notifications/send-order" 
 ## Step 3: Check WhatsApp
 
 You should receive a WhatsApp message with:
-- 🍽️ Order details
+- 🍽️ Order details (items, customer, delivery address)
 - 📋 A button that says "📋 View & Respond"
 - Button opens the order webview in WhatsApp's in-app browser
 
 ## Step 4: Test Order Actions
 
-Once you click the button and the webview opens:
+Once you click the button and the webview opens (`/restaurant/order.html`):
 
 1. **View Order Details** - Should show:
    - Customer name/code
-   - Order items
+   - Order items (formatted list)
    - Delivery address
-   - Special instructions
+   - Special instructions (if any)
 
 2. **Accept Order**:
    - Click "✅ Accept Order" button
@@ -103,12 +103,13 @@ Once you click the button and the webview opens:
    - Enter ready time in minutes (e.g., 30)
    - Click "Confirm Price"
    - Order status updates to "payment_pending"
+   - Success message appears
 
-3. **Reject Order** (test separately):
+3. **Reject Order** (test separately with a new order):
    - Click "❌ Reject Order" button
-   - Enter rejection reason
+   - Enter rejection reason (e.g., "Item finished")
    - Order status updates to "rejected"
-   - Webview closes
+   - Webview closes after 2 seconds
 
 ## Step 5: Verify in Supabase
 
@@ -134,7 +135,7 @@ WHERE id = 'YOUR_ORDER_ID_HERE';
 ### No WhatsApp message received?
 
 1. Check Vercel function logs for errors
-2. Verify WhatsApp phone number is in allowed list
+2. Verify WhatsApp phone number is in allowed list (send a test message first)
 3. Check WhatsApp API token is valid (not expired)
 4. Verify restaurant `whatsapp_phone` field is set correctly
 
@@ -156,6 +157,11 @@ WHERE id = 'YOUR_ORDER_ID_HERE';
 1. Session token might be expired (24 hours)
 2. Restaurant phone doesn't match session token
 3. Order doesn't belong to the restaurant
+
+### Column "notification_preference" does not exist?
+
+- This column is optional - the code defaults to WhatsApp if `whatsapp_phone` exists, otherwise SMS
+- You don't need to add this column unless you want explicit preference control
 
 ## Quick Test Script
 
@@ -195,7 +201,7 @@ try {
 ## Expected Flow
 
 ```
-1. Customer places order → Order created in DB (status: pending)
+1. Customer places order → Order created in DB (status: pending, no price)
 2. Notification API called → WhatsApp message sent with button
 3. Restaurant receives message → Clicks button
 4. Webview opens → Shows order details
@@ -204,11 +210,21 @@ try {
 7. Customer notified → Payment link sent (TODO)
 ```
 
+## Testing the Webview Directly
+
+You can test the webview page directly in a browser (for preview) by visiting:
+
+```
+https://www.movescrow.com/restaurant/order.html?session=TEST_SESSION_TOKEN&order=YOUR_ORDER_ID
+```
+
+Note: You'll need a valid session token for this to work. The session token is generated when sending the notification.
+
 ## Next Steps
 
 After successful testing:
 1. Integrate with main app order creation flow
-2. Add customer payment notification
+2. Add customer payment notification (when price is set)
 3. Add mover assignment workflow
 4. Add order status updates (preparing, ready, etc.)
 

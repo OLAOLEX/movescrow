@@ -96,7 +96,24 @@
     }
   </style>
   
-  <!-- No aggressive inline script - let app.js handle initialization properly -->
+  <!-- Immediate inline script to handle timeout before module loads -->
+  <script>
+    // This runs IMMEDIATELY, before anything else
+    setTimeout(function() {
+      var ls = document.getElementById('loading-screen');
+      var login = document.getElementById('login-screen');
+      if (ls && !ls.classList.contains('hidden')) {
+        if (ls) {
+          ls.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important;';
+          ls.classList.add('hidden');
+        }
+        if (login) {
+          login.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+          login.classList.remove('hidden');
+        }
+      }
+    }, 400);
+  </script>
   
   <!-- Supabase Client -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -406,8 +423,503 @@
     </div>
   </div>
 
-        <!-- Scripts -->
-        <!-- Let app.js handle initialization - no aggressive fallbacks -->
+  <!-- Scripts -->
+  <!-- Inline fallback script - runs immediately before module -->
+  <script>
+    // Immediate fallback to show login screen
+    // This runs synchronously, before any modules load
+    (function() {
+      'use strict';
+      
+      // Function to force show login screen
+      function forceShowLoginNow() {
+        try {
+          var loadingScreen = document.getElementById('loading-screen');
+          var loginScreen = document.getElementById('login-screen');
+          var dashboard = document.getElementById('dashboard');
+          
+          if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            loadingScreen.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -1 !important;';
+          }
+          
+          if (loginScreen) {
+            loginScreen.classList.remove('hidden');
+            loginScreen.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+          }
+          
+          if (dashboard) {
+            dashboard.style.cssText = 'display: none !important; visibility: hidden !important;';
+          }
+          
+          console.log('Login screen forced visible via inline script');
+        } catch (e) {
+          console.error('Error in inline fallback:', e);
+        }
+      }
+      
+      // Show login screen after 300ms as ultimate fallback
+      setTimeout(forceShowLoginNow, 300);
+      
+      // Also show login screen after 1 second
+      setTimeout(forceShowLoginNow, 1000);
+      
+      // Final fallback after 2 seconds
+      setTimeout(forceShowLoginNow, 2000);
+    })();
+  </script>
+  
+  <!-- Main app module -->
+  <script type="module" src="/restaurant/app.js"></script>
+</body>
+</html>
+
+
+                <div class="form-group">
+                  <label for="restaurant-name-input">Restaurant Name</label>
+                  <input type="text" id="restaurant-name-input" required />
+                </div>
+                <div class="form-group">
+                  <label for="restaurant-address">Address</label>
+                  <textarea id="restaurant-address" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="restaurant-description">Description</label>
+                  <textarea id="restaurant-description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+              </form>
+            </section>
+
+            <section class="settings-section">
+              <h2>Banking Details</h2>
+              <form id="banking-form">
+                <div class="form-group">
+                  <label for="account-number">Account Number</label>
+                  <input type="text" id="account-number" maxlength="10" pattern="[0-9]{10}" />
+                </div>
+                <div class="form-group">
+                  <label for="bank-name">Bank Name</label>
+                  <select id="bank-name" required>
+                    <option value="">Select Bank</option>
+                    <!-- Nigerian banks will be loaded here -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="account-name">Account Name</label>
+                  <input type="text" id="account-name" readonly />
+                  <small>Auto-filled after verification</small>
+                </div>
+                <button type="button" class="btn btn-secondary" id="verify-account-btn">Verify Account</button>
+                <button type="submit" class="btn btn-primary">Save Banking Details</button>
+              </form>
+            </section>
+
+            <section class="settings-section">
+              <h2>WhatsApp Integration</h2>
+              <div class="whatsapp-integration">
+                <p>Connect your WhatsApp Business account to receive orders via WhatsApp</p>
+                <button class="btn btn-primary" id="connect-whatsapp-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                  </svg>
+                  Connect WhatsApp
+                </button>
+                <div id="whatsapp-status" class="whatsapp-status hidden">
+                  <p class="status-connected">✅ Connected</p>
+                  <button class="btn btn-text" id="disconnect-whatsapp-btn">Disconnect</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Chat Modal -->
+  <div id="chat-modal" class="chat-modal hidden">
+    <div class="chat-header">
+      <button class="btn-icon" id="close-chat-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="chat-header-info">
+        <h3 id="chat-order-number">Order #12345</h3>
+        <p id="chat-customer-code">Customer: Order #12345</p>
+        <span class="status-badge" id="chat-order-status">New</span>
+      </div>
+      <div class="chat-header-actions">
+        <button class="btn btn-secondary" id="update-status-btn">Update Status</button>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <!-- Messages will be loaded here -->
+    </div>
+    <div class="chat-input-area">
+      <input 
+        type="text" 
+        id="chat-input" 
+        placeholder="Type a message..." 
+        autocomplete="off"
+      />
+      <button class="btn-icon" id="send-message-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Inline fallback script - runs immediately before module -->
+  <script>
+    // Immediate fallback to show login screen
+    // This runs synchronously, before any modules load
+    (function() {
+      'use strict';
+      
+      // Function to force show login screen
+      function forceShowLoginNow() {
+        try {
+          var loadingScreen = document.getElementById('loading-screen');
+          var loginScreen = document.getElementById('login-screen');
+          var dashboard = document.getElementById('dashboard');
+          
+          if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            loadingScreen.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -1 !important;';
+          }
+          
+          if (loginScreen) {
+            loginScreen.classList.remove('hidden');
+            loginScreen.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+          }
+          
+          if (dashboard) {
+            dashboard.style.cssText = 'display: none !important; visibility: hidden !important;';
+          }
+          
+          console.log('Login screen forced visible via inline script');
+        } catch (e) {
+          console.error('Error in inline fallback:', e);
+        }
+      }
+      
+      // Show login screen after 300ms as ultimate fallback
+      setTimeout(forceShowLoginNow, 300);
+      
+      // Also show login screen after 1 second
+      setTimeout(forceShowLoginNow, 1000);
+      
+      // Final fallback after 2 seconds
+      setTimeout(forceShowLoginNow, 2000);
+    })();
+  </script>
+  
+  <!-- Main app module -->
+  <script type="module" src="/restaurant/app.js"></script>
+</body>
+</html>
+
+
+                <div class="form-group">
+                  <label for="restaurant-name-input">Restaurant Name</label>
+                  <input type="text" id="restaurant-name-input" required />
+                </div>
+                <div class="form-group">
+                  <label for="restaurant-address">Address</label>
+                  <textarea id="restaurant-address" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="restaurant-description">Description</label>
+                  <textarea id="restaurant-description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+              </form>
+            </section>
+
+            <section class="settings-section">
+              <h2>Banking Details</h2>
+              <form id="banking-form">
+                <div class="form-group">
+                  <label for="account-number">Account Number</label>
+                  <input type="text" id="account-number" maxlength="10" pattern="[0-9]{10}" />
+                </div>
+                <div class="form-group">
+                  <label for="bank-name">Bank Name</label>
+                  <select id="bank-name" required>
+                    <option value="">Select Bank</option>
+                    <!-- Nigerian banks will be loaded here -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="account-name">Account Name</label>
+                  <input type="text" id="account-name" readonly />
+                  <small>Auto-filled after verification</small>
+                </div>
+                <button type="button" class="btn btn-secondary" id="verify-account-btn">Verify Account</button>
+                <button type="submit" class="btn btn-primary">Save Banking Details</button>
+              </form>
+            </section>
+
+            <section class="settings-section">
+              <h2>WhatsApp Integration</h2>
+              <div class="whatsapp-integration">
+                <p>Connect your WhatsApp Business account to receive orders via WhatsApp</p>
+                <button class="btn btn-primary" id="connect-whatsapp-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                  </svg>
+                  Connect WhatsApp
+                </button>
+                <div id="whatsapp-status" class="whatsapp-status hidden">
+                  <p class="status-connected">✅ Connected</p>
+                  <button class="btn btn-text" id="disconnect-whatsapp-btn">Disconnect</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Chat Modal -->
+  <div id="chat-modal" class="chat-modal hidden">
+    <div class="chat-header">
+      <button class="btn-icon" id="close-chat-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="chat-header-info">
+        <h3 id="chat-order-number">Order #12345</h3>
+        <p id="chat-customer-code">Customer: Order #12345</p>
+        <span class="status-badge" id="chat-order-status">New</span>
+      </div>
+      <div class="chat-header-actions">
+        <button class="btn btn-secondary" id="update-status-btn">Update Status</button>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <!-- Messages will be loaded here -->
+    </div>
+    <div class="chat-input-area">
+      <input 
+        type="text" 
+        id="chat-input" 
+        placeholder="Type a message..." 
+        autocomplete="off"
+      />
+      <button class="btn-icon" id="send-message-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Inline fallback script - runs immediately before module -->
+  <script>
+    // Immediate fallback to show login screen
+    // This runs synchronously, before any modules load
+    (function() {
+      'use strict';
+      
+      // Function to force show login screen
+      function forceShowLoginNow() {
+        try {
+          var loadingScreen = document.getElementById('loading-screen');
+          var loginScreen = document.getElementById('login-screen');
+          var dashboard = document.getElementById('dashboard');
+          
+          if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            loadingScreen.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -1 !important;';
+          }
+          
+          if (loginScreen) {
+            loginScreen.classList.remove('hidden');
+            loginScreen.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+          }
+          
+          if (dashboard) {
+            dashboard.style.cssText = 'display: none !important; visibility: hidden !important;';
+          }
+          
+          console.log('Login screen forced visible via inline script');
+        } catch (e) {
+          console.error('Error in inline fallback:', e);
+        }
+      }
+      
+      // Show login screen after 300ms as ultimate fallback
+      setTimeout(forceShowLoginNow, 300);
+      
+      // Also show login screen after 1 second
+      setTimeout(forceShowLoginNow, 1000);
+      
+      // Final fallback after 2 seconds
+      setTimeout(forceShowLoginNow, 2000);
+    })();
+  </script>
+  
+  <!-- Main app module -->
+  <script type="module" src="/restaurant/app.js"></script>
+</body>
+</html>
+
+                <div class="form-group">
+                  <label for="restaurant-name-input">Restaurant Name</label>
+                  <input type="text" id="restaurant-name-input" required />
+                </div>
+                <div class="form-group">
+                  <label for="restaurant-address">Address</label>
+                  <textarea id="restaurant-address" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                  <label for="restaurant-description">Description</label>
+                  <textarea id="restaurant-description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Profile</button>
+              </form>
+            </section>
+
+            <section class="settings-section">
+              <h2>Banking Details</h2>
+              <form id="banking-form">
+                <div class="form-group">
+                  <label for="account-number">Account Number</label>
+                  <input type="text" id="account-number" maxlength="10" pattern="[0-9]{10}" />
+                </div>
+                <div class="form-group">
+                  <label for="bank-name">Bank Name</label>
+                  <select id="bank-name" required>
+                    <option value="">Select Bank</option>
+                    <!-- Nigerian banks will be loaded here -->
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="account-name">Account Name</label>
+                  <input type="text" id="account-name" readonly />
+                  <small>Auto-filled after verification</small>
+                </div>
+                <button type="button" class="btn btn-secondary" id="verify-account-btn">Verify Account</button>
+                <button type="submit" class="btn btn-primary">Save Banking Details</button>
+              </form>
+            </section>
+
+            <section class="settings-section">
+              <h2>WhatsApp Integration</h2>
+              <div class="whatsapp-integration">
+                <p>Connect your WhatsApp Business account to receive orders via WhatsApp</p>
+                <button class="btn btn-primary" id="connect-whatsapp-btn">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                  </svg>
+                  Connect WhatsApp
+                </button>
+                <div id="whatsapp-status" class="whatsapp-status hidden">
+                  <p class="status-connected">✅ Connected</p>
+                  <button class="btn btn-text" id="disconnect-whatsapp-btn">Disconnect</button>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Chat Modal -->
+  <div id="chat-modal" class="chat-modal hidden">
+    <div class="chat-header">
+      <button class="btn-icon" id="close-chat-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+      <div class="chat-header-info">
+        <h3 id="chat-order-number">Order #12345</h3>
+        <p id="chat-customer-code">Customer: Order #12345</p>
+        <span class="status-badge" id="chat-order-status">New</span>
+      </div>
+      <div class="chat-header-actions">
+        <button class="btn btn-secondary" id="update-status-btn">Update Status</button>
+      </div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <!-- Messages will be loaded here -->
+    </div>
+    <div class="chat-input-area">
+      <input 
+        type="text" 
+        id="chat-input" 
+        placeholder="Type a message..." 
+        autocomplete="off"
+      />
+      <button class="btn-icon" id="send-message-btn">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="22" y1="2" x2="11" y2="13"></line>
+          <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <!-- Inline fallback script - runs immediately before module -->
+  <script>
+    // Immediate fallback to show login screen
+    // This runs synchronously, before any modules load
+    (function() {
+      'use strict';
+      
+      // Function to force show login screen
+      function forceShowLoginNow() {
+        try {
+          var loadingScreen = document.getElementById('loading-screen');
+          var loginScreen = document.getElementById('login-screen');
+          var dashboard = document.getElementById('dashboard');
+          
+          if (loadingScreen) {
+            loadingScreen.classList.add('hidden');
+            loadingScreen.style.cssText = 'display: none !important; visibility: hidden !important; opacity: 0 !important; z-index: -1 !important;';
+          }
+          
+          if (loginScreen) {
+            loginScreen.classList.remove('hidden');
+            loginScreen.style.cssText = 'display: block !important; visibility: visible !important; opacity: 1 !important;';
+          }
+          
+          if (dashboard) {
+            dashboard.style.cssText = 'display: none !important; visibility: hidden !important;';
+          }
+          
+          console.log('Login screen forced visible via inline script');
+        } catch (e) {
+          console.error('Error in inline fallback:', e);
+        }
+      }
+      
+      // Show login screen after 300ms as ultimate fallback
+      setTimeout(forceShowLoginNow, 300);
+      
+      // Also show login screen after 1 second
+      setTimeout(forceShowLoginNow, 1000);
+      
+      // Final fallback after 2 seconds
+      setTimeout(forceShowLoginNow, 2000);
+    })();
+  </script>
   
   <!-- Main app module -->
   <script type="module" src="/restaurant/app.js"></script>

@@ -227,3 +227,318 @@ function generateSessionToken() {
   return crypto.randomBytes(32).toString('hex');
 }
 
+
+    let restaurant = null;
+    
+    if (supabase) {
+      let { data, error: restaurantError } = await supabase
+        .from('restaurants')
+        .select('*')
+        .eq('phone', phone)
+        .maybeSingle(); // Use maybeSingle() to handle 0 rows
+
+      if (restaurantError || !data) {
+        // Create new restaurant if doesn't exist
+        const { data: newRestaurant, error: createError } = await supabase
+          .from('restaurants')
+          .insert({
+            phone,
+            name: `Restaurant ${phone.slice(-4)}`, // Temporary name
+            status: 'active'
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating restaurant:', createError);
+          // Fall back to in-memory restaurant for testing
+          restaurant = { id: `test-${Date.now()}`, phone, name: `Restaurant ${phone.slice(-4)}`, status: 'active' };
+        } else {
+          restaurant = newRestaurant;
+        }
+      } else {
+        restaurant = data;
+      }
+    } else {
+      // Test mode: create in-memory restaurant
+      restaurant = {
+        id: `test-${Date.now()}`,
+        phone,
+        name: `Restaurant ${phone.slice(-4)}`,
+        status: 'active'
+      };
+      console.log('Test mode: Created in-memory restaurant:', restaurant);
+    }
+
+    // Create session token
+    const sessionToken = generateSessionToken();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // Save session (if Supabase configured)
+    if (supabase) {
+      const { error: sessionError } = await supabase
+        .from('restaurant_sessions')
+        .insert({
+          restaurant_id: restaurant.id,
+          token: sessionToken,
+          expires_at: expiresAt.toISOString()
+        });
+
+      if (sessionError) {
+        console.error('Error creating session:', sessionError);
+        // Continue anyway for testing
+      }
+
+      // Clear OTP (optional, for security)
+      await supabase
+        .from('restaurant_auth')
+        .update({ otp_code: null, otp_expires_at: null })
+        .eq('phone', phone);
+    } else {
+      console.log('Test mode: Session token generated but not saved to database');
+    }
+
+    return res.json({
+      success: true,
+      token: sessionToken,
+      restaurant: {
+        id: restaurant.id,
+        name: restaurant.name,
+        phone: restaurant.phone
+      },
+      expiresAt: expiresAt.toISOString()
+    });
+  } catch (error) {
+    console.error('Error in verify-otp:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    
+    // Return proper JSON error response
+    try {
+      return res.status(500).json({ 
+        error: 'Internal server error',
+        message: error.message || 'An unexpected error occurred'
+      });
+    } catch (responseError) {
+      // If we can't even send JSON, something is very wrong
+      console.error('Failed to send error response:', responseError);
+      return res.status(500).send('Internal server error');
+    }
+  }
+}
+
+function generateSessionToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+
+    let restaurant = null;
+    
+    if (supabase) {
+      let { data, error: restaurantError } = await supabase
+        .from('restaurants')
+        .select('*')
+        .eq('phone', phone)
+        .maybeSingle(); // Use maybeSingle() to handle 0 rows
+
+      if (restaurantError || !data) {
+        // Create new restaurant if doesn't exist
+        const { data: newRestaurant, error: createError } = await supabase
+          .from('restaurants')
+          .insert({
+            phone,
+            name: `Restaurant ${phone.slice(-4)}`, // Temporary name
+            status: 'active'
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating restaurant:', createError);
+          // Fall back to in-memory restaurant for testing
+          restaurant = { id: `test-${Date.now()}`, phone, name: `Restaurant ${phone.slice(-4)}`, status: 'active' };
+        } else {
+          restaurant = newRestaurant;
+        }
+      } else {
+        restaurant = data;
+      }
+    } else {
+      // Test mode: create in-memory restaurant
+      restaurant = {
+        id: `test-${Date.now()}`,
+        phone,
+        name: `Restaurant ${phone.slice(-4)}`,
+        status: 'active'
+      };
+      console.log('Test mode: Created in-memory restaurant:', restaurant);
+    }
+
+    // Create session token
+    const sessionToken = generateSessionToken();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // Save session (if Supabase configured)
+    if (supabase) {
+      const { error: sessionError } = await supabase
+        .from('restaurant_sessions')
+        .insert({
+          restaurant_id: restaurant.id,
+          token: sessionToken,
+          expires_at: expiresAt.toISOString()
+        });
+
+      if (sessionError) {
+        console.error('Error creating session:', sessionError);
+        // Continue anyway for testing
+      }
+
+      // Clear OTP (optional, for security)
+      await supabase
+        .from('restaurant_auth')
+        .update({ otp_code: null, otp_expires_at: null })
+        .eq('phone', phone);
+    } else {
+      console.log('Test mode: Session token generated but not saved to database');
+    }
+
+    return res.json({
+      success: true,
+      token: sessionToken,
+      restaurant: {
+        id: restaurant.id,
+        name: restaurant.name,
+        phone: restaurant.phone
+      },
+      expiresAt: expiresAt.toISOString()
+    });
+  } catch (error) {
+    console.error('Error in verify-otp:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    
+    // Return proper JSON error response
+    try {
+      return res.status(500).json({ 
+        error: 'Internal server error',
+        message: error.message || 'An unexpected error occurred'
+      });
+    } catch (responseError) {
+      // If we can't even send JSON, something is very wrong
+      console.error('Failed to send error response:', responseError);
+      return res.status(500).send('Internal server error');
+    }
+  }
+}
+
+function generateSessionToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+
+
+    let restaurant = null;
+    
+    if (supabase) {
+      let { data, error: restaurantError } = await supabase
+        .from('restaurants')
+        .select('*')
+        .eq('phone', phone)
+        .maybeSingle(); // Use maybeSingle() to handle 0 rows
+
+      if (restaurantError || !data) {
+        // Create new restaurant if doesn't exist
+        const { data: newRestaurant, error: createError } = await supabase
+          .from('restaurants')
+          .insert({
+            phone,
+            name: `Restaurant ${phone.slice(-4)}`, // Temporary name
+            status: 'active'
+          })
+          .select()
+          .single();
+
+        if (createError) {
+          console.error('Error creating restaurant:', createError);
+          // Fall back to in-memory restaurant for testing
+          restaurant = { id: `test-${Date.now()}`, phone, name: `Restaurant ${phone.slice(-4)}`, status: 'active' };
+        } else {
+          restaurant = newRestaurant;
+        }
+      } else {
+        restaurant = data;
+      }
+    } else {
+      // Test mode: create in-memory restaurant
+      restaurant = {
+        id: `test-${Date.now()}`,
+        phone,
+        name: `Restaurant ${phone.slice(-4)}`,
+        status: 'active'
+      };
+      console.log('Test mode: Created in-memory restaurant:', restaurant);
+    }
+
+    // Create session token
+    const sessionToken = generateSessionToken();
+    const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    // Save session (if Supabase configured)
+    if (supabase) {
+      const { error: sessionError } = await supabase
+        .from('restaurant_sessions')
+        .insert({
+          restaurant_id: restaurant.id,
+          token: sessionToken,
+          expires_at: expiresAt.toISOString()
+        });
+
+      if (sessionError) {
+        console.error('Error creating session:', sessionError);
+        // Continue anyway for testing
+      }
+
+      // Clear OTP (optional, for security)
+      await supabase
+        .from('restaurant_auth')
+        .update({ otp_code: null, otp_expires_at: null })
+        .eq('phone', phone);
+    } else {
+      console.log('Test mode: Session token generated but not saved to database');
+    }
+
+    return res.json({
+      success: true,
+      token: sessionToken,
+      restaurant: {
+        id: restaurant.id,
+        name: restaurant.name,
+        phone: restaurant.phone
+      },
+      expiresAt: expiresAt.toISOString()
+    });
+  } catch (error) {
+    console.error('Error in verify-otp:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error message:', error.message);
+    console.error('Error name:', error.name);
+    
+    // Return proper JSON error response
+    try {
+      return res.status(500).json({ 
+        error: 'Internal server error',
+        message: error.message || 'An unexpected error occurred'
+      });
+    } catch (responseError) {
+      // If we can't even send JSON, something is very wrong
+      console.error('Failed to send error response:', responseError);
+      return res.status(500).send('Internal server error');
+    }
+  }
+}
+
+function generateSessionToken() {
+  return crypto.randomBytes(32).toString('hex');
+}
+

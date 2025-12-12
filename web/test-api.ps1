@@ -1,4 +1,5 @@
 # Movescrow API Test Script for PowerShell
+# Usage: .\test-api.ps1
 
 # Configuration
 $baseUrl = "https://movescrow.vercel.app"

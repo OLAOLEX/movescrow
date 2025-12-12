@@ -156,7 +156,15 @@ curl "https://movescrow.vercel.app/api/whatsapp/webhook?hub.mode=subscribe&hub.v
 
 #### 3.3 Test Order Flow
 
-1. Create a test order in Supabase:
+1. **First, create a test restaurant** (if you don't have one):
+   ```sql
+   INSERT INTO restaurants (name, phone, whatsapp_phone, status)
+   VALUES ('Test Restaurant', '+2348000000000', '+2348000000000', 'active')
+   RETURNING id;
+   ```
+   Copy the `id` (UUID) that's returned.
+
+2. **Create a test order** in Supabase:
    ```sql
    INSERT INTO orders (
      order_number,
@@ -171,14 +179,31 @@ curl "https://movescrow.vercel.app/api/whatsapp/webhook?hub.mode=subscribe&hub.v
    ) VALUES (
      'ORD-001',
      'ORD-001',
-     'restaurant-uuid-here',
-     'customer-uuid-here',
+     'PASTE_RESTAURANT_UUID_HERE',
+     gen_random_uuid(),
      '#12345',
      '+2348000000000',
-     '{"item": "Jollof Rice"}',
+     '{"item": "Jollof Rice"}'::jsonb,
      3000.00,
      'pending'
-   );
+   )
+   RETURNING id;
+   ```
+   
+   **Important:**
+   - Replace `PASTE_RESTAURANT_UUID_HERE` with the restaurant UUID from step 1
+   - Replace `+2348000000000` with a WhatsApp number you can test with
+   - Copy the `id` (order UUID) that's returned
+
+3. **Test notification**:
+   Use the UUIDs you just created:
+   ```bash
+   curl -X POST https://movescrow.vercel.app/api/notifications/send-order \
+     -H "Content-Type: application/json" \
+     -d '{
+       "restaurantId": "c18cc33b-cd8c-4049-8a28-9412b29c851c",
+       "orderId": "03772f87-7318-4358-9af1-9935f221dfe8"
+     }'
    ```
 
 2. Send notification:
@@ -190,6 +215,8 @@ curl "https://movescrow.vercel.app/api/whatsapp/webhook?hub.mode=subscribe&hub.v
        "orderId": "order-uuid"
      }'
    ```
+
+**Important:** Replace `restaurant-uuid` and `order-uuid` with actual UUIDs from your database!
 
 ---
 

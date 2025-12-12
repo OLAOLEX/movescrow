@@ -83,8 +83,8 @@ export default async function handler(req, res) {
     const deepLinkUrl = `${baseUrl}/restaurant/order.html?session=${encodeURIComponent(sessionToken)}&order=${orderId}`;
     const magicLink = deepLinkUrl; // Keep for backward compatibility
 
-    // Send notification based on preference
-    const notificationPreference = restaurant.notification_preference || 'sms';
+    // Send notification based on preference (default to whatsapp if column doesn't exist)
+    const notificationPreference = restaurant.notification_preference || (restaurant.whatsapp_phone ? 'whatsapp' : 'sms');
     let notificationSent = false;
     let errorDetails = [];
 
