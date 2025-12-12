@@ -84,13 +84,8 @@ export default async function handler(req, res) {
 
     // POST: Generate magic link
     if (req.method === 'POST') {
-      // Check if it's a magic-link request (via path or body type)
-      const path = req.url || '';
-      const isMagicLink = path.includes('magic-link') || req.body.type === 'magic-link';
-
-      if (!isMagicLink) {
-        return res.status(400).json({ error: 'Invalid request. Use GET for verify-token or POST /api/auth/magic-link for magic-link' });
-      }
+      // This endpoint handles magic-link generation
+      // Vercel rewrite routes /api/auth/magic-link here
 
       const { restaurantId, orderId } = req.body;
 
