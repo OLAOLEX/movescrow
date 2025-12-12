@@ -10,10 +10,13 @@ const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5c
 // Initialize Supabase Client
 let supabase;
 try {
-  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY) {
+  if (window.supabase && SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_ANON_KEY !== 'your-anon-key') {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    console.log('Supabase client initialized successfully');
   } else {
     console.warn('Supabase not initialized - check SUPABASE_URL and SUPABASE_ANON_KEY');
+    console.warn('URL:', SUPABASE_URL);
+    console.warn('Key:', SUPABASE_ANON_KEY ? `${SUPABASE_ANON_KEY.substring(0, 20)}...` : 'MISSING');
   }
 } catch (error) {
   console.error('Failed to initialize Supabase:', error);
