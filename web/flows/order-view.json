@@ -8,8 +8,20 @@
       "type": "DETAIL",
       "content": {
         "type": "webview",
-        "url": "https://movescrow.com/restaurant/flow-order.html?order_id={{order_id}}",
+        "url": "{{flow.data.order_url}}",
         "height": "TALL"
+      },
+      "actions": {
+        "navigate": {
+          "next": {
+            "name": "get_order_url",
+            "endpoint": "https://movescrow.com/api/flows/order-url",
+            "method": "POST",
+            "data": {
+              "order_id": "{{order_id}}"
+            }
+          }
+        }
       }
     }
   ]
