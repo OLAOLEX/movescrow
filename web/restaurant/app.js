@@ -516,18 +516,53 @@ async function sendOTP(phone) {
         console.log('Phone input disabled');
       }
       
-      // Show test OTP hint if no SMS service
+      // Show test OTP hint if in test mode OR if OTP is returned in response (DB save failed)
       const testOtpHint = document.getElementById('test-otp-hint');
+      const otpInput = document.getElementById('otp');
+      
       if (testOtpHint) {
-        testOtpHint.classList.remove('hidden');
-        testOtpHint.style.display = 'block';
-        console.log('Test OTP hint shown');
+        if (data.testMode) {
+          // Test mode - show standard test OTP hint
+          testOtpHint.innerHTML = '💡 <strong>Test Mode:</strong> Use OTP <strong>123456</strong> for testing';
+          testOtpHint.style.background = 'rgba(255, 107, 53, 0.1)';
+          testOtpHint.style.borderLeftColor = '#FF6B35';
+          testOtpHint.style.color = '#FF6B35';
+          testOtpHint.classList.remove('hidden');
+          testOtpHint.style.setProperty('display', 'block', 'important');
+          testOtpHint.style.setProperty('visibility', 'visible', 'important');
+          console.log('Test OTP hint shown');
+        } else if (data.otp) {
+          // OTP returned in response because DB save failed
+          testOtpHint.innerHTML = `⚠️ <strong>Database Save Failed:</strong> Use OTP <strong>${data.otp}</strong> (check Vercel logs)`;
+          testOtpHint.style.background = 'rgba(255, 193, 7, 0.1)';
+          testOtpHint.style.borderLeftColor = '#FFC107';
+          testOtpHint.style.color = '#856404';
+          testOtpHint.classList.remove('hidden');
+          testOtpHint.style.setProperty('display', 'block', 'important');
+          testOtpHint.style.setProperty('visibility', 'visible', 'important');
+          console.log('Database save failed - showing OTP from response:', data.otp);
+          
+          // Auto-fill OTP if available
+          if (otpInput) {
+            otpInput.value = data.otp;
+          }
+        } else {
+          testOtpHint.classList.add('hidden');
+          testOtpHint.style.setProperty('display', 'none', 'important');
+        }
       } else {
         console.warn('Test OTP hint element not found');
       }
       
+      // Log debug info
+      if (data.debug) {
+        console.log('Debug info:', data.debug);
+        if (data.debug.supabaseError) {
+          console.error('Supabase error details:', data.debug.supabaseError);
+        }
+      }
+      
       // Focus on OTP input
-      const otpInput = document.getElementById('otp');
       if (otpInput) {
         setTimeout(() => {
           otpInput.focus();
