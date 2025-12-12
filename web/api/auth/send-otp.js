@@ -184,16 +184,32 @@ export default async function handler(req, res) {
 async function sendSMS(phone, message) {
   // Try Termii first (Nigerian SMS provider)
   if (process.env.TERMII_API_KEY) {
-    try {
-      const termiiUrl = 'https://api.ng.termii.com/api/sms/send';
-      const requestBody = {
-        to: phone,
-        from: 'Movescrow', // Your sender ID (needs to be approved by Termii)
-        sms: message,
-        type: 'plain',
-        channel: 'generic',
-        api_key: process.env.TERMII_API_KEY
-      };
+    // Try sender IDs in order of preference
+    // 1. Custom sender ID from env var (if set)
+    // 2. "Movescrow" (needs approval)
+    // 3. Default sender IDs that work without approval
+    const senderIds = [
+      process.env.TERMII_SENDER_ID, // Custom from env var
+      'Movescrow', // Your brand name (needs approval)
+      'Talert', // Default Termii sender ID (usually works)
+      'SecureOTP', // Another default
+      'N-Alert' // Nigerian default
+    ].filter(Boolean); // Remove undefined values
+    
+    let lastError = null;
+    
+    // Try each sender ID until one works
+    for (const senderId of senderIds) {
+      try {
+        const termiiUrl = 'https://api.ng.termii.com/api/sms/send';
+        const requestBody = {
+          to: phone,
+          from: senderId,
+          sms: message,
+          type: 'plain',
+          channel: 'generic',
+          api_key: process.env.TERMII_API_KEY
+        };
       
       console.log('Sending SMS via Termii:', { url: termiiUrl, to: phone, from: requestBody.from });
       
