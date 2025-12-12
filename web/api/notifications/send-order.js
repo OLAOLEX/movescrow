@@ -89,13 +89,12 @@ export default async function handler(req, res) {
     let errorDetails = [];
 
     if (notificationPreference === 'sms' && restaurant.phone) {
-      const message = `Movescrow: You have a new order!
+      const message = `Movescrow: New Order Request!
 
-Order: ${order.order_ref}
-Customer: Order ${order.customer_code}
-Amount: ₦${parseFloat(order.total_amount || 0).toLocaleString()}
+Order: ${order.order_ref || order.id}
+Customer: ${order.customer_code || order.customer_name || 'Customer'}
 
-View: ${magicLink}
+View order and set price: ${magicLink}
 
 Reply STOP to opt out`;
 
@@ -112,13 +111,31 @@ Reply STOP to opt out`;
     }
 
     if ((notificationPreference === 'whatsapp' || !notificationSent) && restaurant.whatsapp_phone) {
-      const messageText = `🍽️ *New Order Received!*
+      // Format order items
+      let itemsList = '';
+      if (order.items && typeof order.items === 'string') {
+        try {
+          const items = JSON.parse(order.items);
+          itemsList = items.map(item => `• ${item.name || item.item_name} × ${item.quantity}`).join('\n');
+        } catch (e) {
+          itemsList = order.items;
+        }
+      } else if (order.items && Array.isArray(order.items)) {
+        itemsList = order.items.map(item => `• ${item.name || item.item_name} × ${item.quantity}`).join('\n');
+      } else {
+        itemsList = 'View order details';
+      }
 
-📦 Order: *${order.order_ref}*
-👤 Customer: ${order.customer_code}
-💰 Amount: *₦${parseFloat(order.total_amount || 0).toLocaleString()}*
+      const messageText = `🍽️ *Movescrow: New Order Request!*
 
-Tap the button below to view and manage this order:`;
+📦 Order: *${order.order_ref || order.id}*
+👤 Customer: ${order.customer_code || order.customer_name || 'Customer'}
+
+*Items:*
+${itemsList}
+
+${order.delivery_address ? `📍 Delivery: ${order.delivery_address}\n` : ''}${order.special_instructions ? `📝 Note: ${order.special_instructions}\n` : ''}
+Tap below to view and respond:`;
 
       try {
         // Try sending with interactive button first (works within 24-hour window)
