@@ -4,10 +4,8 @@
  */
 
 // Supabase Configuration
-// TODO: Set your actual Supabase anon key here or via window.SUPABASE_ANON_KEY
-// Get it from: Supabase Dashboard → Settings → API → anon public key
 const SUPABASE_URL = window.SUPABASE_URL || 'https://jgtvavugofqxlovakswb.supabase.co';
-const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'YOUR_SUPABASE_ANON_KEY_HERE'; // Replace with actual anon key
+const SUPABASE_ANON_KEY = window.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImpndHZhdnVnb2ZxeGxvdmFrc3diIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0MDY2NjQsImV4cCI6MjA4MDk4MjY2NH0.3j6Rc54_82NgJicQhbvfVlCtVG0nyFSoW24FJvg2rM8';
 
 // Initialize Supabase Client
 let supabase;
