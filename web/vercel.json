@@ -47,14 +47,6 @@
   ],
     "rewrites": [
       {
-        "source": "/restaurant",
-        "destination": "/restaurant/landing.html"
-      },
-      {
-        "source": "/restaurant/",
-        "destination": "/restaurant/landing.html"
-      },
-      {
         "source": "/restaurant/login",
         "destination": "/restaurant/index.html"
       },
@@ -72,6 +64,16 @@
     }
   ],
   "redirects": [
+    {
+      "source": "/restaurant",
+      "destination": "/restaurant/landing.html",
+      "permanent": false
+    },
+    {
+      "source": "/restaurant/",
+      "destination": "/restaurant/landing.html",
+      "permanent": false
+    },
     {
       "source": "/:path*",
       "has": [
