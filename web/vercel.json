@@ -50,15 +50,35 @@
         "source": "/restaurant/dashboard",
         "destination": "/restaurant/login.html"
       },
-    {
-      "source": "/api/auth/verify-token",
-      "destination": "/api/auth"
-    },
-    {
-      "source": "/api/auth/magic-link",
-      "destination": "/api/auth"
-    }
-  ],
+      {
+        "source": "/api/auth/verify-token",
+        "destination": "/api/auth"
+      },
+      {
+        "source": "/api/auth/magic-link",
+        "destination": "/api/auth"
+      },
+      {
+        "source": "/:path*",
+        "has": [
+          {
+            "type": "host",
+            "value": "merchants.movescrow.com"
+          }
+        ],
+        "destination": "/restaurant/:path*"
+      },
+      {
+        "source": "/",
+        "has": [
+          {
+            "type": "host",
+            "value": "merchants.movescrow.com"
+          }
+        ],
+        "destination": "/restaurant/index.html"
+      }
+    ],
   "redirects": [
     {
       "source": "/restaurant/:path*",
@@ -80,28 +100,6 @@
       ],
       "destination": "https://www.movescrow.com/:path*",
       "permanent": true
-    },
-    {
-      "source": "/:path*",
-      "has": [
-        {
-          "type": "host",
-          "value": "merchants.movescrow.com"
-        }
-      ],
-      "destination": "/restaurant/:path*",
-      "permanent": false
-    },
-    {
-      "source": "/",
-      "has": [
-        {
-          "type": "host",
-          "value": "merchants.movescrow.com"
-        }
-      ],
-      "destination": "/restaurant/index.html",
-      "permanent": false
     }
   ]
 }
