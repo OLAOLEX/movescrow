@@ -98,7 +98,9 @@
   
   <!-- Immediate inline script to handle timeout before module loads -->
   <script>
-    // This runs IMMEDIATELY, before anything else
+    // Check if URL has #login hash (from landing page)
+    const showLoginDirectly = window.location.hash === '#login';
+    
     setTimeout(function() {
       var ls = document.getElementById('loading-screen');
       var login = document.getElementById('login-screen');
@@ -112,7 +114,7 @@
           login.classList.remove('hidden');
         }
       }
-    }, 400);
+    }, showLoginDirectly ? 0 : 400);
   </script>
   
   <!-- Supabase Client -->

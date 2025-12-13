@@ -45,11 +45,15 @@
       ]
     }
   ],
-  "rewrites": [
-    {
-      "source": "/restaurant",
-      "destination": "/restaurant/index.html"
-    },
+    "rewrites": [
+      {
+        "source": "/restaurant",
+        "destination": "/restaurant/landing.html"
+      },
+      {
+        "source": "/restaurant/dashboard",
+        "destination": "/restaurant/index.html"
+      },
     {
       "source": "/api/auth/verify-token",
       "destination": "/api/auth"
