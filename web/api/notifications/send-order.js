@@ -138,19 +138,26 @@ ${order.delivery_address ? `📍 Delivery: ${order.delivery_address}\n` : ''}${o
 Tap below to view and respond:`;
 
       try {
-        // Send simple WhatsApp message with link to restaurant dashboard
-        // Restaurants access via dedicated dashboard (simpler than WhatsApp Flow)
-        const messageWithLink = `${messageText}
-
-👉 View order: ${magicLink}
-
-Or visit: ${baseUrl}/restaurant`;
-        await sendWhatsApp(restaurant.whatsapp_phone, messageWithLink);
+        // PRIMARY: Try button first (works if domain whitelisted)
+        const buttonResult = await sendWhatsAppWithButton(
+          restaurant.whatsapp_phone,
+          messageText,
+          deepLinkUrl,
+          'View & Respond'
+        );
         notificationSent = true;
-        console.log('WhatsApp notification sent with dashboard link');
-      } catch (whatsappError) {
-        console.error('WhatsApp send error:', whatsappError);
-        errorDetails.push(`WhatsApp failed: ${whatsappError.message}`);
+        console.log('WhatsApp button sent successfully:', buttonResult);
+      } catch (buttonError) {
+        console.error('Button failed, using plain link fallback:', buttonError.message);
+        try {
+          // FALLBACK: Plain link only if button fails
+          await sendWhatsApp(restaurant.whatsapp_phone, `🍽️ New order received.\nTap below to view: ${magicLink}`);
+          notificationSent = true;
+          console.log('WhatsApp plain link sent as fallback');
+        } catch (linkError) {
+          console.error('Plain link also failed:', linkError);
+          errorDetails.push(`WhatsApp failed: Button(${buttonError.message}), Link(${linkError.message})`);
+        }
       }
     } else if ((notificationPreference === 'whatsapp' || !notificationSent) && !restaurant.whatsapp_phone) {
       errorDetails.push('WhatsApp preferred but restaurant WhatsApp phone not set');
