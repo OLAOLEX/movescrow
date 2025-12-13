@@ -51,6 +51,14 @@
         "destination": "/restaurant/landing.html"
       },
       {
+        "source": "/restaurant/",
+        "destination": "/restaurant/landing.html"
+      },
+      {
+        "source": "/restaurant/login",
+        "destination": "/restaurant/index.html"
+      },
+      {
         "source": "/restaurant/dashboard",
         "destination": "/restaurant/index.html"
       },
