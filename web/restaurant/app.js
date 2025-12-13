@@ -1201,16 +1201,42 @@ function subscribeToChat(orderId) {
 // ============================================
 
 function formatTime(timestamp) {
-  if (!timestamp) return '';
+  if (!timestamp) return 'N/A';
   const date = new Date(timestamp);
   const now = new Date();
-  const diff = now - date;
-  const minutes = Math.floor(diff / 60000);
+  const diffMs = now - date;
+  const diffMins = Math.floor(diffMs / 60000);
+  
+  if (diffMins < 1) return 'Just now';
+  if (diffMins < 60) return `${diffMins}m ago`;
+  if (diffMins < 1440) return `${Math.floor(diffMins / 60)}h ago`;
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
 
-  if (minutes < 1) return 'Just now';
-  if (minutes < 60) return `${minutes}m ago`;
-  if (minutes < 1440) return `${Math.floor(minutes / 60)}h ago`;
-  return date.toLocaleDateString();
+function formatStatus(status) {
+  const statusMap = {
+    'pending': 'Pending',
+    'paid': 'Paid',
+    'preparing': 'Preparing',
+    'ready': 'Ready',
+    'picked_up': 'Picked Up',
+    'delivered': 'Delivered',
+    'cancelled': 'Cancelled'
+  };
+  return statusMap[status] || status;
+}
+
+function formatOrderItems(items) {
+  if (!items) return 'N/A';
+  try {
+    const itemsList = typeof items === 'string' ? JSON.parse(items) : items;
+    if (Array.isArray(itemsList)) {
+      return itemsList.map(item => `${item.name || item.item_name} × ${item.quantity}`).join(', ');
+    }
+    return String(items);
+  } catch {
+    return String(items);
+  }
 }
 
 function escapeHtml(text) {
