@@ -61,6 +61,16 @@
   ],
   "redirects": [
     {
+      "source": "/restaurant/:path*",
+      "destination": "https://merchants.movescrow.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/restaurant",
+      "destination": "https://merchants.movescrow.com",
+      "permanent": true
+    },
+    {
       "source": "/:path*",
       "has": [
         {
@@ -70,6 +80,28 @@
       ],
       "destination": "https://www.movescrow.com/:path*",
       "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "merchants.movescrow.com"
+        }
+      ],
+      "destination": "/restaurant/:path*",
+      "permanent": false
+    },
+    {
+      "source": "/",
+      "has": [
+        {
+          "type": "host",
+          "value": "merchants.movescrow.com"
+        }
+      ],
+      "destination": "/restaurant/index.html",
+      "permanent": false
     }
   ]
 }
