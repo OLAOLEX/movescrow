@@ -922,29 +922,52 @@ function renderOrders(orders) {
     return;
   }
 
-  ordersList.innerHTML = orders.map(order => `
-    <div class="order-card" data-order-id="${order.id}">
+  ordersList.innerHTML = orders.map((order, index) => `
+    <div class="order-card" data-order-id="${order.id}" style="animation-delay: ${index * 50}ms">
       <div class="order-card-header">
-        <span class="order-number">${order.order_number}</span>
-        <span class="status-badge ${order.status.replace('_', '-')}">${order.status}</span>
+        <div>
+          <span class="order-number">${order.order_ref || order.order_number || `Order #${order.id.slice(0, 8)}`}</span>
+          <span class="order-time">${formatTime(order.created_at)}</span>
+        </div>
+        <span class="status-badge status-${order.status.replace('_', '-')}">${formatStatus(order.status)}</span>
       </div>
-      <div class="order-info">
-        <div class="order-info-item">
-          <span>Customer:</span>
-          <strong>${order.customer_whatsapp || 'N/A'}</strong>
+      <div class="order-details">
+        <div class="order-detail-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span class="order-detail-label">Customer</span>
+          <span class="order-detail-value">${order.customer_name || order.customer_code || 'N/A'}</span>
         </div>
-        <div class="order-info-item">
-          <span>Amount:</span>
-          <strong>₦${parseFloat(order.total_amount || 0).toLocaleString()}</strong>
+        <div class="order-detail-row">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="1" x2="12" y2="23"></line>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+          </svg>
+          <span class="order-detail-label">Amount</span>
+          <span class="order-detail-value amount">₦${parseFloat(order.total_amount || 0).toLocaleString()}</span>
         </div>
-        <div class="order-info-item">
-          <span>Time:</span>
-          <span>${formatTime(order.created_at)}</span>
+        ${order.items ? `
+        <div class="order-items">
+          <span class="order-items-label">Items:</span>
+          <div class="order-items-list">${formatOrderItems(order.items)}</div>
         </div>
+        ` : ''}
       </div>
       <div class="order-actions">
-        <button class="btn btn-primary" onclick="openChat('${order.id}')">View Chat</button>
-        <button class="btn btn-secondary" onclick="updateOrderStatus('${order.id}')">Update Status</button>
+        <button class="btn btn-primary btn-sm" onclick="openChat('${order.id}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Chat
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="updateOrderStatus('${order.id}')">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Update
+        </button>
       </div>
     </div>
   `).join('');
