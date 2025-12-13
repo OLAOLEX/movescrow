@@ -47,12 +47,8 @@
   ],
     "rewrites": [
       {
-        "source": "/restaurant/login",
-        "destination": "/restaurant/index.html"
-      },
-      {
         "source": "/restaurant/dashboard",
-        "destination": "/restaurant/index.html"
+        "destination": "/restaurant/login.html"
       },
     {
       "source": "/api/auth/verify-token",
@@ -64,16 +60,6 @@
     }
   ],
   "redirects": [
-    {
-      "source": "/restaurant",
-      "destination": "/restaurant/landing.html",
-      "permanent": false
-    },
-    {
-      "source": "/restaurant/",
-      "destination": "/restaurant/landing.html",
-      "permanent": false
-    },
     {
       "source": "/:path*",
       "has": [
