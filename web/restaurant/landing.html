@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Partner with Movescrow - Grow Your Restaurant Business</title>
+  <meta name="description" content="Join Movescrow to reach more customers, manage orders easily, and grow your restaurant business">
+  <link rel="icon" type="image/png" href="/icons/Icon-192.png">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      line-height: 1.6;
+      color: #212121;
+      overflow-x: hidden;
+    }
+    .hero {
+      background: linear-gradient(135deg, #1E3A5F 0%, #0F2A4F 100%);
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255, 107, 53, 0.1) 0%, transparent 70%);
+      animation: pulse 8s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    .hero-content {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      letter-spacing: -1px;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      margin-bottom: 2rem;
+      opacity: 0.9;
+    }
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .btn {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-primary {
+      background: #FF6B35;
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #E55A2B;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(255, 107, 53, 0.4);
+    }
+    .btn-secondary {
+      background: white;
+      color: #1E3A5F;
+    }
+    .btn-secondary:hover {
+      background: #f5f5f5;
+      transform: translateY(-2px);
+    }
+    .features {
+      padding: 4rem 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .features h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      color: #1E3A5F;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+    .feature-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+    .feature-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: linear-gradient(135deg, #1E3A5F, #FF6B35);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+    }
+    .feature-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+      color: #1E3A5F;
+    }
+    .feature-card p {
+      color: #666;
+    }
+    .how-it-works {
+      background: #f5f5f5;
+      padding: 4rem 2rem;
+    }
+    .how-it-works-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .how-it-works h2 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 3rem;
+      color: #1E3A5F;
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+    }
+    .step {
+      text-align: center;
+    }
+    .step-number {
+      width: 60px;
+      height: 60px;
+      background: #FF6B35;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin: 0 auto 1rem;
+    }
+    .step h3 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: #1E3A5F;
+    }
+    .step p {
+      color: #666;
+    }
+    .stats {
+      background: #1E3A5F;
+      color: white;
+      padding: 3rem 2rem;
+      text-align: center;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .stat {
+      padding: 1.5rem;
+    }
+    .stat-number {
+      font-size: 3rem;
+      font-weight: 700;
+      color: #FF6B35;
+      margin-bottom: 0.5rem;
+    }
+    .stat-label {
+      font-size: 1rem;
+      opacity: 0.9;
+    }
+    .footer {
+      background: #0F2A4F;
+      color: white;
+      padding: 2rem;
+      text-align: center;
+    }
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .hero p { font-size: 1rem; }
+      .features h2, .how-it-works h2 { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Grow Your Restaurant with Movescrow</h1>
+      <p>Reach more customers, manage orders easily, and boost your sales. Join Nigeria's trusted food delivery platform.</p>
+      <div class="cta-buttons">
+        <a href="index.html" class="btn btn-primary">Get Started Free</a>
+        <a href="#features" class="btn btn-secondary">Learn More</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <h2>Why Restaurants Choose Movescrow</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">📱</div>
+        <h3>Easy Order Management</h3>
+        <p>Simple dashboard to view, accept, and manage orders. No app installation needed - works in your browser.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Fast Payments</h3>
+        <p>Get paid quickly after order pickup. Secure escrow system ensures you receive payment on time.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Grow Your Business</h3>
+        <p>Reach thousands of customers in your area. Increase orders and revenue with our platform.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔔</div>
+        <h3>Instant Notifications</h3>
+        <p>Get notified immediately when new orders arrive via WhatsApp or SMS. Never miss an order.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💬</div>
+        <h3>Customer Chat</h3>
+        <p>Communicate directly with customers for special requests, order updates, and support.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Track Performance</h3>
+        <p>View your earnings, order history, and analytics to understand your business better.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="how-it-works-content">
+      <h2>How It Works</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>Sign Up</h3>
+          <p>Register your restaurant with just your phone number. No complex setup required.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>Receive Orders</h3>
+          <p>Get instant notifications when customers place orders. View details in your dashboard.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>Accept & Prepare</h3>
+          <p>Accept orders, set prices, and prepare food. Update order status as you go.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">4</div>
+          <h3>Get Paid</h3>
+          <p>Receive payment automatically after order pickup. Track all earnings in one place.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stats Section -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat">
+        <div class="stat-number">0%</div>
+        <div class="stat-label">Commission Fee</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Support Available</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">Fast</div>
+        <div class="stat-label">Payment Processing</div>
+      </div>
+      <div class="stat">
+        <div class="stat-number">Free</div>
+        <div class="stat-label">To Get Started</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="hero" style="padding: 3rem 2rem;">
+    <div class="hero-content">
+      <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Ready to Grow Your Restaurant?</h2>
+      <p style="font-size: 1.25rem; margin-bottom: 2rem;">Join Movescrow today and start receiving orders in minutes.</p>
+      <a href="index.html" class="btn btn-primary" style="font-size: 1.125rem; padding: 1.25rem 2.5rem;">Start Free →</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>&copy; 2025 Movescrow. All rights reserved.</p>
+  </footer>
+</body>
+</html>
+
