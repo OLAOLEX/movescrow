@@ -87,6 +87,8 @@ body {
   color: var(--gray-900);
   background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   overflow-x: hidden;
 }
 
@@ -141,6 +143,8 @@ body {
    ======================================== */
 .login-screen {
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -421,6 +425,8 @@ body {
    ======================================== */
 .dashboard {
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -1278,6 +1284,8 @@ body {
   color: var(--gray-900);
   background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   overflow-x: hidden;
 }
 
@@ -1332,6 +1340,8 @@ body {
    ======================================== */
 .login-screen {
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1612,6 +1622,8 @@ body {
    ======================================== */
 .dashboard {
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -2471,6 +2483,8 @@ body {
   color: var(--gray-900);
   background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   overflow-x: hidden;
 }
 
@@ -2525,6 +2539,8 @@ body {
    ======================================== */
 .login-screen {
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2805,6 +2821,8 @@ body {
    ======================================== */
 .dashboard {
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
@@ -3662,6 +3680,8 @@ body {
   color: var(--gray-900);
   background: linear-gradient(135deg, #FAFAFA 0%, #F5F5F5 100%);
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   overflow-x: hidden;
 }
 
@@ -3716,6 +3736,8 @@ body {
    ======================================== */
 .login-screen {
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -3996,6 +4018,8 @@ body {
    ======================================== */
 .dashboard {
   min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
 }
