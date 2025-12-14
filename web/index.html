@@ -6,36 +6,21 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="facebook-domain-verification" content="uj7gdtdw8kglzw9q2u7nlbd5v41zy7" />
   
-  <!-- SEO Meta Tags -->
   <title>Movescrow - Secure Package & Food Delivery Platform | Nigeria</title>
-  <meta name="description" content="Movescrow is Nigeria's secure, escrow-protected delivery platform. Send packages, order food, and track deliveries in real-time. Fast, safe, and reliable.">
+  <meta name="description" content="Nigeria's most trusted peer-to-peer delivery platform. Food-Safe Certified movers. Escrow protection. Real-time tracking. Fast delivery.">
   <meta name="keywords" content="package delivery, food delivery, document delivery, escrow delivery, secure delivery, Nigeria delivery, Lagos delivery, Movescrow">
-  <meta name="author" content="Movescrow">
-  <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#1E3A5F">
   
   <link rel="canonical" href="https://www.movescrow.com/">
-  <meta name="geo.region" content="NG-LA">
-  <meta name="geo.placename" content="Lagos, Nigeria">
-  
-  <!-- Open Graph / Facebook -->
-  <meta property="og:type" content="website">
-  <meta property="og:url" content="https://www.movescrow.com/">
-  <meta property="og:title" content="Movescrow - Secure Package & Food Delivery Platform">
-  <meta property="og:description" content="Nigeria's secure, escrow-protected delivery platform. Fast, safe, and reliable.">
-  <meta property="og:image" content="https://www.movescrow.com/icons/Icon-512.png">
-  
-  <!-- Twitter -->
-  <meta property="twitter:card" content="summary_large_image">
-  <meta property="twitter:url" content="https://www.movescrow.com/">
-  <meta property="twitter:title" content="Movescrow - Secure Package & Food Delivery Platform">
-  <meta property="twitter:description" content="Nigeria's secure, escrow-protected delivery platform. Fast, safe, and reliable.">
-  <meta property="twitter:image" content="https://www.movescrow.com/icons/Icon-512.png">
-  
   <link rel="icon" type="image/png" href="favicon.png">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
   
-  <!-- Structured Data -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.movescrow.com/">
+  <meta property="og:title" content="Movescrow - Secure Package & Food Delivery Platform">
+  <meta property="og:description" content="Nigeria's most trusted peer-to-peer delivery platform. Food-Safe Certified movers. Escrow protection. Real-time tracking.">
+  <meta property="og:image" content="https://www.movescrow.com/icons/Icon-512.png">
+  
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -43,21 +28,27 @@
     "name": "Movescrow",
     "url": "https://www.movescrow.com",
     "logo": "https://www.movescrow.com/icons/Icon-512.png",
-    "description": "Secure, escrow-protected delivery platform for packages, food, and documents",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "Customer Service",
-      "email": "support@movescrow.com"
-    }
+    "description": "Secure, escrow-protected delivery platform for packages, food, and documents"
   }
   </script>
   
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --primary-blue: #1E3A5F;
+      --primary-blue-dark: #0F2A4F;
+      --accent-orange: #FF6B35;
+      --accent-orange-dark: #E55A2B;
+      --success-green: #28A745;
+      --text-dark: #212529;
+      --text-gray: #666;
+      --bg-light: #F5F5F5;
+      --white: #FFFFFF;
+    }
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
       line-height: 1.6;
-      color: #212121;
+      color: var(--text-dark);
       overflow-x: hidden;
     }
     .nav {
@@ -65,7 +56,7 @@
       top: 0;
       left: 0;
       right: 0;
-      background: rgba(30, 58, 95, 0.95);
+      background: rgba(30, 58, 95, 0.98);
       backdrop-filter: blur(10px);
       padding: 1rem 2rem;
       z-index: 1000;
@@ -83,12 +74,9 @@
       color: white;
       text-decoration: none;
     }
-    .nav-logo img {
-      width: 40px;
-      height: 40px;
-    }
+    .nav-logo img { width: 40px; height: 40px; }
     .nav-logo span:first-child { color: white; }
-    .nav-logo span:last-child { color: #FF6B35; }
+    .nav-logo span:last-child { color: var(--accent-orange); }
     .nav-links {
       display: flex;
       gap: 2rem;
@@ -101,8 +89,9 @@
       transition: opacity 0.3s;
     }
     .nav-links a:hover { opacity: 0.8; }
+    .nav-links a.primary-link { color: var(--accent-orange); }
     .btn-nav {
-      background: #FF6B35;
+      background: var(--accent-orange);
       color: white;
       padding: 0.625rem 1.5rem;
       border-radius: 8px;
@@ -111,20 +100,20 @@
       transition: all 0.3s;
     }
     .btn-nav:hover {
-      background: #E55A2B;
+      background: var(--accent-orange-dark);
       transform: translateY(-2px);
     }
+    .menu-toggle { display: none; color: white; font-size: 1.5rem; cursor: pointer; }
+    
     .hero {
-      background: linear-gradient(135deg, #1E3A5F 0%, #0F2A4F 100%);
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
       color: white;
       padding: 8rem 2rem 4rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
       min-height: 90vh;
       display: flex;
       align-items: center;
-      justify-content: center;
+      position: relative;
+      overflow: hidden;
     }
     .hero::before {
       content: '';
@@ -141,34 +130,476 @@
       50% { transform: scale(1.1) rotate(180deg); opacity: 0.8; }
     }
     .hero-content {
-      max-width: 900px;
+      max-width: 1200px;
       margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
       position: relative;
       z-index: 1;
     }
-    .hero h1 {
+    .hero-text h1 {
       font-size: clamp(2.5rem, 5vw, 4rem);
       font-weight: 700;
       margin-bottom: 1.5rem;
-      letter-spacing: -2px;
       line-height: 1.1;
     }
-    .hero h1 span:first-child { color: white; }
-    .hero h1 span:last-child { color: #FF6B35; }
-    .hero p {
+    .hero-text p {
       font-size: clamp(1.125rem, 2vw, 1.5rem);
-      margin-bottom: 2.5rem;
+      margin-bottom: 2rem;
       opacity: 0.95;
+    }
+    .hero-features {
+      list-style: none;
+      margin-bottom: 2.5rem;
+    }
+    .hero-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+      font-size: 1.125rem;
+    }
+    .hero-features li::before {
+      content: '✓';
+      color: var(--accent-orange);
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .hero-visual {
+      text-align: center;
+    }
+    .hero-visual img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 16px;
+    }
+    .trust-stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem;
+      max-width: 1000px;
+      margin: -3rem auto 0;
+      position: relative;
+      z-index: 2;
+    }
+    .trust-stat {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+    .trust-stat-number {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 0.5rem;
+    }
+    .trust-stat-label {
+      color: var(--text-gray);
+      font-size: 0.9375rem;
+    }
+    
+    .section {
+      padding: 6rem 2rem;
+    }
+    .section-title {
+      text-align: center;
+      font-size: clamp(2rem, 4vw, 3rem);
+      font-weight: 700;
+      color: var(--primary-blue);
+      margin-bottom: 1rem;
+    }
+    .section-subtitle {
+      text-align: center;
+      font-size: 1.25rem;
+      color: var(--text-gray);
+      margin-bottom: 4rem;
       max-width: 700px;
       margin-left: auto;
       margin-right: auto;
     }
-    .hero-buttons {
+    
+    .value-props {
+      background: var(--white);
+    }
+    .value-props-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .value-prop-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      transition: all 0.3s;
+      border: 1px solid #f0f0f0;
+    }
+    .value-prop-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
+    }
+    .value-prop-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
+    }
+    .value-prop-icon.green { background: rgba(40, 167, 69, 0.1); }
+    .value-prop-icon.blue { background: rgba(30, 58, 95, 0.1); }
+    .value-prop-icon.orange { background: rgba(255, 107, 53, 0.1); }
+    .value-prop-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary-blue);
+      font-weight: 700;
+    }
+    .value-prop-card p {
+      color: var(--text-gray);
+      line-height: 1.7;
+      margin-bottom: 1rem;
+    }
+    .value-prop-card a {
+      color: var(--primary-blue);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    
+    .food-section {
+      background: var(--bg-light);
+    }
+    .food-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto 3rem;
+    }
+    .food-feature {
+      background: white;
+      padding: 2rem;
+      border-radius: 12px;
+      text-align: center;
+    }
+    .food-feature-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .food-feature h4 {
+      font-size: 1.25rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-blue);
+    }
+    .food-feature p {
+      color: var(--text-gray);
+      font-size: 0.9375rem;
+    }
+    .food-ctas {
+      text-align: center;
       display: flex;
       gap: 1rem;
       justify-content: center;
       flex-wrap: wrap;
     }
+    
+    .user-types {
+      background: var(--white);
+    }
+    .user-tabs {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 3rem;
+      flex-wrap: wrap;
+    }
+    .user-tab {
+      padding: 1rem 2rem;
+      background: var(--bg-light);
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: var(--text-gray);
+    }
+    .user-tab.active {
+      background: var(--primary-blue);
+      color: white;
+    }
+    .user-content {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .user-panel {
+      display: none;
+    }
+    .user-panel.active {
+      display: block;
+    }
+    .user-panel h3 {
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      color: var(--primary-blue);
+      text-align: center;
+    }
+    .user-features {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .user-feature {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+    .user-feature-icon {
+      font-size: 1.5rem;
+      color: var(--accent-orange);
+    }
+    .user-feature-text h4 {
+      margin-bottom: 0.5rem;
+      color: var(--primary-blue);
+    }
+    .user-feature-text p {
+      color: var(--text-gray);
+      font-size: 0.9375rem;
+    }
+    
+    .security-section {
+      background: var(--bg-light);
+    }
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .security-card {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    .security-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .security-card h4 {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary-blue);
+    }
+    .security-card p {
+      color: var(--text-gray);
+      line-height: 1.7;
+    }
+    
+    .how-it-works {
+      background: var(--white);
+    }
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .step {
+      text-align: center;
+      position: relative;
+    }
+    .step-number {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--accent-orange), var(--accent-orange-dark));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      font-weight: 700;
+      margin: 0 auto 1.5rem;
+      box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+    }
+    .step h4 {
+      font-size: 1.375rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary-blue);
+      font-weight: 700;
+    }
+    .step p {
+      color: var(--text-gray);
+      line-height: 1.7;
+    }
+    
+    .pricing-section {
+      background: var(--bg-light);
+    }
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .pricing-card {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .pricing-card h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-blue);
+    }
+    .pricing-list {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+    .pricing-list li {
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+      color: var(--text-gray);
+    }
+    .pricing-list li:last-child {
+      border-bottom: none;
+    }
+    
+    .testimonials {
+      background: var(--white);
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .testimonial {
+      background: var(--bg-light);
+      padding: 2rem;
+      border-radius: 16px;
+    }
+    .testimonial-text {
+      font-style: italic;
+      margin-bottom: 1rem;
+      color: var(--text-dark);
+    }
+    .testimonial-author {
+      font-weight: 600;
+      color: var(--primary-blue);
+    }
+    
+    .download-section {
+      background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+      color: white;
+      padding: 6rem 2rem;
+    }
+    .download-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+    .download-text h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 1.5rem;
+    }
+    .download-features {
+      list-style: none;
+      margin-bottom: 2rem;
+    }
+    .download-features li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+    .download-features li::before {
+      content: '✓';
+      color: var(--accent-orange);
+      font-weight: 700;
+    }
+    .download-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    
+    .faq-section {
+      background: var(--bg-light);
+    }
+    .faq-list {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .faq-item {
+      background: white;
+      margin-bottom: 1rem;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .faq-question {
+      padding: 1.5rem;
+      font-weight: 600;
+      color: var(--primary-blue);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .faq-answer {
+      padding: 0 1.5rem 1.5rem;
+      color: var(--text-gray);
+      display: none;
+    }
+    .faq-item.active .faq-answer {
+      display: block;
+    }
+    
+    .final-cta {
+      background: var(--accent-orange);
+      color: white;
+      padding: 6rem 2rem;
+      text-align: center;
+    }
+    .final-cta h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 1.5rem;
+    }
+    .final-cta p {
+      font-size: 1.25rem;
+      margin-bottom: 2.5rem;
+      opacity: 0.95;
+    }
+    .final-cta-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
     .btn {
       padding: 1rem 2.5rem;
       font-size: 1.125rem;
@@ -183,199 +614,45 @@
       gap: 0.5rem;
     }
     .btn-primary {
-      background: #FF6B35;
+      background: var(--accent-orange);
       color: white;
       box-shadow: 0 4px 20px rgba(255, 107, 53, 0.4);
     }
     .btn-primary:hover {
-      background: #E55A2B;
+      background: var(--accent-orange-dark);
       transform: translateY(-3px);
       box-shadow: 0 6px 30px rgba(255, 107, 53, 0.5);
     }
     .btn-secondary {
-      background: white;
-      color: #1E3A5F;
+      background: var(--primary-blue);
+      color: white;
     }
     .btn-secondary:hover {
-      background: #f5f5f5;
+      background: var(--primary-blue-dark);
       transform: translateY(-3px);
     }
-    .features {
-      padding: 6rem 2rem;
-      max-width: 1200px;
-      margin: 0 auto;
+    .btn-outline {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
     }
-    .features h2 {
-      text-align: center;
-      font-size: clamp(2rem, 4vw, 3rem);
-      margin-bottom: 1rem;
-      color: #1E3A5F;
-      font-weight: 700;
-    }
-    .features-subtitle {
-      text-align: center;
-      font-size: 1.25rem;
-      color: #666;
-      margin-bottom: 4rem;
-    }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 2rem;
-    }
-    .feature-card {
+    .btn-outline:hover {
       background: white;
-      padding: 2.5rem;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-      transition: all 0.3s;
-      border: 1px solid #f0f0f0;
+      color: var(--accent-orange);
     }
-    .feature-card:hover {
-      transform: translateY(-8px);
-      box-shadow: 0 8px 40px rgba(0,0,0,0.12);
-    }
-    .feature-icon {
-      width: 70px;
-      height: 70px;
-      background: linear-gradient(135deg, #1E3A5F, #FF6B35);
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
-    }
-    .feature-card h3 {
-      font-size: 1.5rem;
-      margin-bottom: 0.75rem;
-      color: #1E3A5F;
-      font-weight: 700;
-    }
-    .feature-card p {
-      color: #666;
-      line-height: 1.7;
-    }
-    .how-it-works {
-      background: #f8f9fa;
-      padding: 6rem 2rem;
-    }
-    .how-it-works-content {
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .how-it-works h2 {
-      text-align: center;
-      font-size: clamp(2rem, 4vw, 3rem);
-      margin-bottom: 1rem;
-      color: #1E3A5F;
-      font-weight: 700;
-    }
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 2rem;
-      margin-top: 4rem;
-    }
-    .step {
-      text-align: center;
-      background: white;
-      padding: 2rem;
-      border-radius: 16px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    .step-number {
-      width: 70px;
-      height: 70px;
-      background: linear-gradient(135deg, #FF6B35, #E55A2B);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2rem;
-      font-weight: 700;
-      margin: 0 auto 1.5rem;
-      box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
-    }
-    .step h3 {
-      font-size: 1.375rem;
-      margin-bottom: 0.75rem;
-      color: #1E3A5F;
-      font-weight: 700;
-    }
-    .step p {
-      color: #666;
-      line-height: 1.7;
-    }
-    .trust {
-      background: #1E3A5F;
-      color: white;
-      padding: 4rem 2rem;
-      text-align: center;
-    }
-    .trust-content {
-      max-width: 1000px;
-      margin: 0 auto;
-    }
-    .trust h2 {
-      font-size: clamp(2rem, 4vw, 2.5rem);
-      margin-bottom: 3rem;
-      font-weight: 700;
-    }
-    .trust-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 2rem;
-    }
-    .trust-item {
-      padding: 1.5rem;
-    }
-    .trust-icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-    }
-    .trust-item h3 {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-      font-weight: 700;
-    }
-    .trust-item p {
-      opacity: 0.9;
-      font-size: 0.9375rem;
-    }
-    .cta-section {
-      background: linear-gradient(135deg, #1E3A5F 0%, #0F2A4F 100%);
-      color: white;
-      padding: 6rem 2rem;
-      text-align: center;
-    }
-    .cta-content {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-    .cta-content h2 {
-      font-size: clamp(2rem, 4vw, 3rem);
-      margin-bottom: 1.5rem;
-      font-weight: 700;
-    }
-    .cta-content p {
-      font-size: 1.25rem;
-      margin-bottom: 2.5rem;
-      opacity: 0.95;
-    }
+    
     .footer {
-      background: #0F2A4F;
+      background: var(--primary-blue-dark);
       color: white;
-      padding: 3rem 2rem 2rem;
+      padding: 4rem 2rem 2rem;
     }
     .footer-content {
       max-width: 1200px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 3rem;
-      margin-bottom: 2rem;
+      margin-bottom: 3rem;
     }
     .footer-section h3 {
       margin-bottom: 1rem;
@@ -389,7 +666,7 @@
       transition: color 0.3s;
     }
     .footer-section a:hover {
-      color: #FF6B35;
+      color: var(--accent-orange);
     }
     .footer-bottom {
       text-align: center;
@@ -397,11 +674,18 @@
       border-top: 1px solid rgba(255,255,255,0.1);
       color: rgba(255,255,255,0.6);
     }
+    
     @media (max-width: 768px) {
       .nav { padding: 1rem; }
       .nav-links { display: none; }
-      .hero { padding: 6rem 1rem 3rem; min-height: 80vh; }
-      .features, .how-it-works, .cta-section { padding: 4rem 1rem; }
+      .menu-toggle { display: block; }
+      .hero-content { grid-template-columns: 1fr; }
+      .hero { padding: 6rem 1rem 3rem; min-height: auto; }
+      .trust-stats { grid-template-columns: 1fr; margin-top: 2rem; }
+      .section { padding: 4rem 1rem; }
+      .download-content { grid-template-columns: 1fr; }
+      .hero-buttons, .final-cta-buttons { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -413,169 +697,529 @@
       <span>Move</span><span>scrow</span>
     </a>
     <div class="nav-links">
-      <a href="#features">Features</a>
-      <a href="#how-it-works">How It Works</a>
+      <a href="#food" class="primary-link">Order Food</a>
+      <a href="#movers">Become a Mover</a>
       <a href="https://merchants.movescrow.com">For Merchants</a>
-      <a href="#contact">Contact</a>
-      <a href="#" class="btn-nav">Download App</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#about">About</a>
+      <a href="#signin">Sign In</a>
+      <a href="#get-started" class="btn-nav">Get Started</a>
     </div>
+    <div class="menu-toggle">☰</div>
   </nav>
 
   <!-- Hero Section -->
   <section class="hero">
     <div class="hero-content">
-      <h1>
-        <span>Secure Delivery.</span><br>
-        <span>Fast Service.</span><br>
-        <span>Trusted Platform.</span>
-      </h1>
-      <p>Nigeria's premier escrow-protected delivery platform. Send packages, order food, and track everything in real-time. Your security is our priority.</p>
-      <div class="hero-buttons">
-        <a href="#" class="btn btn-primary">Download App</a>
-        <a href="#how-it-works" class="btn btn-secondary">Learn More</a>
+      <div class="hero-text">
+        <h1>Deliver. Secure. Run.</h1>
+        <p>Nigeria's most trusted peer-to-peer delivery platform. Food-Safe Certified movers. Escrow protection. Real-time tracking.</p>
+        <ul class="hero-features">
+          <li>Food-Safe Certified Movers Only</li>
+          <li>Escrow Protection (Your money is safe)</li>
+          <li>Real-Time GPS Tracking</li>
+          <li>Fast Delivery (Average 30-45 min)</li>
+        </ul>
+        <div class="hero-buttons">
+          <a href="#food" class="btn btn-primary">Order Food Now</a>
+          <a href="#movers" class="btn btn-secondary">Become a Mover</a>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div style="background: linear-gradient(135deg, rgba(255,107,53,0.2), rgba(30,58,95,0.2)); height: 400px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 4rem;">🚴</div>
       </div>
     </div>
   </section>
 
-  <!-- Features Section -->
-  <section class="features" id="features">
-    <h2>Why Choose Movescrow?</h2>
-    <p class="features-subtitle">Built for security, designed for speed</p>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Escrow Protection</h3>
-        <p>Your payment is held securely until delivery is confirmed. No scams, no worries.</p>
+  <!-- Trust Stats -->
+  <div class="trust-stats">
+    <div class="trust-stat">
+      <div class="trust-stat-number">10,000+</div>
+      <div class="trust-stat-label">Orders Delivered</div>
+    </div>
+    <div class="trust-stat">
+      <div class="trust-stat-number">4.8★</div>
+      <div class="trust-stat-label">Rating (2,000+ Reviews)</div>
+    </div>
+    <div class="trust-stat">
+      <div class="trust-stat-number">₦100K+</div>
+      <div class="trust-stat-label">Insurance Coverage</div>
+    </div>
+  </div>
+
+  <!-- Value Propositions -->
+  <section class="section value-props">
+    <h2 class="section-title">Why Movescrow?</h2>
+    <div class="value-props-grid">
+      <div class="value-prop-card">
+        <div class="value-prop-icon green">🛡️</div>
+        <h3>Food-Safe Certified Movers</h3>
+        <p>Only verified, trusted movers handle your food. 4.5+ rating, police clearance, zero tampering history.</p>
+        <a href="#movers">Learn More →</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">📍</div>
-        <h3>Real-Time Tracking</h3>
-        <p>Track your delivery live with GPS. Know exactly where your package is at all times.</p>
+      <div class="value-prop-card">
+        <div class="value-prop-icon blue">🔒</div>
+        <h3>100% Escrow Protection</h3>
+        <p>Your payment is held safely until delivery confirmed. Full refund if item not delivered or tampered.</p>
+        <a href="#how-it-works">How It Works →</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">⚡</div>
-        <h3>Fast Delivery</h3>
-        <p>Connect with verified movers in your area. Get your items delivered quickly and safely.</p>
+      <div class="value-prop-card">
+        <div class="value-prop-icon orange">📍</div>
+        <h3>Live GPS Tracking</h3>
+        <p>Track your order in real-time. Know exactly where your delivery is, every step of the way.</p>
+        <a href="#download">See Demo →</a>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">🍔</div>
-        <h3>Food Delivery</h3>
-        <p>Order from your favorite restaurants. Fast, fresh, and delivered to your door.</p>
+    </div>
+  </section>
+
+  <!-- Food Delivery Section -->
+  <section class="section food-section" id="food">
+    <h2 class="section-title">Order Food from Your Favorite Restaurants</h2>
+    <p class="section-subtitle">Fast, safe food delivery with Food-Safe Certified movers. Anonymous packaging. Tamper-proof seals. Guaranteed safety.</p>
+    <div class="food-features">
+      <div class="food-feature">
+        <div class="food-feature-icon">✅</div>
+        <h4>Verified Restaurants</h4>
+        <p>100+ partners</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">✅</div>
-        <h3>Verified Movers</h3>
-        <p>All movers are Food-Safe certified and background checked for your peace of mind.</p>
+      <div class="food-feature">
+        <div class="food-feature-icon">📦</div>
+        <h4>Anonymous Packaging</h4>
+        <p>Movers can't see contents</p>
       </div>
-      <div class="feature-card">
-        <div class="feature-icon">💬</div>
-        <h3>24/7 Support</h3>
-        <p>Our support team is always ready to help. Get assistance whenever you need it.</p>
+      <div class="food-feature">
+        <div class="food-feature-icon">🔐</div>
+        <h4>Breakable Seals</h4>
+        <p>Tamper-proof protection</p>
+      </div>
+      <div class="food-feature">
+        <div class="food-feature-icon">⚡</div>
+        <h4>Fast Delivery</h4>
+        <p>30-45 min average</p>
+      </div>
+      <div class="food-feature">
+        <div class="food-feature-icon">🛡️</div>
+        <h4>Insurance</h4>
+        <p>₦100K+ coverage</p>
+      </div>
+      <div class="food-feature">
+        <div class="food-feature-icon">📸</div>
+        <h4>Photo Proof</h4>
+        <p>Every pickup documented</p>
+      </div>
+    </div>
+    <div class="food-ctas">
+      <a href="#food" class="btn btn-primary">Browse Restaurants</a>
+      <a href="https://merchants.movescrow.com" class="btn btn-secondary">Partner with Us</a>
+    </div>
+  </section>
+
+  <!-- User Types Section -->
+  <section class="section user-types">
+    <h2 class="section-title">For Everyone</h2>
+    <div class="user-tabs">
+      <button class="user-tab active" data-tab="buyers">For Buyers</button>
+      <button class="user-tab" data-tab="movers">For Movers</button>
+      <button class="user-tab" data-tab="merchants">For Merchants</button>
+    </div>
+    <div class="user-content">
+      <div class="user-panel active" id="buyers">
+        <h3>Order Anything, Anytime</h3>
+        <div class="user-features">
+          <div class="user-feature">
+            <div class="user-feature-icon">🍔</div>
+            <div class="user-feature-text">
+              <h4>Food Delivery</h4>
+              <p>Order from restaurants</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">📄</div>
+            <div class="user-feature-text">
+              <h4>Document Delivery</h4>
+              <p>Send important documents</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">📦</div>
+            <div class="user-feature-text">
+              <h4>Package Delivery</h4>
+              <p>Send packages safely</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">✓</div>
+            <div class="user-feature-text">
+              <h4>Escrow Protection</h4>
+              <p>Your money is safe</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">📍</div>
+            <div class="user-feature-text">
+              <h4>Real-Time Tracking</h4>
+              <p>Track every delivery</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">📸</div>
+            <div class="user-feature-text">
+              <h4>Photo Proof</h4>
+              <p>At pickup and delivery</p>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <a href="#get-started" class="btn btn-primary">Start Ordering</a>
+        </div>
+      </div>
+      <div class="user-panel" id="movers">
+        <h3>Earn Money Delivering</h3>
+        <div class="user-features">
+          <div class="user-feature">
+            <div class="user-feature-icon">⏰</div>
+            <div class="user-feature-text">
+              <h4>Flexible Schedule</h4>
+              <p>Work when you want</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">🛡️</div>
+            <div class="user-feature-text">
+              <h4>Food-Safe Certification</h4>
+              <p>Higher earnings program</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">💰</div>
+            <div class="user-feature-text">
+              <h4>Higher Earnings</h4>
+              <p>For certified movers</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">💳</div>
+            <div class="user-feature-text">
+              <h4>Weekly Payments</h4>
+              <p>Get paid on time</p>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <a href="#movers" class="btn btn-primary">Become a Mover</a>
+        </div>
+      </div>
+      <div class="user-panel" id="merchants">
+        <h3>Grow Your Business</h3>
+        <div class="user-features">
+          <div class="user-feature">
+            <div class="user-feature-icon">📦</div>
+            <div class="user-feature-text">
+              <h4>Free Packaging</h4>
+              <p>Movescrow-branded (first 100)</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">📱</div>
+            <div class="user-feature-text">
+              <h4>Instant Notifications</h4>
+              <p>WhatsApp/SMS alerts</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">💰</div>
+            <div class="user-feature-text">
+              <h4>Zero Upfront Costs</h4>
+              <p>No subscription fees</p>
+            </div>
+          </div>
+          <div class="user-feature">
+            <div class="user-feature-icon">📈</div>
+            <div class="user-feature-text">
+              <h4>Marketing Support</h4>
+              <p>Reach more customers</p>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center;">
+          <a href="https://merchants.movescrow.com" class="btn btn-primary">Partner with Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Security Section -->
+  <section class="section security-section">
+    <h2 class="section-title">Your Safety is Our Priority</h2>
+    <div class="security-grid">
+      <div class="security-card">
+        <div class="security-icon">🔐</div>
+        <h4>OTP Verification</h4>
+        <p>Time-limited OTP sent to releaser. Mover must verify before pickup.</p>
+      </div>
+      <div class="security-card">
+        <div class="security-icon">📸</div>
+        <h4>Photo Evidence</h4>
+        <p>Mandatory photos at pickup/delivery. Complete audit trail for disputes.</p>
+      </div>
+      <div class="security-card">
+        <div class="security-icon">📍</div>
+        <h4>GPS Tracking</h4>
+        <p>Real-time location tracking. Route deviation alerts.</p>
+      </div>
+      <div class="security-card">
+        <div class="security-icon">🛡️</div>
+        <h4>Insurance Coverage</h4>
+        <p>₦50K-₦150K coverage per delivery. Full protection for your items.</p>
+      </div>
+      <div class="security-card">
+        <div class="security-icon">✅</div>
+        <h4>Food-Safe Certification</h4>
+        <p>Only certified movers handle food. 4.5+ rating, police clearance.</p>
+      </div>
+      <div class="security-card">
+        <div class="security-icon">📦</div>
+        <h4>Anonymous Packaging</h4>
+        <p>Movers can't see food contents. Breakable seals prevent tampering.</p>
       </div>
     </div>
   </section>
 
   <!-- How It Works -->
-  <section class="how-it-works" id="how-it-works">
-    <div class="how-it-works-content">
-      <h2>How It Works</h2>
-      <p class="features-subtitle">Simple, secure, and fast</p>
-      <div class="steps">
-        <div class="step">
-          <div class="step-number">1</div>
-          <h3>Create Order</h3>
-          <p>Enter pickup and delivery details. Add items or select from restaurant menu.</p>
-        </div>
-        <div class="step">
-          <div class="step-number">2</div>
-          <h3>Secure Payment</h3>
-          <p>Pay securely through our escrow system. Funds are held until delivery is complete.</p>
-        </div>
-        <div class="step">
-          <div class="step-number">3</div>
-          <h3>Track Live</h3>
-          <p>Watch your delivery in real-time. Get updates as your mover travels to you.</p>
-        </div>
-        <div class="step">
-          <div class="step-number">4</div>
-          <h3>Confirm Delivery</h3>
-          <p>Receive your items and confirm delivery. Payment is automatically released.</p>
-        </div>
+  <section class="section how-it-works" id="how-it-works">
+    <h2 class="section-title">How It Works</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="step-number">1</div>
+        <h4>Place Your Order</h4>
+        <p>Select items, enter pickup/delivery locations, choose Food-Safe Certified mover (for food).</p>
+      </div>
+      <div class="step">
+        <div class="step-number">2</div>
+        <h4>Secure Verification</h4>
+        <p>Mover arrives, OTP verified, photo captured. Your item is safe and tracked.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">3</div>
+        <h4>Real-Time Tracking</h4>
+        <p>Watch your delivery in real-time. Get updates at every step of the journey.</p>
+      </div>
+      <div class="step">
+        <div class="step-number">4</div>
+        <h4>Confirm Delivery</h4>
+        <p>Item delivered, photo proof, payment released. Rate your mover.</p>
       </div>
     </div>
   </section>
 
-  <!-- Trust Section -->
-  <section class="trust">
-    <div class="trust-content">
-      <h2>Trusted by Thousands</h2>
-      <div class="trust-grid">
-        <div class="trust-item">
-          <div class="trust-icon">🔐</div>
-          <h3>100% Secure</h3>
-          <p>Escrow protection on every transaction</p>
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon">⚡</div>
-          <h3>Fast Delivery</h3>
-          <p>Average delivery time under 1 hour</p>
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon">⭐</div>
-          <h3>5-Star Rated</h3>
-          <p>Thousands of satisfied customers</p>
-        </div>
-        <div class="trust-item">
-          <div class="trust-icon">✅</div>
-          <h3>Verified Movers</h3>
-          <p>All movers are certified and checked</p>
-        </div>
+  <!-- Pricing -->
+  <section class="section pricing-section">
+    <h2 class="section-title">Transparent Pricing</h2>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>For Buyers</h3>
+        <p style="margin-bottom: 1.5rem; color: var(--text-gray);">Pay Only for Delivery</p>
+        <ul class="pricing-list">
+          <li>Food delivery: ₦500-₦2,000</li>
+          <li>Regular delivery: ₦500-₦1,500</li>
+          <li>Platform fee: Included</li>
+          <li>No hidden charges</li>
+        </ul>
+        <a href="#get-started" class="btn btn-primary" style="width: 100%;">Calculate Fee</a>
+      </div>
+      <div class="pricing-card">
+        <h3>For Movers</h3>
+        <p style="margin-bottom: 1.5rem; color: var(--text-gray);">Earn More with Certification</p>
+        <ul class="pricing-list">
+          <li>Regular delivery: 80% of fee</li>
+          <li>Food delivery (certified): 80% of fee</li>
+          <li>Weekly payments</li>
+          <li>No subscription fees</li>
+        </ul>
+        <a href="#movers" class="btn btn-secondary" style="width: 100%;">See Calculator</a>
       </div>
     </div>
   </section>
 
-  <!-- CTA Section -->
-  <section class="cta-section">
-    <div class="cta-content">
-      <h2>Ready to Get Started?</h2>
-      <p>Download the Movescrow app today and experience secure, fast delivery.</p>
-      <div class="hero-buttons">
-        <a href="#" class="btn btn-primary">Download for iOS</a>
-        <a href="#" class="btn btn-primary">Download for Android</a>
+  <!-- Trust Signals -->
+  <section class="section testimonials">
+    <h2 class="section-title">Trusted by Thousands</h2>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; max-width: 1000px; margin: 0 auto 4rem;">
+      <div style="text-align: center;">
+        <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 0.5rem;">10,000+</div>
+        <div style="color: var(--text-gray);">Orders Delivered</div>
       </div>
+      <div style="text-align: center;">
+        <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 0.5rem;">4.8★</div>
+        <div style="color: var(--text-gray);">Rating (2,000+ Reviews)</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 0.5rem;">500+</div>
+        <div style="color: var(--text-gray);">Active Movers</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 0.5rem;">100+</div>
+        <div style="color: var(--text-gray);">Restaurants</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 0.5rem;">99.5%</div>
+        <div style="color: var(--text-gray);">Success Rate</div>
+      </div>
+      <div style="text-align: center;">
+        <div style="font-size: 3rem; font-weight: 700; color: var(--primary-blue); margin-bottom: 0.5rem;">₦100K+</div>
+        <div style="color: var(--text-gray);">Insurance Coverage</div>
+      </div>
+    </div>
+    <div class="testimonials-grid">
+      <div class="testimonial">
+        <p class="testimonial-text">"Fast delivery, food arrived hot! Love the Food-Safe Certification."</p>
+        <p class="testimonial-author">— Sarah M., Lagos</p>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-text">"Best delivery app in Lagos! Real-time tracking is amazing."</p>
+        <p class="testimonial-author">— John D., Ikeja</p>
+      </div>
+      <div class="testimonial">
+        <p class="testimonial-text">"Escrow protection gives me peace of mind. Highly recommended!"</p>
+        <p class="testimonial-author">— Ada O., Victoria Island</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Download App -->
+  <section class="download-section" id="download">
+    <div class="download-content">
+      <div class="download-text">
+        <h2>Get the Movescrow App</h2>
+        <p>Order food, track deliveries, earn money. All in one app.</p>
+        <ul class="download-features">
+          <li>Order food from restaurants</li>
+          <li>Track deliveries in real-time</li>
+          <li>Become a mover and earn</li>
+          <li>Secure payments</li>
+        </ul>
+        <div class="download-buttons">
+          <a href="#" class="btn btn-primary">App Store</a>
+          <a href="#" class="btn btn-primary">Google Play</a>
+        </div>
+      </div>
+      <div style="text-align: center;">
+        <div style="background: rgba(255,255,255,0.1); height: 400px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 4rem;">📱</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="section faq-section">
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="faq-list">
+      <div class="faq-item">
+        <div class="faq-question">What is Food-Safe Certification? <span>+</span></div>
+        <div class="faq-answer">Only movers with 4.5+ rating, 50+ deliveries, and police clearance can handle food.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How does escrow protection work? <span>+</span></div>
+        <div class="faq-answer">Your payment is held until delivery confirmed. Full refund if item not delivered.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How fast is delivery? <span>+</span></div>
+        <div class="faq-answer">Average 30-45 minutes for food, 1-2 hours for regular deliveries.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">Can I track my order? <span>+</span></div>
+        <div class="faq-answer">Yes, real-time GPS tracking from pickup to delivery.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">What if my item is damaged? <span>+</span></div>
+        <div class="faq-answer">Insurance covers up to ₦100K-₦150K. File a claim within 24 hours.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">How do I become a Food-Safe Certified mover? <span>+</span></div>
+        <div class="faq-answer">Complete 50 deliveries, maintain 4.5+ rating, submit police clearance.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Final CTA -->
+  <section class="final-cta" id="get-started">
+    <h2>Ready to Get Started?</h2>
+    <p>Join thousands of users enjoying secure, fast delivery.</p>
+    <div class="final-cta-buttons">
+      <a href="#food" class="btn btn-outline">Order Food Now</a>
+      <a href="#movers" class="btn btn-outline">Become a Mover</a>
+      <a href="https://merchants.movescrow.com" class="btn btn-outline">Partner Restaurant</a>
     </div>
   </section>
 
   <!-- Footer -->
-  <footer class="footer" id="contact">
+  <footer class="footer" id="about">
     <div class="footer-content">
       <div class="footer-section">
         <h3>Movescrow</h3>
-        <p style="opacity: 0.8; margin-top: 0.5rem;">Nigeria's secure delivery platform</p>
+        <p style="opacity: 0.8; margin-top: 0.5rem;">Nigeria's trusted peer-to-peer delivery platform.</p>
       </div>
       <div class="footer-section">
-        <h3>Company</h3>
-        <a href="#features">Features</a>
-        <a href="#how-it-works">How It Works</a>
-        <a href="https://merchants.movescrow.com">For Merchants</a>
-        <a href="#contact">Contact Us</a>
+        <h3>For Users</h3>
+        <a href="#food">Order Food</a>
+        <a href="#how-it-works">Regular Delivery</a>
+        <a href="#download">Track Order</a>
+        <a href="#faq">Help Center</a>
+        <a href="#movers">Become a Mover</a>
+        <a href="#movers">Food-Safe Certification</a>
       </div>
       <div class="footer-section">
-        <h3>Support</h3>
-        <a href="mailto:support@movescrow.com">support@movescrow.com</a>
-        <a href="#">Help Center</a>
-        <a href="#">FAQs</a>
+        <h3>For Business</h3>
+        <a href="https://merchants.movescrow.com">Partner with Us</a>
+        <a href="https://merchants.movescrow.com">Merchant Dashboard</a>
+        <a href="#about">Marketing Support</a>
+        <a href="#contact">Contact Sales</a>
       </div>
       <div class="footer-section">
-        <h3>Legal</h3>
-        <a href="#">Privacy Policy</a>
+        <h3>Legal & Support</h3>
         <a href="#">Terms of Service</a>
+        <a href="#">Privacy Policy</a>
         <a href="#">Cookie Policy</a>
+        <a href="mailto:support@movescrow.com">Contact Us</a>
+        <a href="#">Dispute Resolution</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>&copy; 2025 Movescrow. All rights reserved.</p>
+      <p>&copy; 2025 Movescrow. All rights reserved. | Lagos, Nigeria</p>
     </div>
   </footer>
+
+  <script>
+    // User tabs functionality
+    document.querySelectorAll('.user-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        const tabName = tab.dataset.tab;
+        document.querySelectorAll('.user-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.user-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tabName).classList.add('active');
+      });
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(question => {
+      question.addEventListener('click', () => {
+        const item = question.parentElement;
+        const isActive = item.classList.contains('active');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+        if (!isActive) item.classList.add('active');
+      });
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
 </body>
 </html>
