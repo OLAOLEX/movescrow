@@ -77,6 +77,16 @@
           }
         ],
         "destination": "/restaurant/index.html"
+      },
+      {
+        "source": "/login",
+        "has": [
+          {
+            "type": "host",
+            "value": "merchants.movescrow.com"
+          }
+        ],
+        "destination": "/restaurant/login.html"
       }
     ],
   "redirects": [
