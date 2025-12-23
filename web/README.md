@@ -1,86 +1,31 @@
-# Movescrow Coming Soon Website
+# MOVESCROW Web Pages
 
-A beautiful, SEO-optimized "Coming Soon" landing page with waitlist functionality.
+This folder contains the web pages for MOVESCROW, including Privacy Policy and Terms of Service required for app store submissions.
 
-## Features
+## Files
 
-- ✅ SEO optimized with meta tags, Open Graph, and structured data
-- ✅ Responsive design (mobile-first)
-- ✅ Waitlist form with backend API integration
-- ✅ Google Analytics ready
-- ✅ Social media links
-- ✅ Fast loading (no external dependencies)
-- ✅ Modern UI with animations
+- `index.html` - Landing page
+- `privacy.html` - Privacy Policy (required for Play Store)
+- `terms.html` - Terms of Service (required for Play Store)
 
-## Quick Start
+## Deployment
 
-### Local Development
+These pages can be deployed to:
+- GitHub Pages
+- Netlify
+- Vercel
+- Any static hosting service
 
-1. Open `index.html` in a web browser
-2. Or use a local server:
-   ```bash
-   # Python
-   python -m http.server 8000
-   
-   # Node.js
-   npx serve
-   ```
+## URLs for Play Store
 
-### Deployment
+Update these URLs in your Play Console:
+- Privacy Policy: `https://yourdomain.com/privacy.html`
+- Terms of Service: `https://yourdomain.com/terms.html`
 
-See [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md) for detailed deployment instructions.
+## Customization
 
-## Configuration
-
-### Update API Endpoint
-
-Edit the `API_BASE_URL` constant in `index.html`:
-
-```javascript
-const API_BASE_URL = 'https://api.movescrow.com'; // Your backend URL
-```
-
-### Enable Google Analytics
-
-1. Get your Measurement ID from Google Analytics
-2. Uncomment and update the Google Analytics script in `index.html`:
-
-```html
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-```
-
-### Update Social Media Links
-
-Edit the social links section in `index.html` with your actual URLs.
-
-## File Structure
-
-```
-web/
-├── index.html          # Main landing page
-├── manifest.json       # PWA manifest
-├── robots.txt          # Search engine crawler instructions
-├── sitemap.xml         # XML sitemap for SEO
-├── vercel.json         # Vercel deployment configuration
-├── favicon.png         # Site favicon
-├── icons/              # App icons
-└── DEPLOYMENT_GUIDE.md # Deployment instructions
-```
-
-## SEO Checklist
-
-- [x] Meta tags (title, description, keywords)
-- [x] Open Graph tags
-- [x] Twitter Card tags
-- [x] Structured data (JSON-LD)
-- [x] robots.txt
-- [x] sitemap.xml
-- [x] Mobile responsive
-- [x] Fast loading
-- [ ] Google Analytics (add your ID)
-- [ ] Submit to Google Search Console
-
-## Support
-
-For deployment issues, refer to [DEPLOYMENT_GUIDE.md](./DEPLOYMENT_GUIDE.md).
-
+Before deploying, update:
+1. Contact email addresses in privacy.html and terms.html
+2. Jurisdiction in terms.html (line 12)
+3. Domain name in all files
+4. Company information
