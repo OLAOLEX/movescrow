@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service - MOVESCROW</title>
+    <title>Terms of Service - MoveScrow</title>
     <style>
         * {
             margin: 0;
@@ -23,17 +23,36 @@
             background: white;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        h1 {
-            color: #1E88E5;
+        .header {
+            background: linear-gradient(135deg, #1E88E5 0%, #1565C0 100%);
+            color: white;
+            padding: 30px;
+            margin: -20px -20px 30px -20px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5em;
             margin-bottom: 10px;
         }
+        .header p {
+            opacity: 0.9;
+            font-size: 1.1em;
+        }
         h2 {
-            color: #424242;
+            color: #1E88E5;
             margin-top: 30px;
             margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+        h3 {
+            color: #424242;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
         }
         p {
             margin-bottom: 15px;
+            color: #555;
         }
         ul {
             margin-left: 20px;
@@ -41,57 +60,87 @@
         }
         li {
             margin-bottom: 8px;
+            color: #555;
         }
         .last-updated {
             color: #666;
             font-size: 14px;
             margin-bottom: 30px;
+            font-style: italic;
         }
         .contact {
-            background: #f9f9f9;
-            padding: 15px;
+            background: #f0f7ff;
+            padding: 20px;
             border-left: 4px solid #1E88E5;
             margin-top: 30px;
+            border-radius: 4px;
         }
         .warning {
             background: #fff3cd;
-            padding: 15px;
+            padding: 20px;
             border-left: 4px solid #ffc107;
             margin: 20px 0;
+            border-radius: 4px;
+        }
+        .warning strong {
+            color: #856404;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 30px;
+            color: #1E88E5;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        a {
+            color: #1E88E5;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Terms of Service</h1>
+        <div class="header">
+            <h1>Terms of Service</h1>
+            <p>Please read these terms carefully</p>
+        </div>
+        
         <p class="last-updated">Last Updated: <span id="date"></span></p>
 
-        <p>Please read these Terms of Service ("Terms") carefully before using the MOVESCROW mobile application and services operated by MOVESCROW ("we," "us," or "our").</p>
+        <p>Please read these Terms of Service ("Terms") carefully before using the MoveScrow escrow payment platform and services operated by MoveScrow ("we," "us," or "our").</p>
 
         <h2>1. Acceptance of Terms</h2>
-        <p>By accessing or using our services, you agree to be bound by these Terms. If you disagree with any part of these Terms, you may not access or use our services.</p>
+        <p>By accessing or using our escrow services, you agree to be bound by these Terms. If you disagree with any part of these Terms, you may not access or use our services.</p>
 
         <h2>2. Description of Service</h2>
-        <p>MOVESCROW is a peer-to-peer logistics marketplace that connects customers with movers for:</p>
+        <p>MoveScrow is a secure escrow payment platform that facilitates transactions between buyers and sellers by:</p>
         <ul>
-            <li>Food delivery services</li>
-            <li>Package moving and delivery</li>
-            <li>Related logistics services</li>
+            <li>Holding funds securely in escrow until services are completed</li>
+            <li>Verifying service completion before releasing funds</li>
+            <li>Providing dispute resolution services</li>
+            <li>Ensuring secure payment processing</li>
         </ul>
-        <p>We provide a platform for users to request and movers to provide delivery services. We are not a delivery service provider ourselves.</p>
+        <p>We provide a platform for secure escrow transactions. We are not a party to the underlying transactions between buyers and sellers.</p>
 
         <h2>3. User Accounts</h2>
         <h3>3.1 Registration</h3>
-        <p>To use our services, you must:</p>
+        <p>To use our escrow services, you must:</p>
         <ul>
             <li>Be at least 18 years old</li>
             <li>Provide accurate and complete information</li>
             <li>Maintain the security of your account</li>
             <li>Accept responsibility for all activities under your account</li>
+            <li>Comply with all applicable laws and regulations</li>
         </ul>
 
         <h3>3.2 Account Security</h3>
-        <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account.</p>
+        <p>You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account. You must immediately notify us of any unauthorized use of your account.</p>
 
         <h2>4. User Conduct</h2>
         <p>You agree not to:</p>
@@ -104,76 +153,91 @@
             <li>Attempt to gain unauthorized access to the service</li>
             <li>Impersonate any person or entity</li>
             <li>Use automated systems to access the service without permission</li>
+            <li>Engage in fraudulent or deceptive practices</li>
+            <li>Circumvent escrow protections or attempt to bypass verification</li>
         </ul>
 
-        <h2>5. Service Fees and Payments</h2>
-        <h3>5.1 Escrow System</h3>
-        <p>MOVESCROW uses an escrow system to secure payments:</p>
+        <h2>5. Escrow Services and Payments</h2>
+        <h3>5.1 Escrow Process</h3>
+        <p>MoveScrow uses an escrow system to secure payments:</p>
         <ul>
-            <li>Payments are held securely until delivery is confirmed</li>
-            <li>Funds are released to movers upon successful delivery</li>
-            <li>Refunds are processed according to our refund policy</li>
+            <li>Funds are held securely in escrow until service completion is verified</li>
+            <li>Funds are released to sellers upon successful verification</li>
+            <li>Refunds are processed according to our refund policy and dispute resolution process</li>
+            <li>All transactions are subject to verification and compliance checks</li>
         </ul>
 
         <h3>5.2 Service Fees</h3>
-        <p>We may charge service fees for using our platform. All fees will be clearly disclosed before you complete a transaction.</p>
+        <p>We may charge service fees for using our escrow platform. All fees will be clearly disclosed before you complete a transaction. Fees are non-refundable except as required by law.</p>
 
         <h3>5.3 Payment Processing</h3>
-        <p>Payments are processed through secure third-party payment processors. We do not store your full payment card information.</p>
+        <p>Payments are processed through secure third-party payment processors. We do not store your full payment card information. You authorize us to process payments in accordance with these Terms.</p>
 
-        <h2>6. Delivery Services</h2>
-        <h3>6.1 Customer Responsibilities</h3>
-        <p>As a customer, you agree to:</p>
+        <h3>5.4 Fund Release</h3>
+        <p>Funds will be released from escrow only after:</p>
         <ul>
-            <li>Provide accurate pickup and delivery locations</li>
-            <li>Be available at the agreed-upon time</li>
-            <li>Provide accurate item descriptions and values</li>
-            <li>Pay all agreed-upon fees</li>
+            <li>Service completion is verified by the buyer</li>
+            <li>All verification requirements are met</li>
+            <li>No disputes are pending</li>
+            <li>All applicable fees are paid</li>
         </ul>
 
-        <h3>6.2 Mover Responsibilities</h3>
-        <p>As a mover, you agree to:</p>
+        <h2>6. Transaction Responsibilities</h2>
+        <h3>6.1 Buyer Responsibilities</h3>
+        <p>As a buyer, you agree to:</p>
         <ul>
-            <li>Provide services in a professional and timely manner</li>
-            <li>Handle items with care</li>
-            <li>Complete deliveries as agreed</li>
+            <li>Provide accurate transaction details</li>
+            <li>Deposit funds into escrow as agreed</li>
+            <li>Verify service completion accurately and in good faith</li>
+            <li>Communicate clearly with sellers</li>
+            <li>Report any issues or disputes promptly</li>
+        </ul>
+
+        <h3>6.2 Seller Responsibilities</h3>
+        <p>As a seller, you agree to:</p>
+        <ul>
+            <li>Provide services as agreed and described</li>
+            <li>Complete services in a timely and professional manner</li>
+            <li>Provide accurate service descriptions</li>
+            <li>Respond promptly to verification requests</li>
             <li>Comply with all applicable laws and regulations</li>
         </ul>
 
         <h3>6.3 Disputes</h3>
-        <p>If you have a dispute with another user, please contact our support team. We will attempt to resolve disputes fairly, but we are not obligated to resolve all disputes.</p>
+        <p>If you have a dispute with another user, please contact our support team. We will attempt to resolve disputes fairly based on available evidence, but we are not obligated to resolve all disputes. Our decision in dispute resolution is final.</p>
 
         <h2>7. Limitation of Liability</h2>
         <div class="warning">
-            <p><strong>IMPORTANT:</strong> MOVESCROW acts as a platform connecting users and movers. We are not responsible for:</p>
+            <p><strong>IMPORTANT:</strong> MoveScrow acts as an escrow service provider. We are not responsible for:</p>
             <ul>
-                <li>The quality, safety, or legality of services provided by movers</li>
+                <li>The quality, safety, or legality of services provided by sellers</li>
                 <li>The accuracy of information provided by users</li>
-                <li>Loss or damage to items during delivery</li>
-                <li>Disputes between users and movers</li>
+                <li>Disputes between buyers and sellers beyond our dispute resolution process</li>
+                <li>Losses arising from fraudulent or illegal activities by users</li>
+                <li>Technical issues beyond our reasonable control</li>
             </ul>
         </div>
-        <p>To the maximum extent permitted by law, MOVESCROW shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of your use of the service.</p>
+        <p>To the maximum extent permitted by law, MoveScrow shall not be liable for any indirect, incidental, special, consequential, or punitive damages arising out of your use of the service.</p>
 
         <h2>8. Indemnification</h2>
-        <p>You agree to indemnify and hold harmless MOVESCROW, its officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising out of your use of the service or violation of these Terms.</p>
+        <p>You agree to indemnify and hold harmless MoveScrow, its officers, directors, employees, and agents from any claims, damages, losses, liabilities, and expenses (including legal fees) arising out of your use of the service, violation of these Terms, or infringement of any rights of another.</p>
 
         <h2>9. Intellectual Property</h2>
-        <p>The service and its original content, features, and functionality are owned by MOVESCROW and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.</p>
+        <p>The service and its original content, features, and functionality are owned by MoveScrow and are protected by international copyright, trademark, patent, trade secret, and other intellectual property laws.</p>
         <p>You may not reproduce, distribute, modify, or create derivative works of the service without our express written permission.</p>
 
         <h2>10. Termination</h2>
-        <p>We may terminate or suspend your account and access to the service immediately, without prior notice, for any reason, including if you breach these Terms.</p>
-        <p>Upon termination, your right to use the service will cease immediately. All provisions of these Terms that by their nature should survive termination shall survive.</p>
+        <p>We may terminate or suspend your account and access to the service immediately, without prior notice, for any reason, including if you breach these Terms or engage in fraudulent activity.</p>
+        <p>Upon termination, your right to use the service will cease immediately. All provisions of these Terms that by their nature should survive termination shall survive, including payment obligations and dispute resolution provisions.</p>
 
         <h2>11. Changes to Terms</h2>
         <p>We reserve the right to modify these Terms at any time. We will notify users of any material changes by posting the new Terms on this page and updating the "Last Updated" date. Your continued use of the service after such changes constitutes acceptance of the new Terms.</p>
 
         <h2>12. Governing Law</h2>
-        <p>These Terms shall be governed by and construed in accordance with the laws of [Your Jurisdiction], without regard to its conflict of law provisions.</p>
+        <p>These Terms shall be governed by and construed in accordance with applicable laws, without regard to its conflict of law provisions.</p>
 
         <h2>13. Dispute Resolution</h2>
-        <p>Any disputes arising out of or relating to these Terms or the service shall be resolved through binding arbitration in accordance with the rules of [Arbitration Organization], except where prohibited by law.</p>
+        <p>Any disputes arising out of or relating to these Terms or the service shall be resolved through binding arbitration in accordance with applicable arbitration rules, except where prohibited by law.</p>
 
         <h2>14. Severability</h2>
         <p>If any provision of these Terms is found to be unenforceable or invalid, that provision shall be limited or eliminated to the minimum extent necessary, and the remaining provisions shall remain in full force and effect.</p>
@@ -184,6 +248,8 @@
             <p><strong>Email:</strong> support@movescrow.com</p>
             <p><strong>Website:</strong> <a href="https://movescrow.com">https://movescrow.com</a></p>
         </div>
+
+        <a href="index.html" class="back-link">← Back to Home</a>
     </div>
 
     <script>
@@ -191,4 +257,3 @@
     </script>
 </body>
 </html>
-
