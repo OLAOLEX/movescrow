@@ -27,6 +27,38 @@
       color: white;
       margin-bottom: 60px;
     }
+    .auth-buttons {
+      display: flex;
+      gap: 15px;
+      justify-content: center;
+      margin-top: 30px;
+      flex-wrap: wrap;
+    }
+    .auth-btn {
+      display: inline-block;
+      padding: 12px 28px;
+      background: white;
+      color: #1E88E5;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s;
+      font-weight: 600;
+      font-size: 1em;
+      border: 2px solid white;
+    }
+    .auth-btn:hover {
+      background: rgba(255, 255, 255, 0.9);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+    }
+    .auth-btn.primary {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      border-color: white;
+    }
+    .auth-btn.primary:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
     h1 {
       font-size: 3.5em;
       margin-bottom: 15px;
@@ -208,6 +240,10 @@
       <h1>MoveScrow</h1>
       <p class="tagline">Secure Escrow Payment Platform</p>
       <p class="subtagline">Your funds protected until services are completed</p>
+      <div class="auth-buttons">
+        <a href="login.html" class="auth-btn">Login</a>
+        <a href="signup.html" class="auth-btn primary">Sign Up</a>
+      </div>
     </header>
 
     <div class="content">
